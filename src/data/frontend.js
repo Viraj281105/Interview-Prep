@@ -146,35 +146,5 @@ export const frontendData = [
         codeLanguage: 'javascript'
       }
     ]
-  },
-  {
-    id: 'typescript',
-    title: 'TypeScript',
-    icon: '📘',
-    summary: 'A strict syntactical superset of JavaScript that adds optional static typing.',
-    concepts: ['Interfaces vs Types', 'Generics', 'Utility Types', 'Enums', 'Type Guards', 'Decorators'],
-    questions: [
-      {
-        id: 'ts-001',
-        question: 'What is the difference between an Interface and a Type alias?',
-        difficulty: 'medium',
-        answer: 'Interfaces are primarily used to define the shape of objects and can be merged (declaration merging). Types can define the shape of objects but also represent primitive types, unions, and intersections. Types cannot be merged. In general, use interfaces for public API definitions and object shapes, and types for unions/complex utility types.',
-        codeLanguage: 'typescript'
-      },
-      {
-        id: 'ts-002',
-        question: 'Explain Generics in TypeScript.',
-        difficulty: 'hard',
-        answer: 'Generics allow you to create reusable components/functions that can work over a variety of types rather than a single one. They act as a placeholder for a type that will be specified when the function or class is used (e.g., Array<T>). This provides type safety without sacrificing flexibility.',
-        codeLanguage: 'typescript'
-      },
-      {
-        id: 'ts-003',
-        question: 'What are Type Guards?',
-        difficulty: 'medium',
-        answer: 'Type guards are expressions that perform a runtime check to narrow down the type within a specific scope. Examples include using typeof, instanceof, the "in" operator, or custom type predicate functions (e.g., function isString(val: any): val is string).',
-        codeLanguage: 'typescript'
-      }
-    ]
   }
 ];
