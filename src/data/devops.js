@@ -1,34 +1,68 @@
 export const devopsData = [
   {
-    id: 'devops',
-    title: 'DevOps & Site Reliability Engineering',
-    icon: '⚙️',
-    summary: 'Practices, tools, and concepts for continuous delivery, automation, and reliability of software systems.',
-    concepts: ['CI/CD', 'Infrastructure as Code', 'Containers', 'Kubernetes', 'Monitoring', 'Logging', 'GitOps', 'Terraform', 'Ansible', 'Site Reliability Engineering'],
+    id: 'containers',
+    title: 'Containers & Orchestration',
+    icon: '🐳',
+    summary: 'Packaging applications with Docker and scaling them with Kubernetes.',
+    concepts: ['Docker', 'Images vs Containers', 'Dockerfile', 'Kubernetes (K8s)', 'Pods', 'Deployments', 'Services', 'Ingress'],
     questions: [
       {
-        id: 'devops-001',
-        question: 'What is the difference between continuous integration, continuous delivery, and continuous deployment?',
-        difficulty: 'easy',
-        answer: 'Continuous Integration (CI) automatically builds and tests code on each commit. Continuous Delivery (CD) ensures the codebase is always in a deployable state and can be released with a manual approval step. Continuous Deployment automates the release step as well, deploying every change that passes tests to production automatically.',
-        code: '',
-        codeLanguage: ''
-      },
-      {
-        id: 'devops-002',
-        question: 'Explain how Kubernetes implements service discovery and load balancing.',
+        id: 'dev-001',
+        question: 'What is the difference between a Virtual Machine and a Container?',
         difficulty: 'medium',
-        answer: 'Kubernetes creates a DNS entry for each Service (ClusterIP) that resolves to a virtual IP. kube-proxy routes traffic to the Service IP and forwards it to one of the backing Pods using iptables or IPVS, providing load balancing across Pod endpoints. For external traffic, a LoadBalancer Service or Ingress controller can expose the Service and perform L7 routing.',
-        code: "apiVersion: v1\nkind: Service\nmetadata:\n  name: my-service\nspec:\n  selector:\n    app: my-app\n  ports:\n    - protocol: TCP\n      port: 80\n      targetPort: 8080",
-        codeLanguage: 'yaml'
+        answer: 'A Virtual Machine (VM) includes the app, necessary binaries/libraries, and an entire guest operating system, all running on top of a hypervisor. A container includes the app and its dependencies but shares the host OS kernel with other containers. This makes containers much more lightweight, faster to start, and less resource-intensive.',
+        codeLanguage: 'text'
       },
       {
-        id: 'devops-003',
-        question: 'What is infrastructure as code (IaC) and why is it important?',
+        id: 'dev-002',
+        question: 'Explain the Docker architecture.',
+        difficulty: 'hard',
+        answer: 'Docker uses a client-server architecture. The Docker Client talks to the Docker Daemon (dockerd), which does the heavy lifting of building, running, and distributing containers. They communicate via REST API. Docker Registries (like Docker Hub) store images. An Image is a read-only template with instructions to create a container. A Container is a runnable instance of an image.',
+        codeLanguage: 'text'
+      },
+      {
+        id: 'dev-003',
+        question: 'What is a Pod in Kubernetes?',
+        difficulty: 'medium',
+        answer: 'A Pod is the smallest, most basic deployable object in Kubernetes. It represents a single instance of a running process in your cluster. A Pod can contain one or more containers (tightly coupled) that share the same network namespace (IP address and ports) and storage volumes. They are ephemeral and meant to be replaced if they fail.',
+        codeLanguage: 'text'
+      },
+      {
+        id: 'dev-004',
+        question: 'Explain K8s Deployments vs Services.',
+        difficulty: 'hard',
+        answer: 'A Deployment manages the creation and scaling of Pods. It ensures the desired number of Pod replicas are running and handles rolling updates. Because Pods are ephemeral and their IP addresses change, a Service provides a stable, abstract IP address and DNS name to load-balance traffic across a logical set of Pods.',
+        codeLanguage: 'text'
+      }
+    ]
+  },
+  {
+    id: 'cicd',
+    title: 'CI/CD & Cloud',
+    icon: '☁️',
+    summary: 'Continuous Integration, Continuous Deployment, Infrastructure as Code, and Cloud providers.',
+    concepts: ['CI/CD Pipelines', 'GitHub Actions', 'Jenkins', 'Terraform', 'AWS', 'S3', 'EC2', 'Serverless'],
+    questions: [
+      {
+        id: 'dev-005',
+        question: 'What is CI/CD?',
         difficulty: 'easy',
-        answer: 'IaC means defining and managing infrastructure (servers, networks, databases) with declarative or imperative code (e.g., Terraform, CloudFormation). It enables version control, reproducibility, automated provisioning, and reduces manual configuration drift, leading to faster, more reliable deployments.',
-        code: "resource \"aws_instance\" \"example\" {\n  ami           = \"ami-0c55b159cbfafe1f0\"\n  instance_type = \"t2.micro\"\n}\n",
+        answer: 'Continuous Integration (CI) is the practice of automatically building and testing code every time a developer commits changes. Continuous Deployment/Delivery (CD) automatically deploys the successfully tested code to a staging or production environment. This ensures rapid, reliable software release cycles.',
+        codeLanguage: 'text'
+      },
+      {
+        id: 'dev-006',
+        question: 'What is Infrastructure as Code (IaC)?',
+        difficulty: 'medium',
+        answer: 'IaC is the process of managing and provisioning computing infrastructure (networks, VMs, load balancers) through machine-readable definition files (like Terraform, CloudFormation, or Ansible playbooks) rather than physical hardware configuration or interactive configuration tools. It enables version control, reproducibility, and automation for infrastructure.',
         codeLanguage: 'hcl'
+      },
+      {
+        id: 'dev-007',
+        question: 'Explain Serverless computing.',
+        difficulty: 'medium',
+        answer: 'Serverless (e.g., AWS Lambda) allows developers to build and run applications without managing servers. The cloud provider automatically provisions, scales, and manages the infrastructure required to run the code. You only pay for the exact compute time consumed (down to milliseconds) rather than pre-purchasing capacity.',
+        codeLanguage: 'text'
       }
     ]
   }
