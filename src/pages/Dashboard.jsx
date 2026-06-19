@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { motion } from 'framer-motion';
-import { Target, CheckCircle2, Flame, Award, BookOpen, Clock } from 'lucide-react';
+import { Target, CheckCircle2, Flame, Award, BookOpen, Clock, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Dashboard = () => {
@@ -38,33 +38,26 @@ export const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
-        {/* Recent Activity / Progress */}
-        <Card className="p-6 col-span-1 lg:col-span-2">
-          <h2 className="text-xl font-bold mb-6">Subject Progress</h2>
-          <div className="space-y-6">
-            {[
-              { name: 'Data Structures & Algorithms', progress: 65, color: 'bg-blue-500' },
-              { name: 'Database Management', progress: 80, color: 'bg-emerald-500' },
-              { name: 'System Design', progress: 30, color: 'bg-indigo-500' },
-              { name: 'HR & Leadership', progress: 90, color: 'bg-rose-500' },
-            ].map((sub, i) => (
-              <div key={i}>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">{sub.name}</span>
-                  <span className="text-slate-500">{sub.progress}%</span>
-                </div>
-                <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }} 
-                    animate={{ width: `${sub.progress}%` }} 
-                    transition={{ duration: 1, delay: 0.2 }}
-                    className={`h-full ${sub.color} rounded-full`} 
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
+        {/* Activity Heatmap */}
+        <div className="lg:col-span-2">
+          <Card className="p-6 h-full border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-bold flex items-center gap-2 text-lg">
+                <Flame className="text-orange-500" size={24} /> Activity Streak: <span className="text-orange-500">7 Days</span>
+              </h3>
+            </div>
+            <div className="flex flex-wrap gap-1.5 md:gap-2 opacity-90">
+              {Array.from({length: 60}).map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`w-4 h-4 md:w-6 md:h-6 rounded-[4px] shadow-sm transition-colors hover:scale-110 ${i > 52 ? 'bg-orange-500' : Math.random() > 0.6 ? 'bg-orange-300 dark:bg-orange-500/50' : 'bg-slate-100 dark:bg-slate-800'}`}
+                  title="Activity Block"
+                />
+              ))}
+            </div>
+            <p className="text-xs font-bold text-slate-400 mt-6 text-right uppercase tracking-wider">Last 60 Days</p>
+          </Card>
+        </div>
 
         {/* Up Next */}
         <Card className="p-6">

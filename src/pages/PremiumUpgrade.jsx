@@ -1,0 +1,88 @@
+import React, { useState } from 'react';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { CheckCircle2, Zap, Shield, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+export const PremiumUpgrade = () => {
+  const [isYearly, setIsYearly] = useState(false);
+
+  return (
+    <div className="max-w-5xl mx-auto w-full flex flex-col items-center gap-12 py-8">
+      <div className="text-center max-w-3xl">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="inline-block p-3 bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 rounded-full mb-6 shadow-sm">
+          <Sparkles size={32} />
+        </motion.div>
+        <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent pb-2">
+          Accelerate Your Career
+        </h1>
+        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          Get unlimited access to AI Mock Interviews, premium company-specific roadmaps, and advanced gamification analytics.
+        </p>
+
+        <div className="flex items-center justify-center gap-3 mt-8">
+          <span className={`text-sm font-bold ${!isYearly ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>Monthly</span>
+          <button 
+            className="w-12 h-6 bg-blue-600 rounded-full relative transition-colors"
+            onClick={() => setIsYearly(!isYearly)}
+          >
+            <motion.div 
+              className="w-4 h-4 bg-white rounded-full absolute top-1 shadow-sm"
+              animate={{ left: isYearly ? '26px' : '4px' }}
+            />
+          </button>
+          <span className={`text-sm font-bold flex items-center gap-2 ${isYearly ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>
+            Yearly <span className="text-[10px] uppercase bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded-full">Save 20%</span>
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl px-4">
+        {/* Basic Plan */}
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+          <Card className="p-8 h-full flex flex-col border-2 border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+            <h3 className="text-2xl font-bold mb-2">Basic</h3>
+            <p className="text-slate-500 mb-6 font-medium">Essential prep for everyone.</p>
+            <div className="text-5xl font-black mb-8">$0<span className="text-xl text-slate-400 font-bold">/mo</span></div>
+            
+            <ul className="space-y-4 mb-10 flex-1">
+              {['100+ DSA Flashcards', 'Basic Subject Roadmaps', 'Community Interview Experiences', 'Standard Leaderboard Rank'].map((feat, i) => (
+                <li key={i} className="flex items-center gap-3 text-slate-700 dark:text-slate-300 font-medium">
+                  <CheckCircle2 size={20} className="text-slate-400 shrink-0" /> {feat}
+                </li>
+              ))}
+            </ul>
+            <Button variant="outline" className="w-full font-bold py-6 text-slate-500 border-slate-300 dark:border-slate-700" disabled>Current Plan</Button>
+          </Card>
+        </motion.div>
+
+        {/* Pro Plan */}
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+          <Card className="p-8 h-full flex flex-col border-2 border-blue-500 shadow-2xl shadow-blue-500/20 relative overflow-hidden bg-white dark:bg-slate-900">
+            <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-black px-6 py-1.5 rounded-bl-xl uppercase tracking-widest shadow-md">
+              Most Popular
+            </div>
+            <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">Pro <Zap size={24} className="text-yellow-500 fill-yellow-500" /></h3>
+            <p className="text-blue-600 dark:text-blue-400 mb-6 font-bold">Unlock the ultimate unfair advantage.</p>
+            <div className="text-5xl font-black mb-8">
+              ${isYearly ? '15' : '19'}<span className="text-xl text-slate-400 font-bold">/mo</span>
+            </div>
+            
+            <ul className="space-y-4 mb-10 flex-1">
+              {['Everything in Free', 'Unlimited AI Mock Interviews', 'AI ATS Resume Parsing (Unlimited)', 'Advanced Activity Heatmaps', 'Verified Company Timelines'].map((feat, i) => (
+                <li key={i} className="flex items-start gap-3 text-slate-900 dark:text-slate-100 font-bold">
+                  <CheckCircle2 size={20} className="text-blue-500 shrink-0 mt-0.5" /> {feat}
+                </li>
+              ))}
+            </ul>
+            <Button className="w-full bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/30 font-bold py-6 text-lg">Upgrade to Pro</Button>
+          </Card>
+        </motion.div>
+      </div>
+
+      <div className="flex items-center gap-2 text-slate-400 text-sm mt-4 font-medium">
+        <Shield size={16} /> Secure payments powered by <span className="font-bold text-slate-500 dark:text-slate-300">Stripe</span>
+      </div>
+    </div>
+  );
+};

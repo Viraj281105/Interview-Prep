@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, Trophy, Zap, Building2, Video, Sparkles } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export function Sidebar({ isMobileOpen, setIsMobileOpen }) {
@@ -10,11 +10,32 @@ export function Sidebar({ isMobileOpen, setIsMobileOpen }) {
   const navigate = useNavigate();
 
   const currentPath = location.pathname;
-  const isDashboard = currentPath === '/' || currentPath === '';
+  const isDashboard = currentPath === '/';
 
   const handleNavigate = (path) => {
     navigate(path);
     setIsMobileOpen(false);
+  };
+
+  const NavItem = ({ name, icon: Icon, path }) => {
+    const isActive = currentPath === path;
+    return (
+      <motion.button
+        whileHover={{ x: 3 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => handleNavigate(path)}
+        className={`
+          w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all duration-200
+          ${isActive
+            ? 'bg-blue-500/15 text-blue-300 border border-blue-500/25'
+            : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
+          }
+        `}
+      >
+        <Icon size={18} />
+        <span className="font-medium text-sm">{name}</span>
+      </motion.button>
+    );
   };
 
   const containerClasses = `
@@ -28,7 +49,6 @@ export function Sidebar({ isMobileOpen, setIsMobileOpen }) {
 
   return (
     <div className={containerClasses}>
-      {/* Logo */}
       <div className="p-5 border-b border-white/[0.06] flex items-center justify-between flex-shrink-0">
         <button onClick={() => handleNavigate('/')} className="text-left group">
           <h1 className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 group-hover:from-blue-300 group-hover:to-purple-300 transition-all">
@@ -44,32 +64,23 @@ export function Sidebar({ isMobileOpen, setIsMobileOpen }) {
         </button>
       </div>
 
-      {/* Navigation */}
       <div className="flex-1 overflow-y-auto py-3 px-2.5 space-y-0.5">
-        {/* Dashboard */}
-        <motion.button
-          whileHover={{ x: 3 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => handleNavigate('/')}
-          className={`
-            w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all duration-200
-            ${isDashboard
-              ? 'bg-blue-500/15 text-blue-300 border border-blue-500/25'
-              : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
-            }
-          `}
-        >
-          <LayoutDashboard size={18} className={isDashboard ? 'text-blue-400' : ''} />
-          <span className="font-medium text-sm">Dashboard</span>
-        </motion.button>
+        <NavItem name="Dashboard" icon={LayoutDashboard} path="/" />
 
-        {/* Divider */}
+        <div className="py-2 px-3.5">
+          <div className="border-t border-white/[0.04]" />
+          <span className="text-[10px] text-slate-600 uppercase tracking-widest font-semibold mt-2 block">Preparation</span>
+        </div>
+        
+        <NavItem name="Companies" icon={Building2} path="/companies" />
+        <NavItem name="Mock Interviews" icon={Video} path="/mock" />
+        <NavItem name="AI Co-Pilot" icon={Sparkles} path="/ai" />
+
         <div className="py-2 px-3.5">
           <div className="border-t border-white/[0.04]" />
           <span className="text-[10px] text-slate-600 uppercase tracking-widest font-semibold mt-2 block">Topics</span>
         </div>
 
-        {/* Topic list */}
         {allModules.map((mod) => {
           const isActive = currentPath === `/topic/${mod.id}`;
           const questionIds = mod.questions?.map(q => q.id) || [];
@@ -99,7 +110,6 @@ export function Sidebar({ isMobileOpen, setIsMobileOpen }) {
                     {completedCount}/{totalCount}
                   </span>
                 </div>
-                {/* Mini progress bar */}
                 <div className="w-full h-[2px] bg-white/[0.04] rounded-full mt-1.5 overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
@@ -114,9 +124,15 @@ export function Sidebar({ isMobileOpen, setIsMobileOpen }) {
             </motion.button>
           );
         })}
+
+        <div className="py-2 px-3.5">
+          <div className="border-t border-white/[0.04]" />
+          <span className="text-[10px] text-slate-600 uppercase tracking-widest font-semibold mt-2 block">Premium</span>
+        </div>
+        <NavItem name="Leaderboard" icon={Trophy} path="/leaderboard" />
+        <NavItem name="Upgrade to Pro" icon={Zap} path="/premium" />
       </div>
 
-      {/* Footer */}
       <div className="p-4 border-t border-white/[0.06] flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-purple-500/20">
