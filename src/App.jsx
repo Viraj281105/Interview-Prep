@@ -9,6 +9,7 @@ import { Subjects } from './pages/Subjects';
 import { SubjectDetail } from './pages/SubjectDetail';
 import { CompaniesList } from './pages/CompaniesList';
 import { CompanyProfile } from './pages/CompanyProfile';
+import { MockInterviewDashboard } from './pages/MockInterviewDashboard';
 
 // Dummy component for unbuilt routes
 const ComingSoon = ({ title }) => (
@@ -34,7 +35,7 @@ function App() {
               <Route path="subjects/:id" element={<SubjectDetail />} />
               <Route path="companies" element={<CompaniesList />} />
               <Route path="companies/:id" element={<CompanyProfile />} />
-              <Route path="mock" element={<ComingSoon title="Mock Interview Engine" />} />
+              <Route path="mock" element={<MockInterviewDashboard />} />
               <Route path="profile" element={<ComingSoon title="User Profile" />} />
               <Route path="login" element={<ComingSoon title="Sign In" />} />
               <Route path="*" element={<ComingSoon title="Page Not Found" />} />
