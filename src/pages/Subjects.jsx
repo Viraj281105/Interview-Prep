@@ -5,6 +5,7 @@ import { Input } from '../components/ui/Input';
 import { motion } from 'framer-motion';
 import { Code, Database, Server, Users, Search, ArrowRight, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { RevisionScheduler } from '../components/practice/RevisionScheduler';
 
 const subjects = [
   { id: 'dsa', title: 'Data Structures & Algorithms', icon: Code, desc: 'Arrays, Trees, Graphs, DP, and more.', progress: 65, modules: 12 },
@@ -62,6 +63,8 @@ export const Subjects = () => {
           </motion.div>
         ))}
       </div>
+
+      <RevisionScheduler />
     </div>
   );
 };

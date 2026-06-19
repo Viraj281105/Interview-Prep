@@ -1,11 +1,13 @@
 # Phase 1: Foundation Upgrade Tasks
+- [x] Phase 1 Complete
 
-- [x] Initialize Firebase dependencies and set up dummy config.
-- [x] Implement `ThemeContext` (Dark/Light Mode).
-- [x] Implement `AuthContext` (Firebase Auth skeleton).
-- [x] Create base UI components (Button, Card, Input).
-- [x] Create layout components (Navbar, Sidebar, Footer, Layout).
-- [x] Build the Home (Landing) Page (Hero, Features, Testimonials).
-- [x] Build the Dashboard Page (Stats, Charts).
-- [x] Build the Subjects Listing Page.
-- [x] Set up routing in `App.jsx`.
+# Phase 2: Interactive Learning Tasks
+- [x] Phase 2 Complete
+
+# Phase 3: Company Specific Prep Tasks
+- [ ] Create `CompaniesList` Page.
+- [ ] Create `CompanyProfile` Page.
+- [ ] Build `CompanyCard` Component.
+- [ ] Build `InterviewExperienceList` / `ExperienceAccordion`.
+- [ ] Build `SubmitExperienceForm` Component.
+- [ ] Update Routing in `App.jsx` for Company pages.
