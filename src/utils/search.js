@@ -31,16 +31,20 @@ export function filterByCompletion(items, filter, isComplete) {
 export function getAllQuestions(dataModules) {
   const allQuestions = [];
   for (const mod of dataModules) {
-    for (const topic of mod.topics) {
-      for (const q of topic.questions) {
+    if (mod.questions && Array.isArray(mod.questions)) {
+      for (const q of mod.questions) {
         allQuestions.push({
           ...q,
-          topicTitle: topic.title,
-          sectionTitle: mod.sectionTitle,
-          sectionPath: mod.path,
+          topicId: mod.id,
+          topicTitle: mod.title,
         });
       }
     }
   }
   return allQuestions;
+}
+
+export function filterByType(items, type) {
+  if (!type || type === 'all') return items;
+  return items.filter(item => item.type === type);
 }
