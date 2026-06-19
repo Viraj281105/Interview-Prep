@@ -1,21 +1,44 @@
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import { AppProvider } from './context/AppContext';
-import { Layout } from './components/Layout';
-import DashboardPage from './pages/DashboardPage';
-import TopicPage from './pages/TopicPage';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import { Layout } from './components/layout/Layout';
+import { Home } from './pages/Home';
+import { Dashboard } from './pages/Dashboard';
+import { Subjects } from './pages/Subjects';
 
-export default function App() {
+// Dummy component for unbuilt routes
+const ComingSoon = ({ title }) => (
+  <div className="flex flex-col items-center justify-center h-[60vh] text-center">
+    <div className="p-4 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-6">
+      <span className="text-3xl">🚀</span>
+    </div>
+    <h2 className="text-2xl font-bold mb-2">{title}</h2>
+    <p className="text-slate-500 dark:text-slate-400">This feature is scheduled for the next phase of development!</p>
+  </div>
+);
+
+function App() {
   return (
-    <AppProvider>
-      <HashRouter>
-        <Layout>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router basename="/Interview-Prep">
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/topic/:topicId" element={<TopicPage />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="subjects" element={<Subjects />} />
+              <Route path="companies" element={<ComingSoon title="Company Specific Prep" />} />
+              <Route path="mock" element={<ComingSoon title="Mock Interview Engine" />} />
+              <Route path="profile" element={<ComingSoon title="User Profile" />} />
+              <Route path="login" element={<ComingSoon title="Sign In" />} />
+              <Route path="*" element={<ComingSoon title="Page Not Found" />} />
+            </Route>
           </Routes>
-        </Layout>
-      </HashRouter>
-    </AppProvider>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
+
+export default App;
