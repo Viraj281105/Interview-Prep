@@ -1,18 +1,8 @@
-# Phase 1: Foundation Upgrade Tasks
-- [x] Phase 1 Complete
+# Phase 1-5 Complete
+- [x] Foundation, Interactive Learning, Company Prep, Mock Engine, AI Integration
 
-# Phase 2: Interactive Learning Tasks
-- [x] Phase 2 Complete
-
-# Phase 3: Company Specific Prep Tasks
-- [x] Phase 3 Complete
-
-# Phase 4: Mock Interview Engine Tasks
-- [x] Phase 4 Complete
-
-# Phase 5: AI Integration Tasks
-- [ ] Create `AIAssistant` Dashboard Page.
-- [ ] Build `ResumeAnalyzer` Component (Upload UI + Mock Analysis Report).
-- [ ] Build `RoadmapGenerator` Component (Inputs + Mock Plan Output).
-- [ ] Build `AIInterviewerChat` Component (Mock Chatbot UI).
-- [ ] Update Routing in `App.jsx`.
+# Phase 6 & 7: Gamification & Premium Tasks
+- [ ] Build `Leaderboard` Component/Page.
+- [ ] Build `PremiumUpgrade` Page (Pricing Tiers / Stripe Mock).
+- [ ] Update `Dashboard` to include Activity Streaks / Heatmap.
+- [ ] Update Routing in `App.jsx` for Leaderboard & Premium.
