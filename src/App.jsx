@@ -7,6 +7,8 @@ import { Home } from './pages/Home';
 import { Dashboard } from './pages/Dashboard';
 import { Subjects } from './pages/Subjects';
 import { SubjectDetail } from './pages/SubjectDetail';
+import { CompaniesList } from './pages/CompaniesList';
+import { CompanyProfile } from './pages/CompanyProfile';
 
 // Dummy component for unbuilt routes
 const ComingSoon = ({ title }) => (
@@ -30,7 +32,8 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="subjects" element={<Subjects />} />
               <Route path="subjects/:id" element={<SubjectDetail />} />
-              <Route path="companies" element={<ComingSoon title="Company Specific Prep" />} />
+              <Route path="companies" element={<CompaniesList />} />
+              <Route path="companies/:id" element={<CompanyProfile />} />
               <Route path="mock" element={<ComingSoon title="Mock Interview Engine" />} />
               <Route path="profile" element={<ComingSoon title="User Profile" />} />
               <Route path="login" element={<ComingSoon title="Sign In" />} />

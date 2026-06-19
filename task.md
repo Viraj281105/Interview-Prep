@@ -5,9 +5,9 @@
 - [x] Phase 2 Complete
 
 # Phase 3: Company Specific Prep Tasks
-- [ ] Create `CompaniesList` Page.
-- [ ] Create `CompanyProfile` Page.
-- [ ] Build `CompanyCard` Component.
-- [ ] Build `InterviewExperienceList` / `ExperienceAccordion`.
-- [ ] Build `SubmitExperienceForm` Component.
-- [ ] Update Routing in `App.jsx` for Company pages.
+- [x] Create `CompaniesList` Page.
+- [x] Create `CompanyProfile` Page.
+- [x] Build `CompanyCard` Component.
+- [x] Build `InterviewExperienceList` / `ExperienceAccordion`.
+- [x] Build `SubmitExperienceForm` Component.
+- [x] Update Routing in `App.jsx` for Company pages.
