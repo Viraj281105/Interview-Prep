@@ -8,6 +8,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Subjects } from './pages/Subjects';
 import { SubjectDetail } from './pages/SubjectDetail';
 import TopicPage from './pages/TopicPage';
+import QuizDashboard from './pages/QuizDashboard';
+import ActiveQuiz from './pages/ActiveQuiz';
 import { CompaniesList } from './pages/CompaniesList';
 import { CompanyProfile } from './pages/CompanyProfile';
 import { MockInterviewDashboard } from './pages/MockInterviewDashboard';
@@ -40,6 +42,8 @@ function App() {
               <Route path="subjects" element={<Subjects />} />
               <Route path="subjects/:id" element={<SubjectDetail />} />
               <Route path="topic/:topicId" element={<TopicPage />} />
+              <Route path="quiz" element={<QuizDashboard />} />
+              <Route path="quiz/:quizId" element={<ActiveQuiz />} />
               <Route path="companies" element={<CompaniesList />} />
               <Route path="companies/:id" element={<CompanyProfile />} />
               <Route path="mock" element={<MockInterviewDashboard />} />

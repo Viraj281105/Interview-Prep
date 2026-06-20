@@ -36,6 +36,19 @@ export const useAppStore = create(
       ...state.userNotes,
       [topicId]: text
     }
+  })),
+
+  // Phase 3: Quiz Engine State
+  quizScores: {}, // Format: { quizId: { score: number, total: number, date: string } }
+  
+  saveQuizScore: (quizId, scoreData) => set((state) => ({
+    quizScores: {
+      ...state.quizScores,
+      [quizId]: {
+        ...scoreData,
+        date: new Date().toISOString()
+      }
+    }
   }))
   }),
   {
