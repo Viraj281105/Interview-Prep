@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import { Send, Bot, User } from 'lucide-react';
+import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const AIInterviewerChat = () => {
@@ -37,35 +37,38 @@ export const AIInterviewerChat = () => {
   };
 
   return (
-    <Card className="h-full flex flex-col p-0 overflow-hidden border-slate-200 dark:border-slate-800 shadow-sm">
-      <div className="p-4 bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 flex items-center justify-center shadow-sm">
-          <Bot size={20} />
+    <Card glass className="h-full flex flex-col p-0 overflow-hidden border-brand-indigo/10 dark:border-brand-indigo/20 shadow-xl relative">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-brand-indigo/5 dark:bg-brand-indigo/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+      
+      <div className="p-4 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center gap-4 shrink-0 z-10">
+        <div className="w-12 h-12 rounded-2xl bg-brand-indigo/10 text-brand-indigo flex items-center justify-center shadow-inner relative">
+          <Sparkles size={20} className="absolute -top-1 -right-1 text-amber-400" />
+          <Bot size={24} />
         </div>
         <div>
-          <h3 className="font-bold">Interview Coach</h3>
-          <p className="text-xs text-emerald-500 font-medium flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online
+          <h3 className="font-heading font-bold tracking-tight text-slate-900 dark:text-slate-100">Interview Coach</h3>
+          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5 uppercase tracking-wider">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span> Online
           </p>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar space-y-6 relative z-10">
         <AnimatePresence initial={false}>
           {messages.map((msg, i) => (
             <motion.div 
               key={i} 
-              initial={{ opacity: 0, y: 10 }} 
-              animate={{ opacity: 1, y: 0 }} 
+              initial={{ opacity: 0, y: 10, scale: 0.95 }} 
+              animate={{ opacity: 1, y: 0, scale: 1 }} 
               className={`flex gap-3 max-w-[85%] ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
             >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${msg.role === 'ai' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}>
-                {msg.role === 'ai' ? <Bot size={16} /> : <User size={16} />}
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${msg.role === 'ai' ? 'bg-brand-indigo/10 text-brand-indigo' : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}>
+                {msg.role === 'ai' ? <Sparkles size={14} /> : <User size={14} />}
               </div>
-              <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
+              <div className={`p-4 rounded-2xl text-[15px] leading-relaxed shadow-sm ${
                 msg.role === 'user' 
-                  ? 'bg-blue-600 text-white rounded-tr-sm' 
-                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-tl-sm text-slate-800 dark:text-slate-200'
+                  ? 'bg-brand-indigo text-white rounded-tr-sm shadow-brand-indigo/20' 
+                  : 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-tl-sm text-slate-800 dark:text-slate-200'
               }`}>
                 {msg.content}
               </div>
@@ -73,13 +76,13 @@ export const AIInterviewerChat = () => {
           ))}
           {isTyping && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3 max-w-[85%]">
-              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 flex items-center justify-center shrink-0 shadow-sm">
-                <Bot size={16} />
+              <div className="w-8 h-8 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center shrink-0 shadow-sm">
+                <Sparkles size={14} />
               </div>
-              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-tl-sm shadow-sm flex gap-1 items-center">
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="p-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-tl-sm shadow-sm flex gap-1.5 items-center">
+                <motion.div className="w-1.5 h-1.5 bg-brand-indigo rounded-full" animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} />
+                <motion.div className="w-1.5 h-1.5 bg-brand-indigo rounded-full" animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} />
+                <motion.div className="w-1.5 h-1.5 bg-brand-indigo rounded-full" animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} />
               </div>
             </motion.div>
           )}
@@ -87,16 +90,16 @@ export const AIInterviewerChat = () => {
         <div ref={endRef} />
       </div>
 
-      <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
-        <form onSubmit={handleSend} className="flex gap-2">
+      <div className="p-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 z-10 shrink-0">
+        <form onSubmit={handleSend} className="flex gap-3 max-w-4xl mx-auto">
           <Input 
             value={input} 
             onChange={e => setInput(e.target.value)} 
             placeholder="Type your response..." 
-            className="flex-1 bg-white dark:bg-slate-950" 
+            className="flex-1 bg-white/80 dark:bg-slate-950/80 border-slate-300 dark:border-slate-700 rounded-xl focus-visible:ring-brand-indigo/50 h-12" 
           />
-          <Button type="submit" disabled={!input.trim() || isTyping} className="shadow-blue-500/20 shadow-lg px-6">
-            <Send size={18} />
+          <Button type="submit" disabled={!input.trim() || isTyping} className="h-12 w-12 p-0 rounded-xl shadow-brand-indigo/20 shadow-lg shrink-0 bg-brand-indigo hover:bg-brand-purple">
+            <Send size={18} className="ml-0.5" />
           </Button>
         </form>
       </div>

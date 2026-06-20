@@ -1,22 +1,41 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { CheckCircle2, TrendingUp, AlertCircle, ArrowRight, Clock, Award } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { CheckCircle2, TrendingUp, AlertCircle, ArrowRight, Clock, Award, Sparkles, Loader2, BrainCircuit } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store';
 
 export const InterviewFeedback = ({ type, duration, onExit }) => {
   const { saveMockInterview } = useAppStore();
+  const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const [feedbackData, setFeedbackData] = useState(null);
 
   useEffect(() => {
-    // Generate some mock feedback for now
-    const score = Math.floor(Math.random() * 30) + 70; // 70-100 score
-    saveMockInterview({
-      type,
-      duration,
-      score,
-      feedback: "Good structured answers. Improve eye contact and reduce filler words."
-    });
+    // Simulate AI processing delay (3-4 seconds)
+    const timer = setTimeout(() => {
+      const score = Math.floor(Math.random() * 20) + 75; // 75-95 score
+      
+      const newFeedback = {
+        type,
+        duration,
+        score,
+        feedback: type === 'dsa' 
+          ? "Good approach on the first problem, but missed edge cases in the second. Time complexity analysis was strong."
+          : "Structured answers well using the STAR method. Consider taking brief pauses before answering to reduce filler words.",
+        strengths: type === 'dsa' 
+          ? ["Explained time complexity clearly before coding.", "Maintained good eye contact with the camera.", "Wrote clean, modular code."]
+          : ["Structured answers well using the STAR method.", "Communicated thoughts without long silences.", "Demonstrated strong leadership principles."],
+        improvements: type === 'dsa'
+          ? ["Edge cases were missed in the second problem.", "Try to reduce filler words.", "Could have optimized space complexity further."]
+          : ["Try to reduce filler words ('um', 'like').", "Take brief pauses to gather your thoughts instead of rushing.", "Provide more quantifiable metrics in your examples."]
+      };
+
+      setFeedbackData(newFeedback);
+      saveMockInterview(newFeedback);
+      setIsAnalyzing(false);
+    }, 3500);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -28,68 +47,128 @@ export const InterviewFeedback = ({ type, duration, onExit }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 overflow-y-auto">
-      <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ type: "spring", damping: 25 }} className="w-full max-w-3xl my-auto">
-        <Card className="p-8 md:p-12 border border-slate-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-[#0F0F11]">
-          <div className="flex flex-col items-center text-center mb-10">
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className="w-24 h-24 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-full flex items-center justify-center mb-6 shadow-inner"
-            >
-              <CheckCircle2 size={48} />
-            </motion.div>
-            <h1 className="text-4xl font-heading font-bold mb-4 text-slate-900 dark:text-slate-50">Interview Completed!</h1>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-lg mx-auto">
-              Great job completing your <span className="font-bold text-brand-indigo">{type.replace('-', ' ').toUpperCase()}</span> mock interview.
+    <div className="fixed inset-0 z-[100] bg-slate-50/90 dark:bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 overflow-y-auto">
+      <AnimatePresence mode="wait">
+        {isAnalyzing ? (
+          <motion.div 
+            key="analyzing"
+            initial={{ opacity: 0, scale: 0.9 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+            className="flex flex-col items-center justify-center text-center max-w-md w-full"
+          >
+            <div className="relative w-32 h-32 mb-8 flex items-center justify-center">
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-full border-t-2 border-brand-indigo/50 border-r-2 border-r-brand-purple/50 border-b-2 border-b-transparent border-l-2 border-l-transparent"
+              />
+              <motion.div 
+                animate={{ rotate: -360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-2 rounded-full border-b-2 border-emerald-500/50 border-l-2 border-l-emerald-400/50 border-t-2 border-t-transparent border-r-2 border-r-transparent"
+              />
+              <BrainCircuit size={48} className="text-brand-indigo animate-pulse" />
+            </div>
+            
+            <h2 className="text-2xl font-heading font-bold mb-3 text-slate-900 dark:text-white flex items-center justify-center gap-2">
+              <Sparkles className="text-brand-indigo" size={24} />
+              AI Evaluator Processing
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">
+              Analyzing transcript, code quality, and delivery metrics...
             </p>
             
-            <div className="flex justify-center gap-4 mt-6">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                <Clock size={16} className="text-brand-indigo" /> {formatTime(duration)}
+            <div className="mt-8 w-full max-w-xs bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 3.5, ease: "easeInOut" }}
+                className="h-full bg-gradient-to-r from-brand-indigo to-brand-purple"
+              />
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="results"
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ type: "spring", damping: 25, delay: 0.1 }} 
+            className="w-full max-w-3xl my-auto"
+          >
+            <Card glass className="p-8 md:p-12 border-brand-indigo/20 shadow-2xl relative overflow-hidden">
+              {/* Background Glow */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+
+              <div className="flex flex-col items-center text-center mb-10 relative z-10">
+                <motion.div 
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.2, type: "spring", damping: 15 }}
+                  className="w-24 h-24 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(16,185,129,0.2)]"
+                >
+                  <CheckCircle2 size={48} />
+                </motion.div>
+                <h1 className="text-4xl font-heading font-extrabold mb-4 text-slate-900 dark:text-slate-50 tracking-tight">Evaluation Ready</h1>
+                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-lg mx-auto">
+                  Great job completing your <span className="font-bold text-brand-indigo">{type.replace('-', ' ').toUpperCase()}</span> mock interview.
+                </p>
+                
+                <div className="flex flex-wrap justify-center gap-4 mt-6">
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-700 dark:text-slate-300">
+                    <Clock size={16} className="text-brand-indigo" /> {formatTime(duration)}
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-100/50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50 text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                    <Award size={16} /> Score: {feedbackData?.score}/100
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-indigo/10 border border-brand-indigo/20 text-sm font-bold text-brand-indigo dark:text-brand-lavender">
+                    <Sparkles size={16} /> Saved to History
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-100/50 dark:bg-emerald-900/20 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-                <Award size={16} /> Saved to History
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 relative z-10">
+                <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm p-6 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 shadow-sm hover:shadow-md transition-shadow">
+                  <h3 className="font-bold flex items-center gap-2 mb-5 text-emerald-700 dark:text-emerald-400 text-lg">
+                    <TrendingUp size={20} /> Strengths
+                  </h3>
+                  <ul className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                    {feedbackData?.strengths.map((str, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="text-emerald-500 mt-0.5"><CheckCircle2 size={16} /></span>
+                        <span className="leading-relaxed">{str}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm p-6 rounded-2xl border border-amber-100 dark:border-amber-900/30 shadow-sm hover:shadow-md transition-shadow">
+                  <h3 className="font-bold flex items-center gap-2 mb-5 text-amber-700 dark:text-amber-400 text-lg">
+                    <AlertCircle size={20} /> Areas to Improve
+                  </h3>
+                  <ul className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                    {feedbackData?.improvements.map((imp, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="text-amber-500 mt-0.5"><ArrowRight size={16} /></span>
+                        <span className="leading-relaxed">{imp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <div className="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
-              <h3 className="font-bold flex items-center gap-2 mb-4 text-emerald-700 dark:text-emerald-400">
-                <TrendingUp size={20} /> Strengths
-              </h3>
-              <ul className="space-y-3 text-sm text-emerald-800/80 dark:text-emerald-300/80">
-                <li className="flex items-start gap-2"><span className="text-emerald-500 mt-0.5">•</span> Maintained good eye contact with the camera.</li>
-                {type === 'dsa' && <li className="flex items-start gap-2"><span className="text-emerald-500 mt-0.5">•</span> Explained time complexity clearly before coding.</li>}
-                {type === 'behavioral' && <li className="flex items-start gap-2"><span className="text-emerald-500 mt-0.5">•</span> Structured answers well using the STAR method.</li>}
-                <li className="flex items-start gap-2"><span className="text-emerald-500 mt-0.5">•</span> Communicated thoughts without long silences.</li>
-              </ul>
-            </div>
-
-            <div className="bg-amber-50 dark:bg-amber-900/10 p-6 rounded-2xl border border-amber-100 dark:border-amber-900/30">
-              <h3 className="font-bold flex items-center gap-2 mb-4 text-amber-700 dark:text-amber-400">
-                <AlertCircle size={20} /> Areas to Improve
-              </h3>
-              <ul className="space-y-3 text-sm text-amber-800/80 dark:text-amber-300/80">
-                <li className="flex items-start gap-2"><span className="text-amber-500 mt-0.5">•</span> Try to reduce filler words ("um", "like").</li>
-                {type === 'dsa' && <li className="flex items-start gap-2"><span className="text-amber-500 mt-0.5">•</span> Edge cases were missed in the second problem.</li>}
-                <li className="flex items-start gap-2"><span className="text-amber-500 mt-0.5">•</span> Take brief pauses to gather your thoughts instead of rushing.</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button variant="outline" className="w-full sm:w-auto px-8" onClick={onExit}>
-              Return to Dashboard
-            </Button>
-            <Button className="w-full sm:w-auto px-8 gap-2 shadow-lg shadow-brand-indigo/20" onClick={onExit}>
-              Review Full Report <ArrowRight size={16} />
-            </Button>
-          </div>
-        </Card>
-      </motion.div>
+              <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 border-slate-300 dark:border-slate-700" onClick={onExit}>
+                  Return to Dashboard
+                </Button>
+                <Button size="lg" className="w-full sm:w-auto px-8 gap-2 font-bold shadow-lg shadow-brand-indigo/20 bg-brand-indigo hover:bg-brand-purple text-white" onClick={onExit}>
+                  Review Full Report <ArrowRight size={18} />
+                </Button>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
