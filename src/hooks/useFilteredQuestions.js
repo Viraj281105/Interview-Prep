@@ -5,10 +5,11 @@ import { useMemo } from 'react';
  * @param {Array} questions - array of question objects
  * @param {Object} filters - { difficulty, type, status }
  * @param {string} searchQuery - search text
- * @param {Object} completed - { [questionId]: timestamp }
+ * @param {Array} completed - array of completed question IDs
+ * @param {Array} bookmarked - array of bookmarked question IDs
  * @returns {Array} filtered questions
  */
-export function useFilteredQuestions(questions, filters, searchQuery, completed) {
+export function useFilteredQuestions(questions, filters, searchQuery, completed = [], bookmarked = []) {
   return useMemo(() => {
     if (!questions || questions.length === 0) return [];
 
@@ -26,9 +27,11 @@ export function useFilteredQuestions(questions, filters, searchQuery, completed)
 
     // Status filter
     if (filters.status === 'completed') {
-      list = list.filter(q => !!completed[q.id]);
+      list = list.filter(q => completed.includes(q.id));
     } else if (filters.status === 'pending') {
-      list = list.filter(q => !completed[q.id]);
+      list = list.filter(q => !completed.includes(q.id));
+    } else if (filters.status === 'bookmarked') {
+      list = list.filter(q => bookmarked.includes(q.id));
     }
 
     // Search
@@ -45,5 +48,5 @@ export function useFilteredQuestions(questions, filters, searchQuery, completed)
     }
 
     return list;
-  }, [questions, filters, searchQuery, completed]);
+  }, [questions, filters, searchQuery, completed, bookmarked]);
 }
