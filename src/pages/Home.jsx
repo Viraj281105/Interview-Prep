@@ -63,7 +63,7 @@ export const Home = () => {
           <div className="w-6 h-6 rounded-full bg-gradient-primary flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
             <Sparkles size={12} className="text-white" />
           </div>
-          <span className="text-sm font-bold bg-clip-text text-transparent bg-gradient-primary">PrepMaster 3.0 AI Engine is Live</span>
+          <span className="text-sm font-bold text-gradient-primary">PrepMaster 3.0 AI Engine is Live</span>
           <ArrowRight size={14} className="text-brand-indigo group-hover:translate-x-1 transition-transform ml-1" />
         </motion.div>
         
