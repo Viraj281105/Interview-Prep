@@ -154,11 +154,10 @@ export const SubjectDetail = () => {
           return (
             <motion.div 
               key={mod.id || i} 
-              initial={{ opacity: 0, y: 50 }} 
-              animate={{ opacity: 1, y: 0 }} 
+              initial={{ opacity: 0, y: 50, x: xOffset }} 
+              animate={{ opacity: 1, y: 0, x: xOffset }} 
               transition={{ delay: i * 0.1, type: "spring", stiffness: 300, damping: 20 }}
               className="relative z-10 my-8 flex flex-col items-center group"
-              style={{ transform: `translateX(${xOffset}px)` }}
             >
               {/* Tooltip on Hover */}
               <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 bg-slate-900 dark:bg-slate-800 text-white p-4 rounded-2xl shadow-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-20 scale-95 group-hover:scale-100">
