@@ -281,7 +281,7 @@ Feel free to:
 
 # 👨‍💻 Author
 
-## Viraj Jadhav
+## Viraj Jadhao
 
 Computer Engineering Student
 AI/ML Enthusiast | Full Stack Developer | Problem Solver
