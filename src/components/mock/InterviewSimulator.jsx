@@ -6,86 +6,72 @@ import { motion } from 'framer-motion';
 import { InterviewFeedback } from './InterviewFeedback';
 import { generateMockQuestions } from '../../utils/mockInterviewGenerator';
 
-
-
-export const InterviewSimulator = ({ type, onEnd }) => {
+export const InterviewSimulator = ({ type, companyId, onEnd }) => {
   const [stream, setStream] = useState(null);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(true);
-  const [error, setError] = useState(null);
-  
-  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(type === 'behavioral' ? 30 * 60 : 45 * 60); // seconds
+  const [error, setError] = useState('');
+  const [timeLeft, setTimeLeft] = useState(type === 'behavioral' ? 30 * 60 : 45 * 60);
   const [isStarted, setIsStarted] = useState(false);
+  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   
   const videoRef = useRef(null);
   const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
+    // In the future, pass companyId to generateMockQuestions to get company-specific questions
     setQuestions(generateMockQuestions(type));
   }, [type]);
 
   useEffect(() => {
     let timer;
-    if (isStarted && !showFeedback && timeLeft > 0) {
+    if (isStarted && timeLeft > 0) {
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-    } else if (timeLeft === 0 && !showFeedback) {
+    } else if (timeLeft === 0 && isStarted) {
       handleEnd();
     }
     return () => clearInterval(timer);
-  }, [isStarted, showFeedback, timeLeft]);
+  }, [isStarted, timeLeft]);
 
   useEffect(() => {
-    // Request webcam access
-    const initWebcam = async () => {
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        setStream(mediaStream);
-        if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
-        }
-      } catch (err) {
-        console.error("Error accessing media devices.", err);
-        setError("Camera/Microphone access denied or unavailable.");
-      }
-    };
-
-    initWebcam();
-
+    startCamera();
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
+      if (stream) stream.getTracks().forEach(track => track.stop());
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      setStream(mediaStream);
+      if (videoRef.current) videoRef.current.srcObject = mediaStream;
+    } catch (err) {
+      setError('Camera/Microphone access denied. Please enable permissions.');
+      setVideoEnabled(false);
+      setAudioEnabled(false);
+    }
+  };
 
   const toggleVideo = () => {
     if (stream) {
-      const videoTrack = stream.getVideoTracks()[0];
-      if (videoTrack) {
-        videoTrack.enabled = !videoTrack.enabled;
-        setVideoEnabled(videoTrack.enabled);
-      }
+      stream.getVideoTracks().forEach(track => track.enabled = !videoEnabled);
+      setVideoEnabled(!videoEnabled);
     }
   };
 
   const toggleAudio = () => {
     if (stream) {
-      const audioTrack = stream.getAudioTracks()[0];
-      if (audioTrack) {
-        audioTrack.enabled = !audioTrack.enabled;
-        setAudioEnabled(audioTrack.enabled);
-      }
+      stream.getAudioTracks().forEach(track => track.enabled = !audioEnabled);
+      setAudioEnabled(!audioEnabled);
     }
   };
 
-  const handleEnd = () => {
-    setShowFeedback(true);
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-    }
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
   const handleNext = () => {
@@ -96,10 +82,9 @@ export const InterviewSimulator = ({ type, onEnd }) => {
     }
   };
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+  const handleEnd = () => {
+    if (stream) stream.getTracks().forEach(track => track.stop());
+    setShowFeedback(true);
   };
 
   if (showFeedback) {
@@ -147,7 +132,7 @@ export const InterviewSimulator = ({ type, onEnd }) => {
           </div>
           <div className="p-8 bg-slate-950 text-white flex flex-col sm:flex-row justify-between items-center border-t border-slate-800 gap-6">
             <div className="text-center sm:text-left">
-              <p className="font-bold text-lg mb-1">Ready to begin?</p>
+              <p className="font-bold text-lg mb-1">{companyId ? `Ready for ${companyId.toUpperCase()}?` : 'Ready to begin?'}</p>
               <p className="text-sm text-slate-400">Ensure you are in a quiet room with good lighting.</p>
             </div>
             <Button onClick={() => setIsStarted(true)} size="lg" className="w-full sm:w-auto bg-brand-indigo hover:bg-brand-purple shadow-brand-indigo/20 shadow-lg text-white font-bold px-8">
@@ -160,6 +145,9 @@ export const InterviewSimulator = ({ type, onEnd }) => {
   }
 
   const isTechnical = type === 'dsa' || type === 'system-design';
+  const headerTitle = companyId 
+    ? `${companyId.toUpperCase()} Mock: ${type.replace('-', ' ')}` 
+    : `Mock Interview: ${type.replace('-', ' ')}`;
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0A0A0A] text-slate-200 flex flex-col h-screen font-sans">
@@ -167,7 +155,7 @@ export const InterviewSimulator = ({ type, onEnd }) => {
       <div className="h-14 bg-[#111111] border-b border-[#222222] flex items-center justify-between px-6 shrink-0 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]"></div>
-          <span className="font-bold tracking-wide uppercase text-sm text-slate-300">Mock Interview: {type.replace('-', ' ')}</span>
+          <span className="font-bold tracking-wide uppercase text-sm text-slate-300">{headerTitle}</span>
         </div>
         <div className="flex items-center gap-6">
           <div className={`flex items-center gap-2 font-mono font-bold text-lg ${timeLeft < 300 ? 'text-rose-500 animate-pulse' : 'text-slate-300'}`}>
