@@ -13,6 +13,8 @@ import { MockInterviewDashboard } from './pages/MockInterviewDashboard';
 import { AIAssistant } from './pages/AIAssistant';
 import { Leaderboard } from './pages/Leaderboard';
 import { PremiumUpgrade } from './pages/PremiumUpgrade';
+import { Profile } from './pages/Profile';
+import { Settings } from './pages/Settings';
 
 // Dummy component for unbuilt routes
 const ComingSoon = ({ title }) => (
@@ -42,7 +44,8 @@ function App() {
               <Route path="ai" element={<AIAssistant />} />
               <Route path="leaderboard" element={<Leaderboard />} />
               <Route path="premium" element={<PremiumUpgrade />} />
-              <Route path="profile" element={<ComingSoon title="User Profile" />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
               <Route path="login" element={<ComingSoon title="Sign In" />} />
               <Route path="*" element={<ComingSoon title="Page Not Found" />} />
             </Route>

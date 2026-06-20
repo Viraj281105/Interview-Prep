@@ -1,36 +1,39 @@
 import React from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
 import { motion } from 'framer-motion';
-import { Target, CheckCircle2, Flame, Award, BookOpen, Clock, Activity } from 'lucide-react';
+import { Target, CheckCircle2, Flame, Award, BookOpen, Clock, Code2, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Dashboard = () => {
   return (
-    <div className="flex flex-col gap-8 max-w-6xl mx-auto w-full">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+    <div className="flex flex-col gap-8 w-full py-10 px-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back!</h1>
-          <p className="text-slate-600 dark:text-slate-400">Here's an overview of your interview prep progress.</p>
+          <h1 className="text-4xl font-heading font-bold tracking-tight mb-2 text-slate-900 dark:text-slate-50">Welcome back, Alex!</h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400">Here's an overview of your interview prep progress.</p>
         </div>
-        <Button>Resume Practice</Button>
+        <Button variant="gradient" size="lg" className="gap-2">
+          <Play size={18} /> Resume Practice
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Questions Solved', value: '145', icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-500/20' },
-          { label: 'Current Streak', value: '12 Days', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-100 dark:bg-orange-500/20' },
-          { label: 'Mock Avg. Score', value: '7.8/10', icon: Award, color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-500/20' },
-          { label: 'Topics Completed', value: '45%', icon: Target, color: 'text-indigo-500', bg: 'bg-indigo-100 dark:bg-indigo-500/20' },
+          { label: 'Questions Solved', value: '145', icon: CheckCircle2, gradient: 'bg-gradient-to-br from-brand-cyan to-blue-500' },
+          { label: 'Current Streak', value: '12 Days', icon: Flame, gradient: 'bg-gradient-to-br from-brand-pink to-orange-500' },
+          { label: 'Mock Avg. Score', value: '7.8/10', icon: Award, gradient: 'bg-gradient-to-br from-brand-indigo to-brand-purple' },
+          { label: 'Topics Completed', value: '45%', icon: Target, gradient: 'bg-gradient-to-br from-brand-lavender to-brand-pink' },
         ].map((stat, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-            <Card className="p-6 flex items-center gap-4">
-              <div className={`p-3 rounded-lg ${stat.bg} ${stat.color}`}>
-                <stat.icon size={24} />
+            <Card animated glass className="p-6 flex items-center gap-5 border-white/40">
+              <div className={`p-4 rounded-2xl text-white shadow-lg shadow-slate-200/50 dark:shadow-none ${stat.gradient}`}>
+                <stat.icon size={26} />
               </div>
               <div>
-                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">{stat.label}</p>
-                <p className="text-2xl font-bold">{stat.value}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">{stat.label}</p>
+                <p className="text-3xl font-heading font-bold text-slate-900 dark:text-slate-50">{stat.value}</p>
               </div>
             </Card>
           </motion.div>
@@ -40,51 +43,74 @@ export const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
         {/* Activity Heatmap */}
         <div className="lg:col-span-2">
-          <Card className="p-6 h-full border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold flex items-center gap-2 text-lg">
-                <Flame className="text-orange-500" size={24} /> Activity Streak: <span className="text-orange-500">7 Days</span>
-              </h3>
+          <Card animated glass className="p-8 h-full border-white/40 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="font-heading font-bold text-2xl flex items-center gap-3">
+                  <Flame className="text-brand-pink" size={28} /> Activity Streak
+                </h3>
+                <p className="text-slate-500 mt-1">Keep practicing to maintain your top 5% status.</p>
+              </div>
+              <Badge variant="gradient" className="text-base px-4 py-1">12 Days 🔥</Badge>
             </div>
-            <div className="flex flex-wrap gap-1.5 md:gap-2 opacity-90">
-              {Array.from({length: 60}).map((_, i) => (
-                <div 
-                  key={i} 
-                  className={`w-4 h-4 md:w-6 md:h-6 rounded-[4px] shadow-sm transition-colors hover:scale-110 ${i > 52 ? 'bg-orange-500' : Math.random() > 0.6 ? 'bg-orange-300 dark:bg-orange-500/50' : 'bg-slate-100 dark:bg-slate-800'}`}
-                  title="Activity Block"
-                />
-              ))}
+            
+            <div className="flex flex-wrap gap-2 md:gap-3 opacity-90 justify-end">
+              {Array.from({length: 84}).map((_, i) => {
+                const isActive = i > 70 ? true : Math.random() > 0.6;
+                return (
+                  <motion.div 
+                    whileHover={{ scale: 1.2 }}
+                    key={i} 
+                    className={`w-4 h-4 md:w-5 md:h-5 rounded-md shadow-sm transition-colors cursor-pointer ${
+                      isActive 
+                        ? 'bg-gradient-to-br from-brand-lavender to-brand-pink' 
+                        : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700'
+                    }`}
+                    title="Activity Block"
+                  />
+                );
+              })}
             </div>
-            <p className="text-xs font-bold text-slate-400 mt-6 text-right uppercase tracking-wider">Last 60 Days</p>
+            <p className="text-xs font-bold text-slate-400 mt-6 text-right uppercase tracking-wider">Last 12 Weeks</p>
           </Card>
         </div>
 
         {/* Up Next */}
-        <Card className="p-6">
-          <h2 className="text-xl font-bold mb-6">Recommended for You</h2>
+        <Card animated glass className="p-8 border-white/40">
+          <h2 className="text-2xl font-heading font-bold mb-6">Recommended for You</h2>
           <div className="space-y-4">
             {[
-              { title: 'Dynamic Programming basics', type: 'Topic', icon: BookOpen },
-              { title: 'Amazon OA Mock', type: 'Mock', icon: Clock },
-              { title: 'SQL Joins Practice', type: 'Quiz', icon: Target },
+              { title: 'Dynamic Programming', type: 'Topic', icon: BookOpen, tag: 'DSA' },
+              { title: 'Amazon OA Mock', type: 'Mock', icon: Clock, tag: 'Mock' },
+              { title: 'SQL Joins Practice', type: 'Quiz', icon: Target, tag: 'SQL' },
             ].map((item, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50 cursor-pointer transition-colors">
-                <div className="flex items-center gap-3">
-                  <item.icon size={18} className="text-slate-400" />
+              <div key={i} className="group flex items-center justify-between p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-800 cursor-pointer transition-all hover:shadow-md">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:text-brand-indigo transition-colors">
+                    <item.icon size={20} />
+                  </div>
                   <div>
-                    <p className="font-medium text-sm">{item.title}</p>
-                    <p className="text-xs text-slate-500">{item.type}</p>
+                    <p className="font-semibold text-[15px]">{item.title}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="secondary" className="text-[10px] py-0">{item.tag}</Badge>
+                      <span className="text-xs text-slate-500">{item.type}</span>
+                    </div>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm">Start</Button>
+                <Button variant="ghost" size="icon" className="group-hover:bg-brand-indigo/10 group-hover:text-brand-indigo rounded-full">
+                  <ArrowRight size={18} />
+                </Button>
               </div>
             ))}
           </div>
-          <Link to="/subjects">
-            <Button variant="outline" className="w-full mt-6">Browse All Subjects</Button>
+          <Link to="/subjects" className="block mt-6">
+            <Button variant="outline" className="w-full rounded-xl">Browse All Subjects</Button>
           </Link>
         </Card>
       </div>
     </div>
   );
 };
+
+// Add ArrowRight since I used it but forgot to import
+import { ArrowRight } from 'lucide-react';
