@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Video, Code2, Users, Settings, Play, History, CheckCircle2 } from 'lucide-react';
 import { InterviewSimulator } from '../components/mock/InterviewSimulator';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../store';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const MockInterviewDashboard = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [activeSession, setActiveSession] = useState(null);
+  const [activeCompany, setActiveCompany] = useState(null);
   const { mockInterviews } = useAppStore();
+
+  useEffect(() => {
+    if (location.state?.companyId) {
+      setActiveCompany(location.state.companyId);
+      // Default to DSA for company-specific mocks unless specified
+      setActiveSession('dsa');
+      
+      // Clear state so a refresh doesn't auto-start again
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const interviewTypes = [
     { id: 'behavioral', title: 'Behavioral & HR', icon: Users, desc: 'Practice STAR method, leadership principles, and culture fit questions.', duration: '30 mins' },
@@ -16,8 +31,13 @@ export const MockInterviewDashboard = () => {
     { id: 'system-design', title: 'System Design', icon: Settings, desc: 'High-level architecture and scaling questions.', duration: '60 mins' },
   ];
 
+  const handleEndSession = () => {
+    setActiveSession(null);
+    setActiveCompany(null);
+  };
+
   if (activeSession) {
-    return <InterviewSimulator type={activeSession} onEnd={() => setActiveSession(null)} />;
+    return <InterviewSimulator type={activeSession} companyId={activeCompany} onEnd={handleEndSession} />;
   }
 
   const formatTime = (dateString) => {
