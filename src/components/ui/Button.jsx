@@ -32,7 +32,9 @@ const buttonVariants = cva(
 const Button = React.forwardRef(({ className, variant, size, asChild = false, children, ...props }, ref) => {
   return (
     <motion.button
-      whileTap={{ scale: 0.98 }}
+      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
       className={cn(buttonVariants({ variant, size, className }))}
       ref={ref}
       {...props}

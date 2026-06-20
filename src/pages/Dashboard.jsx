@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Target, CheckCircle2, Flame, Award, BookOpen, Clock, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAppStore } from '../store';
+import { useAuth } from '../context/AuthContext';
 import { ArrowRight } from 'lucide-react';
 
 export const Dashboard = () => {
@@ -14,9 +15,10 @@ export const Dashboard = () => {
     currentStreak, 
     mockInterviews, 
     quizScores,
-    activityHeatmap,
-    user 
+    activityHeatmap
   } = useAppStore();
+  
+  const { currentUser } = useAuth();
 
   // Calculate Mock Avg. Score
   const avgMockScore = mockInterviews.length > 0
@@ -46,7 +48,7 @@ export const Dashboard = () => {
     <div className="flex flex-col gap-8 w-full py-10 px-6 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-heading font-bold tracking-tight mb-2 text-slate-900 dark:text-slate-50">Welcome back, {user?.name || 'Candidate'}!</h1>
+          <h1 className="text-4xl font-heading font-bold tracking-tight mb-2 text-slate-900 dark:text-slate-50">Welcome back, {currentUser?.user_metadata?.full_name?.split(' ')[0] || currentUser?.email?.split('@')[0] || 'Candidate'}!</h1>
           <p className="text-lg text-slate-600 dark:text-slate-400">Here's an overview of your interview prep progress.</p>
         </div>
         <Link to="/mock">

@@ -2,10 +2,19 @@ import React from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Moon, Sun, Monitor, Bell, Lock, LogOut } from 'lucide-react';
 
 export const Settings = () => {
   const { theme, toggleTheme } = useTheme();
+  const { currentUser, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login');
+  };
 
   return (
     <div className="flex flex-col gap-8 w-full py-10 px-6 max-w-4xl mx-auto">
@@ -63,7 +72,7 @@ export const Settings = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-[15px]">Email Address</p>
-                  <p className="text-sm text-slate-500">alex@example.com</p>
+                  <p className="text-sm text-slate-500">{currentUser?.email || 'user@example.com'}</p>
                 </div>
                 <Button variant="outline" size="sm">Change</Button>
               </div>
@@ -83,7 +92,7 @@ export const Settings = () => {
             <p className="text-sm text-slate-500 mb-6">Irreversible and destructive actions.</p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="outline" className="gap-2 text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200">
+              <Button variant="outline" onClick={handleSignOut} className="gap-2 text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200">
                 <LogOut size={16} /> Sign Out
               </Button>
               <Button className="bg-red-600 hover:bg-red-700 text-white">

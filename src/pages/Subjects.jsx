@@ -8,17 +8,28 @@ import { Code, Database, Server, Users, Search, ArrowRight, BookOpen } from 'luc
 import { Link } from 'react-router-dom';
 import { RevisionScheduler } from '../components/practice/RevisionScheduler';
 
-const subjects = [
-  { id: 'dsa', title: 'Data Structures & Algorithms', icon: Code, desc: 'Arrays, Trees, Graphs, DP, and more.', progress: 65, modules: 12, color: 'text-brand-indigo', bg: 'bg-brand-indigo/10' },
-  { id: 'sql', title: 'SQL & Database', icon: Database, desc: 'Complex queries, Joins, Indexing.', progress: 80, modules: 8, color: 'text-brand-cyan', bg: 'bg-brand-cyan/10' },
-  { id: 'dbms', title: 'DBMS Concepts', icon: Database, desc: 'ACID, Normalization, Transactions.', progress: 40, modules: 6, color: 'text-brand-purple', bg: 'bg-brand-purple/10' },
-  { id: 'system-design', title: 'System Design', icon: Server, desc: 'Scalable architectures, Load balancing.', progress: 30, modules: 10, color: 'text-brand-violet', bg: 'bg-brand-violet/10' },
-  { id: 'os', title: 'Operating Systems', icon: Server, desc: 'Processes, Threads, Memory.', progress: 20, modules: 7, color: 'text-brand-pink', bg: 'bg-brand-pink/10' },
-  { id: 'oop', title: 'Object Oriented Prog.', icon: Code, desc: 'Classes, Inheritance, Polymorphism.', progress: 100, modules: 5, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-  { id: 'hr', title: 'HR & Leadership', icon: Users, desc: 'Behavioral questions, STAR method.', progress: 90, modules: 4, color: 'text-brand-lavender', bg: 'bg-brand-lavender/10' },
-];
+import { subjectsList } from '../data/subjectsList';
+import { allDataModules } from '../data/index';
+import { useAppStore } from '../store';
 
 export const Subjects = () => {
+  const { completedQuestions } = useAppStore();
+
+  const getSubjectProgress = (subject) => {
+    let total = 0;
+    let completed = 0;
+    
+    subject.moduleIds.forEach(modId => {
+      const module = allDataModules.find(m => m.id === modId);
+      if (module && module.questions) {
+        total += module.questions.length;
+        completed += module.questions.filter(q => completedQuestions.includes(q.id)).length;
+      }
+    });
+
+    return total > 0 ? Math.round((completed / total) * 100) : 0;
+  };
+
   return (
     <div className="flex flex-col gap-12 w-full py-10 px-6 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -34,17 +45,19 @@ export const Subjects = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {subjects.map((sub, i) => (
+        {subjectsList.map((sub, i) => {
+          const progress = getSubjectProgress(sub);
+          return (
           <motion.div key={sub.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <Card animated glass className="p-6 h-full flex flex-col group border-white/40 dark:border-slate-800/50 hover:border-brand-indigo/30 transition-all cursor-pointer">
               <div className="flex justify-between items-start mb-6">
                 <div className={`p-4 rounded-2xl transition-transform group-hover:scale-110 group-hover:shadow-md ${sub.bg} ${sub.color}`}>
                   <sub.icon size={26} />
                 </div>
-                {sub.progress === 100 ? (
+                {progress === 100 ? (
                   <Badge variant="primary" className="bg-emerald-500 shadow-lg shadow-emerald-500/20">Completed</Badge>
                 ) : (
-                  <Badge variant="secondary" className="font-semibold">{sub.progress}% Complete</Badge>
+                  <Badge variant="secondary" className="font-semibold">{progress}% Complete</Badge>
                 )}
               </div>
               
@@ -54,7 +67,7 @@ export const Subjects = () => {
               <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800/60 pt-5 mt-auto">
                 <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
                   <BookOpen size={16} />
-                  <span>{sub.modules} Modules</span>
+                  <span>{sub.moduleIds.length} Modules</span>
                 </div>
                 <Link to={`/subjects/${sub.id}`}>
                   <Button variant="ghost" size="sm" className="gap-2 px-3 text-brand-indigo dark:text-brand-lavender rounded-lg opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0">
@@ -64,7 +77,7 @@ export const Subjects = () => {
               </div>
             </Card>
           </motion.div>
-        ))}
+        )})}
       </div>
 
       <div className="mt-8">

@@ -2,8 +2,12 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
+import { GlobalGamification } from "../ui/GlobalGamification";
+import { useSync } from "../../hooks/useSync";
 
 export const Layout = () => {
+  useSync(); // Mount sync listener globally
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 flex flex-col transition-colors duration-300 relative overflow-hidden">
       {/* Animated background blobs */}
@@ -14,6 +18,9 @@ export const Layout = () => {
       {/* Subtle grid overlay */}
       <div className="fixed inset-0 bg-grid-pattern pointer-events-none opacity-50" />
       
+      
+      <GlobalGamification />
+
       <Navbar />
       <main className="flex-1 w-full flex flex-col z-10 relative">
         <Outlet />

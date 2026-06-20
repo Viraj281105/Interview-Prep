@@ -6,10 +6,12 @@ import { User, Mail, Award, Clock, MapPin, Briefcase, Settings as SettingsIcon, 
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../store';
+import { useAuth } from '../context/AuthContext';
 
 export const Profile = () => {
   const [activeTab, setActiveTab] = useState('Overview');
-  const { user, userNotes, completedQuestions, mockInterviews, xp, currentStreak } = useAppStore();
+  const { userNotes, completedQuestions, mockInterviews, xp, currentStreak } = useAppStore();
+  const { currentUser } = useAuth();
 
   const tabs = [
     { id: 'Overview', icon: User },
@@ -44,16 +46,18 @@ export const Profile = () => {
         <div className="lg:col-span-1 flex flex-col gap-6">
           <Card animated glass className="p-8 flex flex-col items-center text-center border-white/40">
             <div className="w-32 h-32 rounded-full bg-gradient-primary flex items-center justify-center text-white mb-6 shadow-xl shadow-brand-indigo/20">
-              <span className="text-5xl font-heading font-bold">{user?.name ? user.name.charAt(0) : 'A'}</span>
+              <span className="text-5xl font-heading font-bold">
+                {currentUser?.user_metadata?.full_name ? currentUser.user_metadata.full_name.charAt(0).toUpperCase() : (currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : 'U')}
+              </span>
             </div>
-            <h2 className="text-2xl font-heading font-bold mb-1">{user?.name || 'Alex Developer'}</h2>
+            <h2 className="text-2xl font-heading font-bold mb-1">{currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'Developer'}</h2>
             <p className="text-slate-500 mb-4 flex items-center gap-1 justify-center"><Briefcase size={16}/> SDE Candidate</p>
             <Badge variant="gradient" className="px-4 py-1 mb-6">{currentStreak > 0 ? `${currentStreak} Day Streak 🔥` : 'Top 5% Learner'}</Badge>
             
             <div className="w-full flex flex-col gap-3 text-left mb-6">
               <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400 text-sm">
                 <Mail size={16} className="text-brand-indigo" />
-                {user?.name ? `${user.name.split(' ')[0].toLowerCase()}@example.com` : 'alex@example.com'}
+                {currentUser?.email || 'user@example.com'}
               </div>
               <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400 text-sm">
                 <MapPin size={16} className="text-brand-pink" />

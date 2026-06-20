@@ -1,0 +1,49 @@
+import { Code, Database, Server, Layout, Users } from 'lucide-react';
+
+export const subjectsList = [
+  { 
+    id: 'dsa', 
+    title: 'Data Structures & Algorithms', 
+    icon: Code, 
+    desc: 'Arrays, Trees, Graphs, DP, and more.', 
+    color: 'text-brand-indigo', 
+    bg: 'bg-brand-indigo/10',
+    moduleIds: ['dsa-arrays', 'dsa-linkedlists', 'dsa-trees', 'dsa-dp', 'dsa-sorting', 'dsa-heaps']
+  },
+  { 
+    id: 'system-design', 
+    title: 'System Design', 
+    icon: Server, 
+    desc: 'Scalable architectures, Load balancing.', 
+    color: 'text-brand-violet', 
+    bg: 'bg-brand-violet/10',
+    moduleIds: ['core-sys-design', 'projects-system-design']
+  },
+  { 
+    id: 'react', 
+    title: 'React & Frontend', 
+    icon: Layout, 
+    desc: 'Hooks, State Management, Performance.', 
+    color: 'text-brand-cyan', 
+    bg: 'bg-brand-cyan/10',
+    moduleIds: ['react', 'frontend-js', 'frontend-css', 'frontend-perf']
+  },
+  { 
+    id: 'sql', 
+    title: 'SQL & Databases', 
+    icon: Database, 
+    desc: 'Complex queries, ACID, Indexing.', 
+    color: 'text-orange-500', 
+    bg: 'bg-orange-500/10',
+    moduleIds: ['db-sql', 'db-postgres', 'db-nosql', 'db-redis']
+  },
+  { 
+    id: 'behavioral', 
+    title: 'Behavioral & Leadership', 
+    icon: Users, 
+    desc: 'STAR method, cultural fit, conflict resolution.', 
+    color: 'text-brand-pink', 
+    bg: 'bg-brand-pink/10',
+    moduleIds: ['hr-common', 'hr-behavioral', 'hr-leadership']
+  },
+];

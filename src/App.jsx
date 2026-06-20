@@ -22,6 +22,7 @@ import { Leaderboard } from './pages/Leaderboard';
 import { PremiumUpgrade } from './pages/PremiumUpgrade';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
+import { Achievements } from './pages/Achievements';
 import { NotFound } from './pages/NotFound';
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
               <Route path="premium" element={<PremiumUpgrade />} />
               <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />
               <Route path="settings" element={<AuthGuard><Settings /></AuthGuard>} />
+              <Route path="achievements" element={<AuthGuard><Achievements /></AuthGuard>} />
               
               {/* 404 */}
               <Route path="*" element={<NotFound />} />

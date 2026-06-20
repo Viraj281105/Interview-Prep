@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 const Card = React.forwardRef(({ className, glass = false, animated = false, ...props }, ref) => {
   const Comp = animated ? motion.div : "div";
   const animationProps = animated ? {
-    whileHover: { y: -4 },
-    transition: { type: "spring", stiffness: 300 }
+    whileHover: { y: -4, scale: 1.01 },
+    transition: { type: "spring", stiffness: 300, damping: 20 }
   } : {};
 
   return (

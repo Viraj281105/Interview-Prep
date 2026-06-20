@@ -18,6 +18,7 @@ export const ROUTES = {
   PREMIUM: '/premium',
   PROFILE: '/profile',
   SETTINGS: '/settings',
+  ACHIEVEMENTS: '/achievements',
 };
 
 // Navigation links for navbar

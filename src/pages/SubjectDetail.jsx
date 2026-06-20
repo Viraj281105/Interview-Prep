@@ -3,8 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { ArrowLeft, Layers, CheckCircle2, Play } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Lock, Star } from 'lucide-react';
 import { allDataModules } from '../data/index';
+import { subjectsList } from '../data/subjectsList';
 import { useAppStore } from '../store';
 
 export const SubjectDetail = () => {
@@ -12,15 +13,18 @@ export const SubjectDetail = () => {
   const navigate = useNavigate();
   const { completedQuestions } = useAppStore();
   
-  // Find modules for this subject.
-  // Subjects like 'dsa' map to 'dsa-arrays', 'dsa-dp', etc.
-  const modules = useMemo(() => {
-    const directMatches = allDataModules.filter(m => m.id.toLowerCase().startsWith(id.toLowerCase()));
-    if (directMatches.length > 0) return directMatches;
-    
-    // Fallback if ID doesn't directly match
-    return allDataModules.slice(0, 6);
+  // Find the subject metadata
+  const subjectMetadata = useMemo(() => {
+    return subjectsList.find(s => s.id === id) || null;
   }, [id]);
+
+  // Find modules for this subject using moduleIds
+  const modules = useMemo(() => {
+    if (!subjectMetadata) return [];
+    return subjectMetadata.moduleIds
+      .map(modId => allDataModules.find(m => m.id === modId))
+      .filter(Boolean);
+  }, [subjectMetadata]);
 
   // Calculate overall subject progress
   const { totalQuestions, completedCount } = useMemo(() => {
@@ -40,18 +44,40 @@ export const SubjectDetail = () => {
 
   const progressPercentage = totalQuestions > 0 ? Math.round((completedCount / totalQuestions) * 100) : 0;
 
+  if (!subjectMetadata) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-4">Subject Not Found</h2>
+          <Button onClick={() => navigate('/subjects')}>Back to Subjects</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate unlocks: A module is unlocked if it is the first module, or the previous module has at least 50% progress.
+  const getModuleUnlockState = (index) => {
+    if (index === 0) return true;
+    const prevMod = modules[index - 1];
+    const prevTotal = prevMod.questions?.length || 0;
+    if (prevTotal === 0) return true; // Safety fallback
+    const prevCompleted = prevMod.questions.filter(q => completedQuestions.includes(q.id)).length;
+    const prevProgress = (prevCompleted / prevTotal) * 100;
+    return prevProgress >= 50; // Require 50% completion to unlock next
+  };
+
   return (
-    <div className="flex flex-col gap-10 w-full py-10 px-6 max-w-7xl mx-auto">
+    <div className="flex flex-col gap-10 w-full py-10 px-6 max-w-4xl mx-auto">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
+      <div className="flex flex-col md:flex-row gap-8 items-start md:items-center justify-between sticky top-24 z-30 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="flex items-start gap-5">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/subjects')} className="mt-1 rounded-full bg-white/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-800 shrink-0">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/subjects')} className="mt-1 rounded-full bg-white/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 shrink-0">
             <ArrowLeft size={20} />
           </Button>
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-heading font-bold tracking-tight capitalize text-slate-900 dark:text-slate-50">
-                {id.replace('-', ' ')}
+              <h1 className="text-3xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                {subjectMetadata.title}
               </h1>
               {progressPercentage === 100 && (
                 <span className="text-emerald-500 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
@@ -59,88 +85,141 @@ export const SubjectDetail = () => {
                 </span>
               )}
             </div>
-            <p className="text-lg text-slate-600 dark:text-slate-400">Master all modules to conquer this subject.</p>
+            <p className="text-md text-slate-600 dark:text-slate-400">Master all modules to conquer this subject.</p>
           </div>
         </div>
         
         {/* Progress Widget */}
-        <Card glass className="p-5 flex items-center gap-6 min-w-[300px] border-white/40">
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Subject Progress</span>
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col text-right">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Progress</span>
             <span className="text-2xl font-heading font-bold text-slate-900 dark:text-white">
               {completedCount} <span className="text-slate-400 text-lg">/ {totalQuestions}</span>
             </span>
           </div>
           
-          <div className="relative w-16 h-16 ml-auto">
-            <svg className="w-16 h-16 transform -rotate-90">
-              <circle className="text-slate-200 dark:text-slate-800" strokeWidth="6" stroke="currentColor" fill="transparent" r="28" cx="32" cy="32" />
+          <div className="relative w-14 h-14">
+            <svg className="w-14 h-14 transform -rotate-90">
+              <circle className="text-slate-200 dark:text-slate-800" strokeWidth="5" stroke="currentColor" fill="transparent" r="24" cx="28" cy="28" />
               <circle 
-                className="text-brand-indigo transition-all duration-1000 ease-out" 
-                strokeWidth="6" 
-                strokeDasharray={28 * 2 * Math.PI} 
-                strokeDashoffset={28 * 2 * Math.PI - (progressPercentage / 100) * 28 * 2 * Math.PI} 
+                className={`transition-all duration-1000 ease-out ${subjectMetadata.color.replace('text-', 'text-')}`} 
+                strokeWidth="5" 
+                strokeDasharray={24 * 2 * Math.PI} 
+                strokeDashoffset={24 * 2 * Math.PI - (progressPercentage / 100) * 24 * 2 * Math.PI} 
                 strokeLinecap="round" 
                 stroke="currentColor" 
                 fill="transparent" 
-                r="28" cx="32" cy="32" 
+                r="24" cx="28" cy="28" 
               />
             </svg>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-bold text-slate-700 dark:text-slate-300">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-slate-700 dark:text-slate-300">
               {progressPercentage}%
             </div>
           </div>
-        </Card>
+        </div>
       </div>
 
-      {/* Modules Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Module Path UI */}
+      <div className="relative py-12 flex flex-col items-center">
+        {/* The Path SVG Background */}
+        <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-32 md:w-64 z-0 pointer-events-none opacity-20 dark:opacity-30">
+          <svg width="100%" height="100%" preserveAspectRatio="none">
+            <path
+              d={`M 50%,0 ${modules.map((_, i) => `Q ${i % 2 === 0 ? '100%' : '0%'},${((i + 0.5) / modules.length) * 100}% 50%,${((i + 1) / modules.length) * 100}%`).join(' ')}`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="8"
+              strokeDasharray="16 16"
+              strokeLinecap="round"
+              className="text-slate-400"
+            />
+          </svg>
+        </div>
+
         {modules.map((mod, i) => {
           const modTotal = mod.questions?.length || 0;
           const modCompleted = mod.questions ? mod.questions.filter(q => completedQuestions.includes(q.id)).length : 0;
           const modProgress = modTotal > 0 ? Math.round((modCompleted / modTotal) * 100) : 0;
+          
+          const isUnlocked = getModuleUnlockState(i);
+          const isCompleted = modProgress === 100;
+
+          // Alternating positions: Center, Right, Center, Left
+          // Calculate horizontal offset
+          let xOffset = 0;
+          if (i % 2 !== 0) {
+            xOffset = (i % 4 === 1) ? 120 : -120; // alternates right and left
+          }
 
           return (
-            <motion.div key={mod.id || i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-              <Link to={`/topic/${mod.id}`}>
-                <Card animated glass className="p-6 h-full flex flex-col group border-white/40 hover:border-brand-indigo/40 dark:hover:border-brand-lavender/40 transition-all cursor-pointer">
-                  <div className="flex items-start justify-between mb-5">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-indigo/10 to-brand-purple/10 text-brand-indigo dark:text-brand-lavender flex items-center justify-center text-3xl group-hover:scale-110 transition-transform shadow-inner">
-                      {mod.icon || '📚'}
-                    </div>
-                    {modProgress === 100 ? (
-                      <div className="text-emerald-500 bg-emerald-100 dark:bg-emerald-900/30 p-1.5 rounded-full shadow-sm">
-                        <CheckCircle2 size={18} />
-                      </div>
-                    ) : (
-                      <span className="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">
-                        {modProgress}%
-                      </span>
-                    )}
-                  </div>
-                  
-                  <h3 className="text-xl font-heading font-bold mb-2 text-slate-900 dark:text-slate-50 group-hover:text-brand-indigo dark:group-hover:text-brand-lavender transition-colors">{mod.title}</h3>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-relaxed line-clamp-2 flex-1">{mod.summary}</p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {mod.concepts?.slice(0, 3).map((concept, idx) => (
-                      <span key={idx} className="px-2.5 py-1 bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs rounded-lg font-medium">
-                        {concept}
-                      </span>
-                    ))}
-                    {mod.concepts?.length > 3 && <span className="px-2 py-1 text-slate-400 text-xs rounded-md">+{mod.concepts.length - 3}</span>}
-                  </div>
+            <motion.div 
+              key={mod.id || i} 
+              initial={{ opacity: 0, y: 50 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: i * 0.1, type: "spring", stiffness: 300, damping: 20 }}
+              className="relative z-10 my-8 flex flex-col items-center group"
+              style={{ transform: `translateX(${xOffset}px)` }}
+            >
+              {/* Tooltip on Hover */}
+              <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 bg-slate-900 dark:bg-slate-800 text-white p-4 rounded-2xl shadow-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-20 scale-95 group-hover:scale-100">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-bold font-heading">{mod.title}</span>
+                  <span className="text-xs font-bold text-brand-pink">{modProgress}%</span>
+                </div>
+                <p className="text-xs text-slate-300 line-clamp-2">{mod.summary}</p>
+                <div className="w-full h-1.5 bg-slate-700 rounded-full mt-3 overflow-hidden">
+                  <div className={`h-full rounded-full ${isCompleted ? 'bg-emerald-500' : 'bg-brand-indigo'}`} style={{ width: `${modProgress}%` }} />
+                </div>
+                {/* Tooltip Arrow */}
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-slate-900 dark:bg-slate-800 rotate-45" />
+              </div>
 
-                  <div className="mt-auto border-t border-slate-100 dark:border-slate-800/60 pt-5 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
-                      <Layers size={16} className="text-slate-400" /> {modTotal} Questions
-                    </div>
-                    <Button variant="ghost" size="sm" className="gap-2 px-3 text-brand-indigo dark:text-brand-lavender rounded-lg opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                      <Play size={14} fill="currentColor" /> Resume
-                    </Button>
-                  </div>
-                </Card>
-              </Link>
+              {/* The Node Button */}
+              {isUnlocked ? (
+                <Link to={`/topic/${mod.id}`}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`relative w-24 h-24 rounded-full flex items-center justify-center border-4 shadow-xl cursor-pointer transition-all duration-300 ${
+                      isCompleted 
+                        ? 'bg-emerald-500 border-emerald-400 text-white shadow-emerald-500/30' 
+                        : `bg-slate-100 dark:bg-slate-900 border-brand-indigo dark:border-brand-lavender text-brand-indigo dark:text-brand-lavender shadow-brand-indigo/20 hover:bg-brand-indigo/5`
+                    }`}
+                  >
+                    {/* Inner Progress Ring (if active) */}
+                    {!isCompleted && (
+                       <svg className="absolute inset-0 w-full h-full -rotate-90">
+                         <circle 
+                           className="text-brand-indigo/20 transition-all duration-1000 ease-out" 
+                           strokeWidth="8" 
+                           strokeDasharray={48 * Math.PI} 
+                           strokeDashoffset={48 * Math.PI - (modProgress / 100) * 48 * Math.PI} 
+                           stroke="currentColor" 
+                           fill="transparent" 
+                           r="44" cx="48" cy="48" 
+                         />
+                       </svg>
+                    )}
+                    
+                    {isCompleted ? (
+                      <Star size={36} className="fill-current drop-shadow-md" />
+                    ) : (
+                      <span className="text-3xl drop-shadow-sm">{mod.icon || '📚'}</span>
+                    )}
+                  </motion.div>
+                </Link>
+              ) : (
+                <div className="relative w-24 h-24 rounded-full bg-slate-200 dark:bg-slate-800 border-4 border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400 shadow-inner cursor-not-allowed grayscale">
+                  <Lock size={32} />
+                </div>
+              )}
+
+              {/* Node Label Below */}
+              <div className="mt-4 text-center w-32">
+                <p className={`font-heading font-bold text-sm ${isUnlocked ? 'text-slate-900 dark:text-slate-50' : 'text-slate-400 dark:text-slate-600'}`}>
+                  {mod.title}
+                </p>
+              </div>
             </motion.div>
           );
         })}
