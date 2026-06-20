@@ -49,6 +49,20 @@ export const useAppStore = create(
         date: new Date().toISOString()
       }
     }
+  })),
+
+  // Phase 4: Mock Interview State
+  mockInterviews: [], // Format: [{ id, type, date, duration, score }]
+  
+  saveMockInterview: (interviewData) => set((state) => ({
+    mockInterviews: [
+      {
+        id: crypto.randomUUID(),
+        date: new Date().toISOString(),
+        ...interviewData
+      },
+      ...state.mockInterviews
+    ]
   }))
   }),
   {

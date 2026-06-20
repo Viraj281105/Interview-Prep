@@ -1,112 +1,115 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ExperienceAccordion } from '../components/companies/ExperienceAccordion';
 import { SubmitExperienceForm } from '../components/companies/SubmitExperienceForm';
-import { ArrowLeft, Building2, ExternalLink, Target, Users } from 'lucide-react';
+import { ArrowLeft, Building2, ExternalLink, Target, Users, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-const mockExperiences = [
-  {
-    role: 'Software Development Engineer I (SDE 1)',
-    date: 'March 2026',
-    status: 'Offer',
-    upvotes: 45,
-    rounds: [
-      { name: 'Online Assessment (OA)', details: '2 coding questions in 90 minutes on HackerRank. One was Array manipulation (Medium), the other was a Graph traversal (Hard).' },
-      { name: 'Technical Interview 1', details: 'Focused on Data Structures. Asked to implement an LRU Cache and explain time complexity.' },
-      { name: 'Technical Interview 2', details: 'System Design and CS Fundamentals. Design a URL shortener.' },
-      { name: 'HR / Behavioral', details: 'Standard situational questions based on the STAR method. Focused heavily on ownership.' }
-    ]
-  },
-  {
-    role: 'Frontend Developer Intern',
-    date: 'February 2026',
-    status: 'Rejected',
-    upvotes: 12,
-    rounds: [
-      { name: 'Technical Phone Screen', details: 'React fundamentals, hooks, and a live coding exercise to build a Todo list with specific constraints.' },
-      { name: 'Onsite Loop 1', details: 'JavaScript core concepts (closures, event loop, promises). Struggled with a complex closure question.' }
-    ]
-  }
-];
+import { mockCompanies } from '../data/mock_companies';
 
 export const CompanyProfile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('experiences');
 
+  const company = mockCompanies.find(c => c.id === id);
+
+  if (!company) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <AlertCircle size={48} className="text-rose-500 mb-4" />
+        <h2 className="text-2xl font-bold mb-2">Company not found</h2>
+        <Link to="/companies">
+          <Button variant="outline">Return to Directory</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const handleStartMock = () => {
+    navigate('/mock', { state: { companyId: company.id } });
+  };
+
   return (
-    <div className="max-w-5xl mx-auto w-full flex flex-col gap-8">
+    <div className="max-w-6xl mx-auto w-full flex flex-col gap-8 py-4 px-4 sm:px-6">
       <div className="flex items-center gap-4">
         <Link to="/companies">
-          <Button variant="ghost" size="icon" className="rounded-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700">
+          <Button variant="ghost" size="icon" className="rounded-full bg-slate-200/50 hover:bg-slate-200 dark:bg-slate-800/50 dark:hover:bg-slate-800 transition-colors">
             <ArrowLeft size={20} />
           </Button>
         </Link>
-        <span className="font-medium text-slate-500">Back to Directory</span>
+        <span className="font-semibold text-slate-500 dark:text-slate-400">Back to Directory</span>
       </div>
 
       {/* Header Profile */}
-      <Card className="p-8 flex flex-col md:flex-row items-start md:items-center gap-6 border-b-4 border-b-blue-500 shadow-md relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-        <div className="w-24 h-24 rounded-2xl bg-white border border-slate-200 dark:bg-slate-900 dark:border-slate-800 flex items-center justify-center shadow-sm z-10">
-          <Building2 size={48} className="text-slate-400" />
+      <Card glass className="p-8 flex flex-col lg:flex-row items-start lg:items-center gap-8 border-b-4 border-b-brand-indigo shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-indigo/10 dark:bg-brand-indigo/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+        <div className="w-28 h-28 rounded-3xl bg-white border border-slate-200 dark:bg-slate-900 dark:border-slate-800 flex items-center justify-center shadow-lg z-10 shrink-0">
+          <Building2 size={56} className="text-slate-400 dark:text-slate-500" />
         </div>
         <div className="flex-1 z-10">
-          <h1 className="text-4xl font-extrabold tracking-tight capitalize mb-3">{id.replace('-', ' ')}</h1>
-          <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600 dark:text-slate-400 mb-4">
-            <span className="flex items-center gap-1.5"><Target size={16} className="text-blue-500" /> Software Engineering</span>
-            <span className="flex items-center gap-1.5"><Users size={16} className="text-emerald-500" /> Active Hiring</span>
+          <h1 className="text-4xl sm:text-5xl font-heading font-extrabold tracking-tight mb-4">{company.name}</h1>
+          <div className="flex flex-wrap items-center gap-4 text-sm font-bold text-slate-600 dark:text-slate-400 mb-4 uppercase tracking-wider">
+            <span className="flex items-center gap-1.5 px-3 py-1 bg-brand-indigo/10 text-brand-indigo rounded-lg"><Target size={16} /> {company.type}</span>
+            <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg"><Users size={16} /> Active Hiring</span>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
-            Detailed breakdown of the hiring process, interview questions, and real candidate experiences. 
-            Prepare effectively by understanding what to expect in each round.
+          <p className="text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed text-lg">
+            {company.description}
           </p>
         </div>
-        <div className="w-full md:w-auto flex flex-col gap-3 z-10 mt-4 md:mt-0">
-          <Link to="/mock">
-            <Button className="w-full shadow-lg shadow-blue-500/30">Start Mock Interview</Button>
-          </Link>
-          <Button variant="outline" className="w-full gap-2">
+        <div className="w-full lg:w-64 flex flex-col gap-4 z-10 mt-4 lg:mt-0 shrink-0">
+          <Button onClick={handleStartMock} size="lg" className="w-full shadow-lg shadow-brand-indigo/20 font-bold bg-brand-indigo hover:bg-brand-purple">
+            Start Mock Interview
+          </Button>
+          <Button variant="outline" size="lg" className="w-full gap-2 border-slate-300 dark:border-slate-700">
             Careers Site <ExternalLink size={16} />
           </Button>
         </div>
       </Card>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto custom-scrollbar">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto custom-scrollbar no-scrollbar">
         {['experiences', 'hiring process', 'submit'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 font-medium text-sm capitalize transition-colors relative whitespace-nowrap ${activeTab === tab ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'}`}
+            className={`px-8 py-4 font-bold text-sm capitalize transition-colors relative whitespace-nowrap ${activeTab === tab ? 'text-brand-indigo dark:text-brand-lavender' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'}`}
           >
             {tab === 'submit' ? 'Share Experience' : tab}
             {activeTab === tab && (
-              <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
+              <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-indigo dark:bg-brand-lavender" />
             )}
           </button>
         ))}
       </div>
 
       {/* Tab Content */}
-      <div className="pt-2 pb-12">
+      <div className="pt-4 pb-12">
         {activeTab === 'experiences' && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-              <h2 className="text-2xl font-bold">Candidate Experiences</h2>
-              <select className="bg-transparent border border-slate-300 dark:border-slate-700 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-slate-300 [&>option]:text-slate-900">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+              <h2 className="text-2xl font-heading font-bold text-slate-900 dark:text-slate-50">Candidate Experiences</h2>
+              <select className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-indigo dark:text-slate-200 [&>option]:text-slate-900">
                 <option value="recent">Most Recent</option>
                 <option value="top">Top Voted</option>
                 <option value="offers">Offers Only</option>
               </select>
             </div>
-            <div className="space-y-2">
-              {mockExperiences.map((exp, i) => (
-                <ExperienceAccordion key={i} experience={exp} />
-              ))}
-            </div>
+            
+            {company.experiences && company.experiences.length > 0 ? (
+              <div className="space-y-4">
+                {company.experiences.map((exp, i) => (
+                  <ExperienceAccordion key={i} experience={exp} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/20 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
+                <Users className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600 mb-4" />
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">No experiences shared yet</h3>
+                <p className="text-slate-500">Be the first to share your interview experience at {company.name}.</p>
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -118,22 +121,17 @@ export const CompanyProfile = () => {
 
         {activeTab === 'hiring process' && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-             <Card className="p-6 md:p-10 border-blue-100 dark:border-blue-900/30">
-               <h3 className="text-2xl font-bold mb-8 text-center">Typical Hiring Process</h3>
-               <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-blue-300 dark:before:via-blue-800 before:to-transparent">
-                  {[
-                    { title: "Application Screening", desc: "Resume parsing and ATS screening." },
-                    { title: "Online Assessment (OA)", desc: "1-2 coding problems on HackerRank/CodeSignal. 90 mins." },
-                    { title: "Technical Phone Screen", desc: "45 mins live coding on a shared doc. Usually a medium difficulty DSA problem." },
-                    { title: "Onsite Loop (4-5 Rounds)", desc: "Mix of Data Structures, System Design, and Behavioral/HR rounds. Each round is approx 45-60 mins." }
-                  ].map((step, i) => (
+             <Card glass className="p-6 md:p-12 border-brand-indigo/10 dark:border-brand-indigo/20">
+               <h3 className="text-3xl font-heading font-bold mb-12 text-center text-slate-900 dark:text-slate-50">Typical Hiring Process</h3>
+               <div className="space-y-10 relative before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-brand-indigo/0 before:via-brand-indigo/50 before:to-brand-indigo/0">
+                  {company.hiringProcess && company.hiringProcess.map((step, i) => (
                     <div key={i} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white dark:border-slate-900 bg-blue-500 text-white shadow-lg shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-white dark:border-[#0A0A0A] bg-brand-indigo text-white shadow-[0_0_15px_rgba(99,102,241,0.5)] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold text-lg">
                         {i + 1}
                       </div>
-                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="font-bold text-lg mb-2">{step.title}</div>
-                        <div className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{step.desc}</div>
+                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-sm hover:shadow-xl hover:border-brand-indigo/30 transition-all">
+                        <div className="font-heading font-bold text-xl mb-3 text-slate-900 dark:text-slate-100">{step.title}</div>
+                        <div className="text-slate-600 dark:text-slate-400 text-base leading-relaxed">{step.desc}</div>
                       </div>
                     </div>
                   ))}

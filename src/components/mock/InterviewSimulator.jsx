@@ -4,24 +4,9 @@ import { Button } from '../ui/Button';
 import { Video, VideoOff, Mic, MicOff, AlertCircle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { InterviewFeedback } from './InterviewFeedback';
+import { generateMockQuestions } from '../../utils/mockInterviewGenerator';
 
-const MOCK_QUESTIONS = {
-  behavioral: [
-    "Tell me about a time you had a conflict with a coworker and how you resolved it.",
-    "Describe a situation where you had to meet a tight deadline. How did you handle it?",
-    "Tell me about a time you failed or made a significant mistake. What did you learn?"
-  ],
-  dsa: [
-    "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-    "Reverse a singly linked list.",
-    "Find the longest substring without repeating characters."
-  ],
-  'system-design': [
-    "Design a URL Shortening service like bit.ly.",
-    "Design Twitter's timeline feed architecture.",
-    "Design a scalable Chat Application like WhatsApp."
-  ]
-};
+
 
 export const InterviewSimulator = ({ type, onEnd }) => {
   const [stream, setStream] = useState(null);
@@ -35,7 +20,11 @@ export const InterviewSimulator = ({ type, onEnd }) => {
   const [showFeedback, setShowFeedback] = useState(false);
   
   const videoRef = useRef(null);
-  const questions = MOCK_QUESTIONS[type] || MOCK_QUESTIONS.behavioral;
+  const [questions, setQuestions] = useState([]);
+
+  useEffect(() => {
+    setQuestions(generateMockQuestions(type));
+  }, [type]);
 
   useEffect(() => {
     let timer;
@@ -114,19 +103,21 @@ export const InterviewSimulator = ({ type, onEnd }) => {
   };
 
   if (showFeedback) {
-    return <InterviewFeedback type={type} onExit={onEnd} />;
+    return <InterviewFeedback type={type} duration={type === 'behavioral' ? 30*60 - timeLeft : 45*60 - timeLeft} onExit={onEnd} />;
   }
+
+  if (questions.length === 0) return null;
 
   if (!isStarted) {
     return (
-      <div className="max-w-4xl mx-auto w-full flex flex-col items-center justify-center py-12">
-        <h2 className="text-3xl font-bold mb-8">Setup Your Environment</h2>
-        <Card className="w-full max-w-2xl overflow-hidden bg-slate-900 border-slate-800">
+      <div className="max-w-4xl mx-auto w-full flex flex-col items-center justify-center py-12 animate-in fade-in zoom-in-95 duration-500">
+        <h2 className="text-3xl font-heading font-bold mb-8 text-slate-900 dark:text-white">Setup Your Environment</h2>
+        <Card className="w-full max-w-2xl overflow-hidden bg-slate-900 border-slate-800 shadow-2xl">
           <div className="relative aspect-video bg-black flex items-center justify-center">
             {error ? (
               <div className="text-rose-500 flex flex-col items-center gap-4">
                 <AlertCircle size={48} />
-                <p>{error}</p>
+                <p className="font-medium">{error}</p>
               </div>
             ) : (
               <video 
@@ -134,32 +125,32 @@ export const InterviewSimulator = ({ type, onEnd }) => {
                 autoPlay 
                 playsInline 
                 muted 
-                className={`w-full h-full object-cover ${!videoEnabled ? 'opacity-0' : 'opacity-100'}`}
+                className={`w-full h-full object-cover transition-opacity duration-300 ${!videoEnabled ? 'opacity-0' : 'opacity-100'}`}
               />
             )}
             
             {!videoEnabled && !error && (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500">
                 <VideoOff size={48} className="mb-4" />
-                <p>Camera is disabled</p>
+                <p className="font-medium">Camera is disabled</p>
               </div>
             )}
 
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-4">
-              <Button size="icon" variant={audioEnabled ? "default" : "destructive"} onClick={toggleAudio} className="rounded-full w-12 h-12 bg-slate-800/80 hover:bg-slate-700 backdrop-blur-sm border border-slate-600">
-                {audioEnabled ? <Mic size={20} className="text-white" /> : <MicOff size={20} />}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4">
+              <Button size="icon" variant={audioEnabled ? "default" : "destructive"} onClick={toggleAudio} className="rounded-full w-14 h-14 bg-slate-800/80 hover:bg-slate-700 backdrop-blur-md border border-slate-600 shadow-lg">
+                {audioEnabled ? <Mic size={24} className="text-white" /> : <MicOff size={24} />}
               </Button>
-              <Button size="icon" variant={videoEnabled ? "default" : "destructive"} onClick={toggleVideo} className="rounded-full w-12 h-12 bg-slate-800/80 hover:bg-slate-700 backdrop-blur-sm border border-slate-600">
-                {videoEnabled ? <Video size={20} className="text-white" /> : <VideoOff size={20} />}
+              <Button size="icon" variant={videoEnabled ? "default" : "destructive"} onClick={toggleVideo} className="rounded-full w-14 h-14 bg-slate-800/80 hover:bg-slate-700 backdrop-blur-md border border-slate-600 shadow-lg">
+                {videoEnabled ? <Video size={24} className="text-white" /> : <VideoOff size={24} />}
               </Button>
             </div>
           </div>
-          <div className="p-6 bg-slate-950 text-white flex justify-between items-center border-t border-slate-800">
-            <div>
-              <p className="font-bold">Ready to begin?</p>
+          <div className="p-8 bg-slate-950 text-white flex flex-col sm:flex-row justify-between items-center border-t border-slate-800 gap-6">
+            <div className="text-center sm:text-left">
+              <p className="font-bold text-lg mb-1">Ready to begin?</p>
               <p className="text-sm text-slate-400">Ensure you are in a quiet room with good lighting.</p>
             </div>
-            <Button onClick={() => setIsStarted(true)} className="bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20 shadow-lg text-white font-bold px-8">
+            <Button onClick={() => setIsStarted(true)} size="lg" className="w-full sm:w-auto bg-brand-indigo hover:bg-brand-purple shadow-brand-indigo/20 shadow-lg text-white font-bold px-8">
               Start Interview
             </Button>
           </div>
@@ -171,63 +162,72 @@ export const InterviewSimulator = ({ type, onEnd }) => {
   const isTechnical = type === 'dsa' || type === 'system-design';
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col h-screen">
+    <div className="fixed inset-0 z-[100] bg-[#0A0A0A] text-slate-200 flex flex-col h-screen font-sans">
       {/* Top Bar */}
-      <div className="h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 shrink-0">
+      <div className="h-14 bg-[#111111] border-b border-[#222222] flex items-center justify-between px-6 shrink-0 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
-          <span className="font-bold text-slate-800 dark:text-slate-200">Mock Interview: {type.toUpperCase()}</span>
+          <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]"></div>
+          <span className="font-bold tracking-wide uppercase text-sm text-slate-300">Mock Interview: {type.replace('-', ' ')}</span>
         </div>
         <div className="flex items-center gap-6">
-          <div className={`flex items-center gap-2 font-mono font-bold text-lg ${timeLeft < 300 ? 'text-rose-500' : 'text-slate-700 dark:text-slate-300'}`}>
-            <Clock size={20} /> {formatTime(timeLeft)}
+          <div className={`flex items-center gap-2 font-mono font-bold text-lg ${timeLeft < 300 ? 'text-rose-500 animate-pulse' : 'text-slate-300'}`}>
+            <Clock size={18} /> {formatTime(timeLeft)}
           </div>
-          <Button variant="outline" size="sm" onClick={handleEnd} className="border-rose-200 text-rose-600 hover:bg-rose-50 dark:border-rose-900/50 dark:hover:bg-rose-900/20">
+          <Button variant="ghost" size="sm" onClick={handleEnd} className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors">
             End Interview
           </Button>
         </div>
       </div>
 
       {/* Main Workspace */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-4 gap-4">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-4 gap-4 bg-[#0A0A0A]">
         
         {/* Left Column (Question + Code Editor) */}
-        <div className={`flex flex-col gap-4 ${isTechnical ? 'lg:w-2/3' : 'lg:w-1/2 mx-auto'}`}>
-          <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shrink-0">
-            <div className="text-sm font-bold text-blue-500 uppercase tracking-wider mb-2">
+        <div className={`flex flex-col gap-4 ${isTechnical ? 'lg:w-[65%]' : 'lg:w-1/2 mx-auto'} h-full`}>
+          <Card className="p-6 bg-[#111111] border border-[#222222] shrink-0 shadow-lg">
+            <div className="text-xs font-bold text-brand-indigo uppercase tracking-wider mb-3">
               Question {currentQuestionIdx + 1} of {questions.length}
             </div>
-            <h2 className="text-xl md:text-2xl font-bold leading-snug">
+            <h2 className="text-xl leading-relaxed text-slate-100 font-medium">
               {questions[currentQuestionIdx]}
             </h2>
           </Card>
 
           {isTechnical && (
-            <Card className="flex-1 flex flex-col bg-[#1e1e1e] border-slate-800 overflow-hidden">
-              <div className="h-10 bg-[#2d2d2d] flex items-center px-4 border-b border-black">
-                <span className="text-xs font-mono text-slate-300">solution.js</span>
+            <Card className="flex-1 flex flex-col bg-[#0F0F11] border border-[#222222] overflow-hidden shadow-lg group relative">
+              <div className="h-11 bg-[#161618] flex items-center px-4 border-b border-[#222222]">
+                <div className="flex gap-2 mr-4">
+                  <div className="w-3 h-3 rounded-full bg-rose-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                </div>
+                <span className="text-[13px] font-mono text-slate-400">solution.js</span>
               </div>
-              <textarea 
-                className="flex-1 bg-transparent w-full resize-none outline-none p-4 font-mono text-sm text-slate-300 placeholder:text-slate-600"
-                placeholder="// Write your code here..."
-                spellCheck="false"
-              ></textarea>
+              <div className="flex-1 relative flex">
+                {/* Fake line numbers */}
+                <div className="w-12 bg-[#161618] border-r border-[#222222] text-right py-4 pr-3 select-none flex flex-col font-mono text-xs text-slate-600">
+                  {Array.from({ length: 30 }).map((_, i) => <span key={i} className="mb-1 leading-relaxed">{i + 1}</span>)}
+                </div>
+                <textarea 
+                  className="flex-1 bg-transparent resize-none outline-none p-4 font-mono text-[14px] leading-relaxed text-[#c9d1d9] placeholder:text-[#8b949e] caret-brand-indigo"
+                  placeholder="// Write your optimized solution here..."
+                  spellCheck="false"
+                ></textarea>
+              </div>
             </Card>
           )}
 
-          <div className="flex justify-end gap-4 shrink-0">
-            <Button onClick={handleNext} className="shadow-lg shadow-blue-500/20">
+          <div className="flex justify-between items-center shrink-0 pt-2">
+            <span className="text-xs text-slate-500 font-mono">Press Esc to focus out</span>
+            <Button onClick={handleNext} className="bg-brand-indigo hover:bg-brand-purple text-white shadow-lg shadow-brand-indigo/20 px-8">
               {currentQuestionIdx < questions.length - 1 ? 'Next Question' : 'Finish Interview'}
             </Button>
           </div>
         </div>
 
         {/* Right Column (Webcam / Interviewer feed) */}
-        <div className={`${isTechnical ? 'lg:w-1/3' : 'hidden lg:flex lg:w-1/2'} flex-col gap-4`}>
-          <Card className="w-full aspect-video bg-slate-900 overflow-hidden relative border-slate-800 p-0 flex items-center justify-center shadow-lg">
-            {/* The actual video element isn't easily movable in React without state re-renders, 
-                so in a real app we'd portal it or keep the ref stable. 
-                For MVP, we'll re-attach the stream. */}
+        <div className={`${isTechnical ? 'lg:w-[35%]' : 'hidden lg:flex lg:w-1/2'} flex-col gap-4 h-full`}>
+          <Card className="w-full aspect-video bg-black overflow-hidden relative border-[#222222] p-0 flex items-center justify-center shadow-lg rounded-xl">
             <video 
               ref={(el) => {
                 if (el && stream) el.srcObject = stream;
@@ -235,33 +235,38 @@ export const InterviewSimulator = ({ type, onEnd }) => {
               autoPlay 
               playsInline 
               muted 
-              className={`w-full h-full object-cover ${!videoEnabled ? 'opacity-0' : 'opacity-100'}`}
+              className={`w-full h-full object-cover transition-opacity duration-300 ${!videoEnabled ? 'opacity-0' : 'opacity-100'}`}
             />
             {!videoEnabled && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500 bg-slate-950">
-                <VideoOff size={48} className="mb-4" />
-                <p>Camera Off</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500 bg-[#111]">
+                <VideoOff size={48} className="mb-4 text-slate-700" />
               </div>
             )}
-            <div className="absolute bottom-4 right-4 bg-black/60 px-2 py-1 rounded text-xs text-white backdrop-blur-sm">
+            <div className="absolute bottom-3 right-3 bg-black/60 px-3 py-1 rounded-md text-xs font-medium text-white backdrop-blur-md border border-white/10">
               You
             </div>
           </Card>
 
-          <Card className="w-full flex-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center justify-center text-center">
-             <div className="w-20 h-20 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center mb-4">
-               <Users size={32} className="text-slate-400" />
-             </div>
-             <h3 className="font-bold text-lg mb-1">AI Interviewer</h3>
-             <p className="text-sm text-slate-500 max-w-xs">Listening to your response. Speak clearly and explain your thought process.</p>
+          <Card className="w-full flex-1 bg-[#111111] border border-[#222222] p-8 flex flex-col items-center justify-center text-center shadow-lg rounded-xl relative overflow-hidden">
+             <div className="absolute inset-0 bg-gradient-to-b from-brand-indigo/5 to-transparent pointer-events-none"></div>
              
-             <div className="mt-8 flex gap-1 items-center h-8">
-               {[1, 2, 3, 4, 5].map(i => (
+             <div className="w-24 h-24 rounded-full bg-[#1A1A1A] border border-[#333] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(99,102,241,0.1)] relative">
+               <div className="absolute inset-0 rounded-full border border-brand-indigo/30 animate-ping opacity-20"></div>
+               <Video size={36} className="text-brand-indigo" />
+             </div>
+             
+             <h3 className="font-heading font-bold text-xl mb-2 text-slate-100">AI Interviewer</h3>
+             <p className="text-sm text-slate-400 max-w-[250px] leading-relaxed">
+               Listening to your response. Explain your thought process clearly.
+             </p>
+             
+             <div className="mt-10 flex gap-1.5 items-end h-10">
+               {[1, 2, 3, 4, 5, 6, 7].map(i => (
                  <motion.div 
                    key={i}
-                   className="w-1.5 bg-blue-500 rounded-full"
-                   animate={{ height: ['20%', '80%', '20%'] }}
-                   transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
+                   className="w-2 bg-brand-indigo/80 rounded-full"
+                   animate={{ height: ['20%', `${40 + Math.random() * 60}%`, '20%'] }}
+                   transition={{ duration: 0.8 + Math.random() * 0.5, repeat: Infinity, ease: "easeInOut" }}
                  />
                ))}
              </div>
