@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Circle, ChevronDown, Bookmark, BookmarkCheck, Copy, Check } from 'lucide-react';
-import { useAppStore } from '../store';
+import { useAppStore } from '../../store';
 import DifficultyBadge from './DifficultyBadge';
 import CodeBlock from './CodeBlock';
 

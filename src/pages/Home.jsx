@@ -32,7 +32,7 @@ export const Home = () => {
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border-brand-indigo/20 text-brand-indigo dark:text-brand-lavender text-sm font-semibold mb-10 shadow-sm"
         >
           <Sparkles size={16} className="text-brand-purple" />
-          <span>PrepMaster 2.0 is now live</span>
+          <span>PrepMaster 3.0 is now live</span>
         </motion.div>
         
         <motion.h1 

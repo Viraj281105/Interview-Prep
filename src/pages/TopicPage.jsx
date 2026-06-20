@@ -5,8 +5,8 @@ import { ArrowLeft, BookOpen, List, Play, CheckCircle2, Save } from 'lucide-reac
 import { allDataModules } from '../data/index';
 import { useAppStore } from '../store';
 import { useFilteredQuestions } from '../hooks/useFilteredQuestions';
-import { QuestionCard } from '../components/QuestionCard';
-import { FilterBar } from '../components/FilterBar';
+import { QuestionCard } from '../components/ui/QuestionCard';
+import { FilterBar } from '../components/ui/FilterBar';
 import { Tabs } from '../components/ui/Tabs';
 import { Flashcard } from '../components/practice/Flashcard';
 import { Button } from '../components/ui/Button';

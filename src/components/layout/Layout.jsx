@@ -6,9 +6,13 @@ import { Footer } from "./Footer";
 export const Layout = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 flex flex-col transition-colors duration-300 relative overflow-hidden">
-      {/* Background decoration elements for premium feel */}
-      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-brand-indigo/5 blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-brand-purple/5 blur-[120px] pointer-events-none" />
+      {/* Animated background blobs */}
+      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-brand-indigo/5 blur-[120px] pointer-events-none animate-blob" />
+      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-brand-purple/5 blur-[120px] pointer-events-none animate-blob-delayed" />
+      <div className="fixed top-[40%] right-[20%] w-[30%] h-[30%] rounded-full bg-brand-cyan/3 blur-[100px] pointer-events-none animate-blob-delayed-2" />
+      
+      {/* Subtle grid overlay */}
+      <div className="fixed inset-0 bg-grid-pattern pointer-events-none opacity-50" />
       
       <Navbar />
       <main className="flex-1 w-full flex flex-col z-10 relative">
