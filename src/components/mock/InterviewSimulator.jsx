@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { Video, VideoOff, Mic, MicOff, AlertCircle, Clock } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Video, VideoOff, Mic, MicOff, AlertCircle, Clock, Send, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { InterviewFeedback } from './InterviewFeedback';
 import { generateMockQuestions } from '../../utils/mockInterviewGenerator';
+import { aiService } from '../../services/aiService';
 
 export const InterviewSimulator = ({ type, companyId, onEnd }) => {
   const [stream, setStream] = useState(null);
@@ -13,14 +14,19 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
   const [error, setError] = useState('');
   const [timeLeft, setTimeLeft] = useState(type === 'behavioral' ? 30 * 60 : 45 * 60);
   const [isStarted, setIsStarted] = useState(false);
+  
+  const [questions, setQuestions] = useState([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
+  
+  const [userAnswer, setUserAnswer] = useState('');
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evaluation, setEvaluation] = useState(null);
+  
   const [showFeedback, setShowFeedback] = useState(false);
   
   const videoRef = useRef(null);
-  const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
-    // In the future, pass companyId to generateMockQuestions to get company-specific questions
     setQuestions(generateMockQuestions(type));
   }, [type]);
 
@@ -74,7 +80,23 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  const handleSubmitAnswer = async () => {
+    if (!userAnswer.trim()) return;
+    setIsEvaluating(true);
+    
+    try {
+      const result = await aiService.evaluateAnswer(questions[currentQuestionIdx], userAnswer, type);
+      setEvaluation(result);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
   const handleNext = () => {
+    setEvaluation(null);
+    setUserAnswer('');
     if (currentQuestionIdx < questions.length - 1) {
       setCurrentQuestionIdx(prev => prev + 1);
     } else {
@@ -136,7 +158,7 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
               <p className="text-sm text-slate-400">Ensure you are in a quiet room with good lighting.</p>
             </div>
             <Button onClick={() => setIsStarted(true)} size="lg" className="w-full sm:w-auto bg-brand-indigo hover:bg-brand-purple shadow-brand-indigo/20 shadow-lg text-white font-bold px-8">
-              Start Interview
+              Start AI Interview
             </Button>
           </div>
         </Card>
@@ -170,46 +192,119 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
       {/* Main Workspace */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-4 gap-4 bg-[#0A0A0A]">
         
-        {/* Left Column (Question + Code Editor) */}
+        {/* Left Column (Question + Input Area) */}
         <div className={`flex flex-col gap-4 ${isTechnical ? 'lg:w-[65%]' : 'lg:w-1/2 mx-auto'} h-full`}>
           <Card className="p-6 bg-[#111111] border border-[#222222] shrink-0 shadow-lg">
-            <div className="text-xs font-bold text-brand-indigo uppercase tracking-wider mb-3">
-              Question {currentQuestionIdx + 1} of {questions.length}
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-xs font-bold text-brand-indigo uppercase tracking-wider">
+                Question {currentQuestionIdx + 1} of {questions.length}
+              </div>
+              {isEvaluating && (
+                <div className="text-xs font-bold text-brand-cyan uppercase tracking-wider flex items-center gap-2 animate-pulse">
+                  <Sparkles size={14} /> AI Evaluating
+                </div>
+              )}
             </div>
             <h2 className="text-xl leading-relaxed text-slate-100 font-medium">
               {questions[currentQuestionIdx]}
             </h2>
           </Card>
 
-          {isTechnical && (
-            <Card className="flex-1 flex flex-col bg-[#0F0F11] border border-[#222222] overflow-hidden shadow-lg group relative">
-              <div className="h-11 bg-[#161618] flex items-center px-4 border-b border-[#222222]">
-                <div className="flex gap-2 mr-4">
-                  <div className="w-3 h-3 rounded-full bg-rose-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
-                </div>
-                <span className="text-[13px] font-mono text-slate-400">solution.js</span>
-              </div>
-              <div className="flex-1 relative flex">
-                {/* Fake line numbers */}
-                <div className="w-12 bg-[#161618] border-r border-[#222222] text-right py-4 pr-3 select-none flex flex-col font-mono text-xs text-slate-600">
-                  {Array.from({ length: 30 }).map((_, i) => <span key={i} className="mb-1 leading-relaxed">{i + 1}</span>)}
-                </div>
-                <textarea 
-                  className="flex-1 bg-transparent resize-none outline-none p-4 font-mono text-[14px] leading-relaxed text-[#c9d1d9] placeholder:text-[#8b949e] caret-brand-indigo"
-                  placeholder="// Write your optimized solution here..."
-                  spellCheck="false"
-                ></textarea>
-              </div>
-            </Card>
-          )}
+          <AnimatePresence mode="wait">
+            {evaluation ? (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="flex-1 flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2"
+              >
+                <Card className="p-6 bg-brand-indigo/10 border-brand-indigo/30 shadow-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <Sparkles className="text-brand-indigo" size={20} /> AI Feedback
+                    </h3>
+                    <div className="px-3 py-1 rounded-full bg-white/10 text-white font-bold text-sm">
+                      Score: {evaluation.score}/10
+                    </div>
+                  </div>
+                  <p className="text-slate-300 leading-relaxed mb-6">{evaluation.feedback}</p>
+                  
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
+                      <h4 className="text-emerald-400 font-bold text-sm mb-2 uppercase tracking-wider">Strengths</h4>
+                      <ul className="list-disc list-inside text-slate-300 text-sm space-y-1">
+                        {evaluation.strengths.length > 0 ? evaluation.strengths.map((s, i) => <li key={i}>{s}</li>) : <li>None identified</li>}
+                      </ul>
+                    </div>
+                    <div className="bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl">
+                      <h4 className="text-rose-400 font-bold text-sm mb-2 uppercase tracking-wider">Weaknesses</h4>
+                      <ul className="list-disc list-inside text-slate-300 text-sm space-y-1">
+                        {evaluation.weaknesses.length > 0 ? evaluation.weaknesses.map((w, i) => <li key={i}>{w}</li>) : <li>None identified</li>}
+                      </ul>
+                    </div>
+                  </div>
 
-          <div className="flex justify-between items-center shrink-0 pt-2">
-            <span className="text-xs text-slate-500 font-mono">Press Esc to focus out</span>
-            <Button onClick={handleNext} className="bg-brand-indigo hover:bg-brand-purple text-white shadow-lg shadow-brand-indigo/20 px-8">
-              {currentQuestionIdx < questions.length - 1 ? 'Next Question' : 'Finish Interview'}
-            </Button>
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
+                    <h4 className="text-white font-bold text-sm mb-2">Ideal Answer Framework</h4>
+                    <p className="text-slate-400 text-sm">{evaluation.idealAnswer}</p>
+                  </div>
+                </Card>
+              </motion.div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="flex-1 flex flex-col"
+              >
+                <Card className="flex-1 flex flex-col bg-[#0F0F11] border border-[#222222] overflow-hidden shadow-lg group relative">
+                  <div className="h-11 bg-[#161618] flex items-center px-4 border-b border-[#222222]">
+                    <div className="flex gap-2 mr-4">
+                      <div className="w-3 h-3 rounded-full bg-rose-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                    </div>
+                    <span className="text-[13px] font-mono text-slate-400">
+                      {isTechnical ? 'solution.js' : 'your-answer.txt'}
+                    </span>
+                  </div>
+                  <div className="flex-1 relative flex">
+                    {isTechnical && (
+                      <div className="w-12 bg-[#161618] border-r border-[#222222] text-right py-4 pr-3 select-none flex flex-col font-mono text-xs text-slate-600">
+                        {Array.from({ length: 30 }).map((_, i) => <span key={i} className="mb-1 leading-relaxed">{i + 1}</span>)}
+                      </div>
+                    )}
+                    <textarea 
+                      className={`flex-1 bg-transparent resize-none outline-none p-4 text-[14px] leading-relaxed text-[#c9d1d9] placeholder:text-[#8b949e] caret-brand-indigo ${isTechnical ? 'font-mono' : 'font-sans'}`}
+                      placeholder={isTechnical ? "// Write your optimized solution here..." : "Type your response here. Use the STAR method..."}
+                      spellCheck="false"
+                      value={userAnswer}
+                      onChange={(e) => setUserAnswer(e.target.value)}
+                      disabled={isEvaluating}
+                    ></textarea>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="flex justify-end items-center shrink-0 pt-2 gap-4">
+            {!evaluation ? (
+              <Button 
+                onClick={handleSubmitAnswer} 
+                disabled={!userAnswer.trim() || isEvaluating}
+                className="bg-brand-indigo hover:bg-brand-purple text-white shadow-lg shadow-brand-indigo/20 px-8 gap-2"
+              >
+                {isEvaluating ? 'Evaluating...' : <><Send size={16} /> Submit Answer</>}
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleNext} 
+                className="bg-brand-cyan hover:bg-cyan-500 text-slate-900 font-bold shadow-lg shadow-brand-cyan/20 px-8"
+              >
+                {currentQuestionIdx < questions.length - 1 ? 'Next Question' : 'Finish Interview'}
+              </Button>
+            )}
           </div>
         </div>
 
@@ -239,25 +334,29 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
              <div className="absolute inset-0 bg-gradient-to-b from-brand-indigo/5 to-transparent pointer-events-none"></div>
              
              <div className="w-24 h-24 rounded-full bg-[#1A1A1A] border border-[#333] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(99,102,241,0.1)] relative">
-               <div className="absolute inset-0 rounded-full border border-brand-indigo/30 animate-ping opacity-20"></div>
-               <Video size={36} className="text-brand-indigo" />
+               <div className={`absolute inset-0 rounded-full border border-brand-indigo/30 opacity-20 ${isEvaluating ? 'animate-spin' : 'animate-ping'}`}></div>
+               {isEvaluating ? <Sparkles size={36} className="text-brand-cyan animate-pulse" /> : <Video size={36} className="text-brand-indigo" />}
              </div>
              
-             <h3 className="font-heading font-bold text-xl mb-2 text-slate-100">AI Interviewer</h3>
+             <h3 className="font-heading font-bold text-xl mb-2 text-slate-100">
+               {isEvaluating ? 'AI Evaluator' : 'AI Interviewer'}
+             </h3>
              <p className="text-sm text-slate-400 max-w-[250px] leading-relaxed">
-               Listening to your response. Explain your thought process clearly.
+               {isEvaluating ? 'Analyzing your response for correctness, completeness, and clarity...' : 'Listening to your response. Explain your thought process clearly.'}
              </p>
              
-             <div className="mt-10 flex gap-1.5 items-end h-10">
-               {[1, 2, 3, 4, 5, 6, 7].map(i => (
-                 <motion.div 
-                   key={i}
-                   className="w-2 bg-brand-indigo/80 rounded-full"
-                   animate={{ height: ['20%', `${40 + Math.random() * 60}%`, '20%'] }}
-                   transition={{ duration: 0.8 + Math.random() * 0.5, repeat: Infinity, ease: "easeInOut" }}
-                 />
-               ))}
-             </div>
+             {!isEvaluating && !evaluation && (
+               <div className="mt-10 flex gap-1.5 items-end h-10">
+                 {[1, 2, 3, 4, 5, 6, 7].map(i => (
+                   <motion.div 
+                     key={i}
+                     className="w-2 bg-brand-indigo/80 rounded-full"
+                     animate={{ height: ['20%', `${40 + Math.random() * 60}%`, '20%'] }}
+                     transition={{ duration: 0.8 + Math.random() * 0.5, repeat: Infinity, ease: "easeInOut" }}
+                   />
+                 ))}
+               </div>
+             )}
           </Card>
         </div>
 

@@ -176,16 +176,27 @@ export const Navbar = () => {
               
               {/* Mobile auth button */}
               <div className="border-t border-slate-200 dark:border-slate-800 mt-2 pt-3 flex flex-col gap-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full rounded-xl gap-2 justify-start px-4"
+                  onClick={() => {
+                    toggleTheme();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  {theme === 'dark' ? <><Sun size={18} className="text-amber-400" /> Light Mode</> : <><Moon size={18} className="text-slate-600" /> Dark Mode</>}
+                </Button>
+                
                 {currentUser ? (
                   <>
                     <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full rounded-xl gap-2">
+                      <Button variant="outline" className="w-full rounded-xl gap-2 justify-start px-4">
                         <User size={18} /> Profile
                       </Button>
                     </Link>
                     <Button 
                       variant="ghost" 
-                      className="w-full rounded-xl gap-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                      className="w-full rounded-xl gap-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors justify-start px-4"
                       onClick={async () => {
                         setMobileMenuOpen(false);
                         await signOut();
@@ -197,7 +208,7 @@ export const Navbar = () => {
                   </>
                 ) : (
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="gradient" className="w-full rounded-xl">Sign In</Button>
+                    <Button variant="gradient" className="w-full rounded-xl mt-2">Sign In</Button>
                   </Link>
                 )}
               </div>

@@ -11,7 +11,7 @@ import { QuizResults } from '../components/quiz/QuizResults';
 export default function ActiveQuiz() {
   const { quizId } = useParams();
   const navigate = useNavigate();
-  const { saveQuizScore } = useAppStore();
+  const { saveQuizScore, addXP } = useAppStore();
 
   const quiz = mockQuizzes.find(q => q.id === quizId);
 
@@ -85,6 +85,11 @@ export default function ActiveQuiz() {
       total: quiz.questions.length,
       timeSpent: quiz.timeLimit - timeLeft
     });
+
+    // Award XP
+    if (score > 0) {
+      addXP(score * 10);
+    }
   };
 
   const formatTime = (seconds) => {

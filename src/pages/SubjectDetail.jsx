@@ -123,13 +123,13 @@ export const SubjectDetail = () => {
       <div className="relative py-12 flex flex-col items-center">
         {/* The Path SVG Background */}
         <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-32 md:w-64 z-0 pointer-events-none opacity-20 dark:opacity-30">
-          <svg width="100%" height="100%" preserveAspectRatio="none">
+          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path
-              d={`M 50%,0 ${modules.map((_, i) => `Q ${i % 2 === 0 ? '100%' : '0%'},${((i + 0.5) / modules.length) * 100}% 50%,${((i + 1) / modules.length) * 100}%`).join(' ')}`}
+              d={`M 50,0 ${modules.map((_, i) => `Q ${i % 2 === 0 ? '100' : '0'},${((i + 0.5) / modules.length) * 100} 50,${((i + 1) / modules.length) * 100}`).join(' ')}`}
               fill="none"
               stroke="currentColor"
-              strokeWidth="8"
-              strokeDasharray="16 16"
+              strokeWidth="1"
+              strokeDasharray="2 2"
               strokeLinecap="round"
               className="text-slate-400"
             />

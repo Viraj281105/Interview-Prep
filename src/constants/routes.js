@@ -12,6 +12,7 @@ export const ROUTES = {
   COMPANIES: '/companies',
   COMPANY_PROFILE: '/companies/:id',
   MOCK: '/mock',
+  ROADMAP: '/roadmap',
   AI: '/ai',
   LEADERBOARD: '/leaderboard',
   ANALYTICS: '/analytics',
@@ -26,7 +27,8 @@ export const NAV_LINKS = [
   { name: 'Dashboard', path: ROUTES.DASHBOARD },
   { name: 'Subjects', path: ROUTES.SUBJECTS },
   { name: 'Companies', path: ROUTES.COMPANIES },
-  { name: 'Mock Interview', path: ROUTES.MOCK },
+  { name: 'Mock', path: ROUTES.MOCK },
+  { name: 'Roadmap', path: ROUTES.ROADMAP },
   { name: 'Quiz', path: ROUTES.QUIZ },
 ];
 
@@ -36,6 +38,7 @@ export const MOBILE_NAV_LINKS = [
   { name: 'Subjects', path: ROUTES.SUBJECTS },
   { name: 'Companies', path: ROUTES.COMPANIES },
   { name: 'Mock Interview', path: ROUTES.MOCK },
+  { name: 'Roadmap', path: ROUTES.ROADMAP },
   { name: 'Quiz', path: ROUTES.QUIZ },
   { name: 'AI Assistant', path: ROUTES.AI },
   { name: 'Leaderboard', path: ROUTES.LEADERBOARD },
