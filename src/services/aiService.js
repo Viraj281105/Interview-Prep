@@ -18,45 +18,87 @@ export const aiService = {
   evaluateAnswer: async (question, answer, type) => {
     await simulateLatency();
 
-    // Basic heuristic grading for mock realism
+    const ansLower = answer.toLowerCase();
     const wordCount = answer.split(/\s+/).length;
     let score = 0;
     let strengths = [];
     let weaknesses = [];
     let feedback = "";
+    let idealAnswer = "";
 
-    if (wordCount < 10) {
-      score = 3;
-      weaknesses.push("Answer is too brief", "Lacks technical depth");
-      feedback = "Your answer was very short. In a real interview, you should elaborate on your thought process and provide specific details.";
-    } else if (wordCount < 30) {
+    // 1. Base Score on length and detail
+    if (wordCount < 15) {
+      score = 4;
+      weaknesses.push("Answer is too brief and lacks depth.");
+      feedback = "Your answer was extremely short. In a technical interview, you must elaborate on the 'why' and 'how', not just state a fact.";
+    } else if (wordCount < 40) {
       score = 6;
-      strengths.push("Concise");
-      weaknesses.push("Could expand on edge cases", "Needs more detailed explanation");
-      feedback = "Good start, but you missed some important edge cases. Always try to mention time/space complexity if applicable.";
+      strengths.push("Direct and concise.");
+      weaknesses.push("Could expand on edge cases and deeper mechanics.", "Needs more detailed explanation.");
+      feedback = "Good start, but you missed deeper architectural details. Always try to mention trade-offs or alternatives.";
     } else {
       score = Math.min(10, 7 + Math.floor(Math.random() * 3));
-      strengths.push("Detailed explanation", "Good coverage of the topic");
-      if (score < 10) weaknesses.push("Could be structured more clearly");
-      feedback = "Excellent answer! You covered the main points well and provided sufficient detail.";
+      strengths.push("Detailed explanation.", "Good coverage of the core topic.");
+      if (score < 10) weaknesses.push("Could be structured more clearly to avoid rambling.");
+      feedback = "Excellent answer! You covered the main points well and provided sufficient technical depth.";
     }
 
-    if (type === 'dsa' && !answer.includes('O(') && !answer.toLowerCase().includes('complexity')) {
-      weaknesses.push("Did not mention Big-O complexity");
-      score = Math.max(0, score - 2);
+    // 2. Subject-specific checks
+    if (type === 'dsa') {
+      idealAnswer = "An ideal answer explicitly states the core data structure used, walks through an example, and analyzes Time (Big-O) and Space complexity.";
+      if (!ansLower.includes('o(') && !ansLower.includes('complexity') && !ansLower.includes('time') && !ansLower.includes('space')) {
+        weaknesses.push("Did not mention Big-O complexity.");
+        feedback += " You completely forgot to mention the time and space complexity, which is an automatic red flag in FAANG interviews.";
+        score = Math.max(0, score - 2);
+      } else {
+        strengths.push("Mentioned algorithmic complexity.");
+      }
+    } 
+    else if (type === 'db-sql') {
+      idealAnswer = "An ideal answer discusses the query plan, indexing strategies (B-Trees), table locking, and isolation levels.";
+      if (!ansLower.includes('index') && !ansLower.includes('join') && !ansLower.includes('normaliz')) {
+        weaknesses.push("Failed to mention database indexing or schema design trade-offs.");
+        score = Math.max(0, score - 1);
+      } else {
+        strengths.push("Correctly identified database optimization techniques.");
+      }
+    }
+    else if (type === 'core-os') {
+      idealAnswer = "An ideal answer discusses concurrency (threads vs processes), memory management (paging/virtual memory), or locks (mutex/semaphores).";
+      if (!ansLower.includes('thread') && !ansLower.includes('memory') && !ansLower.includes('process') && !ansLower.includes('lock')) {
+        weaknesses.push("Missed core OS terminology (e.g., threads, paging, locks).");
+        score = Math.max(0, score - 1);
+      }
+    }
+    else if (type === 'system-design') {
+      idealAnswer = "An ideal answer covers the API design, database schema, scaling bottlenecks (Load Balancers, Caching, Sharding), and trade-offs (CAP theorem).";
+      if (!ansLower.includes('scale') && !ansLower.includes('cache') && !ansLower.includes('database') && !ansLower.includes('load balanc')) {
+        weaknesses.push("Did not address system scaling or bottlenecks.");
+        score = Math.max(0, score - 2);
+      }
+    }
+    else if (type === 'behavioral') {
+      idealAnswer = "An ideal answer uses the STAR method (Situation, Task, Action, Result) and highlights measurable impact or lessons learned.";
+      if (!ansLower.includes('result') && !ansLower.includes('action') && !ansLower.includes('learn')) {
+        weaknesses.push("Did not fully follow the STAR method or highlight the actual result.");
+        feedback += " Try to structure your behavioral answers using the STAR (Situation, Task, Action, Result) method and focus heavily on the 'Result'.";
+        score = Math.max(0, score - 1);
+      } else {
+        strengths.push("Followed a structured storytelling approach.");
+      }
+    } else {
+      idealAnswer = "An ideal answer directly addresses the core concepts, discusses alternatives, and provides real-world examples.";
     }
 
-    if (type === 'behavioral' && (!answer.toLowerCase().includes('result') || !answer.toLowerCase().includes('action'))) {
-      weaknesses.push("Did not fully follow the STAR method");
-      feedback += " Try to structure your behavioral answers using the STAR (Situation, Task, Action, Result) method.";
-    }
+    // Ensure score is at least 1
+    score = Math.max(1, score);
 
     return {
-      score,
+      score, // out of 10
       strengths,
       weaknesses,
       feedback,
-      idealAnswer: "An ideal answer would explicitly state the core concept, discuss trade-offs, and correctly analyze time/space complexity (if technical) or use the STAR method (if behavioral)."
+      idealAnswer
     };
   },
 
@@ -66,38 +108,103 @@ export const aiService = {
   generateFollowUp: async (previousQuestion, answer, type) => {
     await simulateLatency();
     
-    if (type === 'dsa') {
-      return "How would your solution change if the input size was 100x larger and couldn't fit in memory?";
-    } else if (type === 'system-design') {
-      return "What happens if the primary database node goes down during a peak traffic event?";
-    } else {
-      return "Can you give me a specific example of when that approach failed, and what you learned from it?";
-    }
+    if (type === 'dsa') return "How would your solution change if the input size was 100x larger and couldn't fit in memory?";
+    if (type === 'system-design') return "What happens if the primary database node goes down during a peak traffic event?";
+    if (type === 'db-sql') return "How would this query perform if the table had 1 billion rows? Would your index still work efficiently?";
+    if (type === 'core-os') return "Can you explain how this concept might lead to a deadlock or a race condition?";
+    return "Can you give me a specific example of when that approach failed, and what you learned from it?";
   },
 
   /**
    * Generate a personalized prep roadmap
    */
   generateRoadmap: async (targetCompanies, skillLevel, prepTimeWeeks) => {
+    const groqKey = import.meta.env.VITE_GROQ_API_KEY;
+
+    if (groqKey) {
+      try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${groqKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            response_format: { type: "json_object" },
+            messages: [
+              {
+                role: "system",
+                content: `You are an expert technical interviewer and career coach. Return a JSON object with the exact following structure:
+{
+  "title": "String",
+  "summary": "String",
+  "weeks": [
+    { "week": Number, "title": "String", "focus": "String", "tasks": ["String", "String", "String"] }
+  ]
+}
+The output MUST be valid JSON.`
+              },
+              {
+                role: "user",
+                content: `Create a ${prepTimeWeeks}-week technical interview preparation roadmap for a ${skillLevel} software engineer targeting these companies: ${targetCompanies.length > 0 ? targetCompanies.join(', ') : 'top tech companies'}. Ensure tasks are realistic for the week.`
+              }
+            ]
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const content = data.choices[0].message.content;
+          return JSON.parse(content);
+        } else {
+          console.error("Groq API error, falling back to local heuristics", await response.text());
+        }
+      } catch (error) {
+        console.error("Failed to connect to Groq, falling back to local heuristics:", error);
+      }
+    }
+
+    // --- FALLBACK: Advanced Local Heuristics ---
     await simulateLatency();
 
-    const weeks = [];
-    const topics = [
-      "Arrays & Strings", "Two Pointers", "Sliding Window", 
-      "Linked Lists", "Trees & Graphs", "Dynamic Programming", 
-      "System Design Fundamentals", "Behavioral & Leadership"
-    ];
+    const companies = targetCompanies.map(c => c.toLowerCase());
+    const isGoogle = companies.some(c => c.includes('google') || c.includes('meta') || c.includes('amazon'));
+    const isStripe = companies.some(c => c.includes('stripe') || c.includes('airbnb') || c.includes('shopify'));
+    const isSystemHeavy = companies.some(c => c.includes('netflix') || c.includes('uber') || c.includes('databricks'));
 
+    let topics = [];
+    
+    if (isStripe) {
+      topics = ["API Design & REST", "Practical Integration Tasks", "Frontend Architecture", "Bug Squashing", "Concurrency", "Behavioral & Values"];
+    } else if (isSystemHeavy) {
+      topics = ["Distributed Systems Intro", "Concurrency & OS", "Advanced System Design", "Microservices", "Hard DSA", "Behavioral (Culture Fit)"];
+    } else if (isGoogle) {
+      topics = ["Graphs & Trees", "Dynamic Programming", "Advanced Data Structures", "System Design Fundamentals", "Mock Interview Loop"];
+    } else {
+      topics = ["Arrays & Hashmaps", "Two Pointers", "Trees", "System Design Basics", "Behavioral & STAR Method"];
+    }
+
+    if (skillLevel === 'Beginner') {
+      topics.unshift("Basic Data Structures", "Big-O Notation");
+    } else if (skillLevel === 'Advanced') {
+      topics = topics.map(t => "Advanced " + t);
+      topics.push("System Architecture Deep Dive");
+    }
+
+    const weeks = [];
     for (let i = 0; i < prepTimeWeeks; i++) {
       const isReviewWeek = i === prepTimeWeeks - 1;
+      const topic = topics[i % topics.length];
+      
       weeks.push({
         week: i + 1,
-        title: isReviewWeek ? "Review & Mock Interviews" : `Mastering ${topics[i % topics.length]}`,
-        focus: isReviewWeek ? "Full-length mock loops and weak area targeting" : `Deep dive into ${topics[i % topics.length]} patterns often asked at ${targetCompanies[0] || 'Top Tech'}`,
+        title: isReviewWeek ? "Review & Full Mock Loops" : `Mastering ${topic}`,
+        focus: isReviewWeek ? "Simulating high-pressure onsite loops." : `Deep dive into ${topic} patterns asked by ${targetCompanies[0] || 'top companies'}.`,
         tasks: [
-          `Complete 5 ${skillLevel} level LeetCode questions`,
-          isReviewWeek ? "Do 2 full mock interview loops" : "Review foundational concepts for 1 hour",
-          `Read 2 interview experiences for ${targetCompanies.join(', ') || 'MAANG'}`
+          `Complete 5 ${skillLevel} level questions related to ${topic}`,
+          isReviewWeek ? "Do 2 full mock interview loops back-to-back" : "Read 1 architecture blog post or engineering article",
+          `Do a 45-minute timed mock interview for ${topic}`
         ]
       });
     }

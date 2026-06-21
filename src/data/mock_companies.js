@@ -1,9 +1,6 @@
 export const mockCompanies = [
   { 
-    id: 'google', 
-    name: 'Google', 
-    type: 'Product-based', 
-    difficulty: 'Hard', 
+    id: 'google', name: 'Google', type: 'Product-based', difficulty: 'Hard', 
     color: 'from-blue-500 to-green-500',
     tags: ['FAANG', 'Algorithms', 'System Design', 'C++'],
     description: 'Known for algorithmic rigor. Expect dynamic programming, graphs, and system design in onsite rounds.', 
@@ -16,10 +13,7 @@ export const mockCompanies = [
     ]
   },
   { 
-    id: 'meta', 
-    name: 'Meta', 
-    type: 'Product-based', 
-    difficulty: 'Hard', 
+    id: 'meta', name: 'Meta', type: 'Product-based', difficulty: 'Hard', 
     color: 'from-blue-600 to-indigo-600',
     tags: ['FAANG', 'React', 'Frontend', 'Scale'],
     description: 'Heavy focus on speed and accuracy. Questions are often variants of top LeetCode problems.', 
@@ -31,10 +25,7 @@ export const mockCompanies = [
     ]
   },
   { 
-    id: 'amazon', 
-    name: 'Amazon', 
-    type: 'Product-based', 
-    difficulty: 'Medium', 
+    id: 'amazon', name: 'Amazon', type: 'Product-based', difficulty: 'Medium', 
     color: 'from-orange-400 to-amber-500',
     tags: ['FAANG', 'Leadership', 'OOD', 'Java'],
     description: 'Heavy focus on Leadership Principles (LPs). Be prepared for behavioral questions integrated with technical rounds.', 
@@ -45,10 +36,7 @@ export const mockCompanies = [
     ]
   },
   { 
-    id: 'netflix', 
-    name: 'Netflix', 
-    type: 'Product-based', 
-    difficulty: 'Hard', 
+    id: 'netflix', name: 'Netflix', type: 'Product-based', difficulty: 'Hard', 
     color: 'from-red-500 to-rose-700',
     tags: ['FAANG', 'Microservices', 'Culture', 'Senior'],
     description: 'Hires mostly senior engineers. High bar for system design, culture fit, and domain expertise.', 
@@ -60,10 +48,7 @@ export const mockCompanies = [
     ]
   },
   { 
-    id: 'microsoft', 
-    name: 'Microsoft', 
-    type: 'Product-based', 
-    difficulty: 'Medium', 
+    id: 'microsoft', name: 'Microsoft', type: 'Product-based', difficulty: 'Medium', 
     color: 'from-blue-400 to-cyan-500',
     tags: ['FAANG', 'C#', 'OS', 'Fundamentals'],
     description: 'Focus on core computer science fundamentals, OS concepts, and system design.', 
@@ -74,10 +59,7 @@ export const mockCompanies = [
     ]
   },
   { 
-    id: 'stripe', 
-    name: 'Stripe', 
-    type: 'Fintech', 
-    difficulty: 'Hard', 
+    id: 'stripe', name: 'Stripe', type: 'Fintech', difficulty: 'Hard', 
     color: 'from-indigo-500 to-purple-600',
     tags: ['Fintech', 'Integration', 'APIs', 'Ruby'],
     description: 'Unique interview process focusing on practical coding, debugging, and API integration rather than algorithmic puzzles.', 
@@ -86,6 +68,493 @@ export const mockCompanies = [
       { title: "Bug Squash Round", desc: "Given an existing codebase, find and fix bugs." },
       { title: "Integration Round", desc: "Use an API to fetch data and process it." },
       { title: "System Design", desc: "Design a scalable API or financial ledger system." }
+    ]
+  },
+  {
+    id: 'apple', name: 'Apple', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-slate-700 to-slate-900',
+    tags: ['FAANG', 'Hardware', 'iOS', 'C'],
+    description: 'Interviews are heavily team-dependent. Focus on deep domain knowledge and low-level understanding.',
+    experienceCount: 110,
+    hiringProcess: [
+      { title: "Recruiter Screen", desc: "Background check and team fit." },
+      { title: "Technical Screen", desc: "FaceTime or WebEx. LeetCode Medium/Hard." },
+      { title: "Onsite Loop", desc: "5-6 rounds. Deep domain focus, architecture, and team lunch." }
+    ]
+  },
+  {
+    id: 'linkedin', name: 'LinkedIn', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-blue-700 to-sky-600',
+    tags: ['Social', 'Graphs', 'Java', 'Scaling'],
+    description: 'High bar for system design and graph algorithms. Concurrency in Java is heavily tested.',
+    experienceCount: 75,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "1 hour. Usually 2 medium algorithmic questions." },
+      { title: "Onsite Loop", desc: "2 Coding, 1 System Design, 1 Host Manager, 1 Technical Communication." }
+    ]
+  },
+  {
+    id: 'uber', name: 'Uber', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-slate-900 to-black',
+    tags: ['Logistics', 'Distributed Systems', 'Go', 'Microservices'],
+    description: 'Requires strong understanding of distributed systems, high availability, and real-time processing.',
+    experienceCount: 98,
+    hiringProcess: [
+      { title: "Online Assessment", desc: "Codesignal test, typically highly competitive." },
+      { title: "Phone Screen", desc: "Data structures and algorithms." },
+      { title: "Onsite Loop", desc: "Architecture, coding, and a deep dive into previous experience." }
+    ]
+  },
+  {
+    id: 'airbnb', name: 'Airbnb', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-rose-500 to-pink-600',
+    tags: ['Marketplace', 'Frontend', 'Ruby', 'Culture'],
+    description: 'Famous for their core values interviews. Technical rounds focus on practical application development.',
+    experienceCount: 65,
+    hiringProcess: [
+      { title: "Take-Home or OA", desc: "Practical coding exercise." },
+      { title: "Onsite Loop", desc: "2 Coding, 1 Architecture, 2 Core Values rounds." }
+    ]
+  },
+  {
+    id: 'databricks', name: 'Databricks', type: 'Data', difficulty: 'Expert',
+    color: 'from-orange-500 to-red-500',
+    tags: ['Big Data', 'Spark', 'Scala', 'Distributed'],
+    description: 'Extremely high technical bar. Focus on big data concepts, concurrency, and low-level optimizations.',
+    experienceCount: 42,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Data structures and algorithms." },
+      { title: "Onsite Loop", desc: "4 technical rounds including distributed systems and concurrency." }
+    ]
+  },
+  {
+    id: 'snowflake', name: 'Snowflake', type: 'Data', difficulty: 'Expert',
+    color: 'from-sky-400 to-blue-500',
+    tags: ['Database', 'C++', 'Cloud', 'Analytics'],
+    description: 'Deep focus on database internals, C++, and cloud infrastructure.',
+    experienceCount: 38,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Algorithms and Data Structures." },
+      { title: "Onsite Loop", desc: "Systems engineering, DB internals, and coding." }
+    ]
+  },
+  {
+    id: 'bloomberg', name: 'Bloomberg', type: 'Fintech', difficulty: 'Medium',
+    color: 'from-slate-800 to-slate-950',
+    tags: ['Finance', 'C++', 'Python', 'System Design'],
+    description: 'Strong preference for C++ and Python. Questions often revolve around string manipulation and arrays.',
+    experienceCount: 155,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "HackerRank live coding, typically strings/arrays." },
+      { title: "Onsite Loop", desc: "3-4 technical rounds, meeting with HR, often completed in one day." }
+    ]
+  },
+  {
+    id: 'palantir', name: 'Palantir', type: 'Data', difficulty: 'Hard',
+    color: 'from-slate-700 to-slate-900',
+    tags: ['Data', 'Security', 'Algorithms', 'Java'],
+    description: 'Very algorithmic heavy. Expect complex data structure questions and a system design round.',
+    experienceCount: 50,
+    hiringProcess: [
+      { title: "Karat Screen", desc: "45 mins live coding with a third-party interviewer." },
+      { title: "Onsite Loop", desc: "Learning round, Coding round, System Design, and Behavioral." }
+    ]
+  },
+  {
+    id: 'robinhood', name: 'Robinhood', type: 'Fintech', difficulty: 'Hard',
+    color: 'from-emerald-400 to-teal-500',
+    tags: ['Fintech', 'Python', 'React', 'Trading'],
+    description: 'Focus on high throughput systems, transaction processing, and practical application development.',
+    experienceCount: 45,
+    hiringProcess: [
+      { title: "Karat/OA", desc: "Initial technical screening." },
+      { title: "Onsite Loop", desc: "Architecture, Data Structures, and Past Experience." }
+    ]
+  },
+  {
+    id: 'coinbase', name: 'Coinbase', type: 'Fintech', difficulty: 'Hard',
+    color: 'from-blue-500 to-blue-700',
+    tags: ['Crypto', 'Ruby', 'Go', 'Security'],
+    description: 'Security and accuracy are paramount. They heavily use paired programming in interviews.',
+    experienceCount: 55,
+    hiringProcess: [
+      { title: "Pair Programming", desc: "Practical coding with a Coinbase engineer." },
+      { title: "Onsite Loop", desc: "System Design, Pair Programming, and Culture." }
+    ]
+  },
+  {
+    id: 'doordash', name: 'DoorDash', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-red-500 to-orange-500',
+    tags: ['Logistics', 'Algorithms', 'System Design'],
+    description: 'Known for difficult dynamic programming and graph questions.',
+    experienceCount: 88,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Algorithms and Data Structures." },
+      { title: "Onsite Loop", desc: "2 Coding, 1 System Design, 1 Behavioral." }
+    ]
+  },
+  {
+    id: 'spotify', name: 'Spotify', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-green-500 to-emerald-600',
+    tags: ['Audio', 'Java', 'Data Engineering'],
+    description: 'Focuses heavily on culture fit and system design for scale.',
+    experienceCount: 72,
+    hiringProcess: [
+      { title: "Technical Screen", desc: "Standard algorithmic coding round." },
+      { title: "Onsite Loop", desc: "System Design, Coding, and Values." }
+    ]
+  },
+  {
+    id: 'twitter', name: 'X / Twitter', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-slate-800 to-black',
+    tags: ['Social', 'Scala', 'Real-time', 'Systems'],
+    description: 'Requires strong understanding of distributed systems and real-time data pipelines.',
+    experienceCount: 60,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Standard coding interview." },
+      { title: "Onsite Loop", desc: "Systems engineering, algorithms, and team fit." }
+    ]
+  },
+  {
+    id: 'snap', name: 'Snap', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-yellow-400 to-amber-500',
+    tags: ['Social', 'C++', 'AR', 'Mobile'],
+    description: 'High bar for algorithms, specifically graphs and trees. Strong mobile/AR focus.',
+    experienceCount: 52,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Usually a medium to hard LeetCode question." },
+      { title: "Onsite Loop", desc: "3 Coding rounds, 1 System Design, 1 Behavioral." }
+    ]
+  },
+  {
+    id: 'bytedance', name: 'ByteDance', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-cyan-400 to-blue-500',
+    tags: ['Social', 'Algorithms', 'Go', 'Scale'],
+    description: 'Very algorithmic heavy. High volume of interviews, often requiring DP and advanced graphs.',
+    experienceCount: 130,
+    hiringProcess: [
+      { title: "Multiple Phone Screens", desc: "2-3 rounds of strict algorithmic coding." },
+      { title: "Onsite/Final Loop", desc: "More coding and System Design." }
+    ]
+  },
+  {
+    id: 'atlassian', name: 'Atlassian', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-blue-600 to-blue-800',
+    tags: ['B2B', 'Java', 'React', 'Values'],
+    description: 'Values-driven interview process. Practical coding and system design over puzzle questions.',
+    experienceCount: 85,
+    hiringProcess: [
+      { title: "Code Design", desc: "OOD and practical coding round." },
+      { title: "System Design", desc: "Designing a feature or a system from scratch." },
+      { title: "Values Round", desc: "Behavioral interview focused on company values." }
+    ]
+  },
+  {
+    id: 'adobe', name: 'Adobe', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-red-600 to-red-800',
+    tags: ['B2B', 'C++', 'Java', 'Frontend'],
+    description: 'Focus on C++, Java, and standard data structures. Known for a good work-life balance.',
+    experienceCount: 105,
+    hiringProcess: [
+      { title: "Online Assessment", desc: "Standard aptitude and coding test." },
+      { title: "Onsite Loop", desc: "4 Technical rounds focusing on OOP, core CS concepts, and coding." }
+    ]
+  },
+  {
+    id: 'salesforce', name: 'Salesforce', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-blue-400 to-sky-600',
+    tags: ['B2B', 'Java', 'Apex', 'Cloud'],
+    description: 'Focus on enterprise scale, Java, and object-oriented design.',
+    experienceCount: 110,
+    hiringProcess: [
+      { title: "HackerRank OA", desc: "2-3 coding questions." },
+      { title: "Onsite Loop", desc: "System Design, OOD, and Behavioral." }
+    ]
+  },
+  {
+    id: 'oracle', name: 'Oracle', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-red-500 to-rose-700',
+    tags: ['B2B', 'Database', 'Java', 'Cloud'],
+    description: 'Heavy focus on Java, databases, and core computer science fundamentals.',
+    experienceCount: 120,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Technical screening focusing on core concepts." },
+      { title: "Onsite Loop", desc: "Multiple technical rounds, sometimes including a presentation." }
+    ]
+  },
+  {
+    id: 'ibm', name: 'IBM', type: 'Product-based', difficulty: 'Easy',
+    color: 'from-blue-700 to-blue-900',
+    tags: ['B2B', 'Cloud', 'Enterprise', 'AI'],
+    description: 'Standard interview process. Focus on fundamentals, resume deep dive, and behavioral questions.',
+    experienceCount: 150,
+    hiringProcess: [
+      { title: "Cognitive Assessment", desc: "Online aptitude and coding test." },
+      { title: "Onsite", desc: "Mix of technical and behavioral interviews." }
+    ]
+  },
+  {
+    id: 'cisco', name: 'Cisco', type: 'Product-based', difficulty: 'Easy',
+    color: 'from-sky-500 to-blue-600',
+    tags: ['Networking', 'C', 'Python', 'Hardware'],
+    description: 'Focuses heavily on networking concepts, C programming, and standard algorithms.',
+    experienceCount: 95,
+    hiringProcess: [
+      { title: "OA", desc: "Online assessment focusing on networking and coding." },
+      { title: "Onsite Loop", desc: "Technical interviews and behavioral." }
+    ]
+  },
+  {
+    id: 'intel', name: 'Intel', type: 'Hardware', difficulty: 'Medium',
+    color: 'from-blue-500 to-cyan-500',
+    tags: ['Hardware', 'C', 'C++', 'Architecture'],
+    description: 'Requires deep understanding of computer architecture, operating systems, and low-level programming.',
+    experienceCount: 65,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Technical screening on architecture and C." },
+      { title: "Onsite Loop", desc: "Deep technical rounds focusing on low-level systems." }
+    ]
+  },
+  {
+    id: 'amd', name: 'AMD', type: 'Hardware', difficulty: 'Medium',
+    color: 'from-slate-800 to-slate-950',
+    tags: ['Hardware', 'C++', 'Architecture', 'GPU'],
+    description: 'Similar to Intel, focus is on computer architecture, GPUs, and performance optimization.',
+    experienceCount: 40,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Technical screening." },
+      { title: "Onsite Loop", desc: "Technical deep dives." }
+    ]
+  },
+  {
+    id: 'nvidia', name: 'NVIDIA', type: 'Hardware', difficulty: 'Hard',
+    color: 'from-green-500 to-emerald-600',
+    tags: ['Hardware', 'AI', 'CUDA', 'C++'],
+    description: 'Extremely high technical bar. Focus on AI, parallel computing, CUDA, and C++.',
+    experienceCount: 75,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Algorithms, math, and C++." },
+      { title: "Onsite Loop", desc: "Intense technical rounds covering architecture, algorithms, and parallel processing." }
+    ]
+  },
+  {
+    id: 'qualtrics', name: 'Qualtrics', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-red-500 to-rose-600',
+    tags: ['B2B', 'SaaS', 'Web', 'Data'],
+    description: 'Standard software engineering interviews with a focus on web architecture and algorithms.',
+    experienceCount: 45,
+    hiringProcess: [
+      { title: "OA", desc: "Online coding assessment." },
+      { title: "Onsite Loop", desc: "Coding, System Design, and Behavioral." }
+    ]
+  },
+  {
+    id: 'slack', name: 'Slack', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-purple-500 to-pink-500',
+    tags: ['B2B', 'Communication', 'Electron', 'Real-time'],
+    description: 'Practical interview process. Often includes a take-home project or practical pair programming.',
+    experienceCount: 50,
+    hiringProcess: [
+      { title: "Practical Screen", desc: "Pair programming or take-home." },
+      { title: "Onsite Loop", desc: "Architecture, coding, and values." }
+    ]
+  },
+  {
+    id: 'zoom', name: 'Zoom', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-blue-500 to-sky-500',
+    tags: ['Video', 'C++', 'WebRTC', 'Scaling'],
+    description: 'Focus on algorithms, concurrency, and real-time networking.',
+    experienceCount: 35,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Standard algorithmic screening." },
+      { title: "Onsite Loop", desc: "Coding and System Design." }
+    ]
+  },
+  {
+    id: 'twilio', name: 'Twilio', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-red-500 to-red-700',
+    tags: ['API', 'Communication', 'Java', 'Scaling'],
+    description: 'Focus on API design, scaling, and practical problem solving.',
+    experienceCount: 60,
+    hiringProcess: [
+      { title: "HackerRank OA", desc: "Coding assessment." },
+      { title: "Onsite Loop", desc: "System Design, pair programming, and behavioral." }
+    ]
+  },
+  {
+    id: 'square', name: 'Square (Block)', type: 'Fintech', difficulty: 'Hard',
+    color: 'from-slate-800 to-slate-900',
+    tags: ['Fintech', 'Java', 'Ruby', 'Security'],
+    description: 'High bar for code quality, pair programming, and system design.',
+    experienceCount: 55,
+    hiringProcess: [
+      { title: "Pair Programming", desc: "Heavy focus on pair programming during screens." },
+      { title: "Onsite Loop", desc: "Architecture, coding, and past experience." }
+    ]
+  },
+  {
+    id: 'pinterest', name: 'Pinterest', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-red-600 to-red-800',
+    tags: ['Social', 'Python', 'React', 'Discovery'],
+    description: 'Focus on algorithms, frontend/backend architecture, and culture.',
+    experienceCount: 48,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Karat or standard phone screen." },
+      { title: "Onsite Loop", desc: "Coding, System Design, and Behavioral." }
+    ]
+  },
+  {
+    id: 'lyft', name: 'Lyft', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-pink-500 to-rose-600',
+    tags: ['Logistics', 'Go', 'Microservices', 'Algorithms'],
+    description: 'Similar to Uber, high bar for system design, algorithms, and distributed systems.',
+    experienceCount: 42,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Algorithmic coding." },
+      { title: "Onsite Loop", desc: "System design, coding, and laptop test (practical)." }
+    ]
+  },
+  {
+    id: 'dropbox', name: 'Dropbox', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-blue-600 to-indigo-600',
+    tags: ['Storage', 'Python', 'Go', 'Systems'],
+    description: 'Known for very difficult concurrency and systems design questions.',
+    experienceCount: 68,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Algorithms." },
+      { title: "Onsite Loop", desc: "Systems engineering, coding, and core values." }
+    ]
+  },
+  {
+    id: 'asana', name: 'Asana', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-rose-400 to-red-500',
+    tags: ['B2B', 'Productivity', 'TypeScript', 'Culture'],
+    description: 'Focuses heavily on design patterns, algorithms, and a collaborative work environment.',
+    experienceCount: 30,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Algorithms and Data Structures." },
+      { title: "Onsite Loop", desc: "Design, coding, and behavioral." }
+    ]
+  },
+  {
+    id: 'cloudflare', name: 'Cloudflare', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-orange-400 to-amber-500',
+    tags: ['CDN', 'Security', 'Go', 'Rust', 'Networking'],
+    description: 'Requires deep knowledge of networking protocols, security, and systems-level programming.',
+    experienceCount: 50,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Networking and systems basics." },
+      { title: "Onsite Loop", desc: "Deep technical networking and architecture rounds." }
+    ]
+  },
+  {
+    id: 'fastly', name: 'Fastly', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-red-500 to-rose-700',
+    tags: ['CDN', 'Edge', 'C', 'Networking'],
+    description: 'High bar for low-level systems programming, networking, and edge computing.',
+    experienceCount: 20,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Technical screening." },
+      { title: "Onsite Loop", desc: "Architecture, low-level systems, and coding." }
+    ]
+  },
+  {
+    id: 'shopify', name: 'Shopify', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-green-500 to-emerald-600',
+    tags: ['E-commerce', 'Ruby', 'React', 'Scale'],
+    description: 'Focuses on practical problem solving and past experiences rather than Leetcode puzzles.',
+    experienceCount: 78,
+    hiringProcess: [
+      { title: "Life Story Interview", desc: "Deep dive into your background and experiences." },
+      { title: "Technical Pair Programming", desc: "Building a practical application or fixing bugs." }
+    ]
+  },
+  {
+    id: 'splunk', name: 'Splunk', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-pink-600 to-rose-700',
+    tags: ['Data', 'Security', 'C++', 'Python'],
+    description: 'Focus on big data processing, search algorithms, and distributed systems.',
+    experienceCount: 40,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Coding and algorithms." },
+      { title: "Onsite Loop", desc: "System Design and technical deep dives." }
+    ]
+  },
+  {
+    id: 'roku', name: 'Roku', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-purple-600 to-indigo-700',
+    tags: ['Streaming', 'C++', 'BrightScript', 'Embedded'],
+    description: 'Focus on embedded systems, C++, and streaming technologies.',
+    experienceCount: 35,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Algorithms and Data Structures." },
+      { title: "Onsite Loop", desc: "System design, coding, and behavioral." }
+    ]
+  },
+  {
+    id: 'roblox', name: 'Roblox', type: 'Product-based', difficulty: 'Hard',
+    color: 'from-slate-700 to-slate-900',
+    tags: ['Gaming', 'C++', 'Lua', 'Scale'],
+    description: 'High bar for algorithms, C++, and system design to support massive concurrent users.',
+    experienceCount: 45,
+    hiringProcess: [
+      { title: "Cognitive/Coding OA", desc: "Online assessment." },
+      { title: "Onsite Loop", desc: "Intense coding and system design rounds." }
+    ]
+  },
+  {
+    id: 'intuit', name: 'Intuit', type: 'Product-based', difficulty: 'Medium',
+    color: 'from-blue-500 to-cyan-500',
+    tags: ['Fintech', 'Java', 'React', 'AWS'],
+    description: 'Standard software engineering interviews focusing on object-oriented design and algorithms.',
+    experienceCount: 82,
+    hiringProcess: [
+      { title: "Karat Screen", desc: "Technical screening." },
+      { title: "Onsite Loop", desc: "Craft demonstration, system design, and behavioral." }
+    ]
+  },
+  {
+    id: 'paypal', name: 'PayPal', type: 'Fintech', difficulty: 'Medium',
+    color: 'from-blue-700 to-blue-900',
+    tags: ['Fintech', 'Java', 'JavaScript', 'Payments'],
+    description: 'Focus on secure coding practices, REST APIs, and system design for transactional systems.',
+    experienceCount: 110,
+    hiringProcess: [
+      { title: "HackerRank OA", desc: "Coding assessment." },
+      { title: "Onsite Loop", desc: "Technical and behavioral rounds." }
+    ]
+  },
+  {
+    id: 'visa', name: 'Visa', type: 'Fintech', difficulty: 'Medium',
+    color: 'from-blue-600 to-indigo-800',
+    tags: ['Fintech', 'Java', 'Scale', 'Security'],
+    description: 'Interviews emphasize reliability, security, and scale for payment processing.',
+    experienceCount: 60,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Technical screening." },
+      { title: "Onsite Loop", desc: "System Design and coding." }
+    ]
+  },
+  {
+    id: 'mastercard', name: 'Mastercard', type: 'Fintech', difficulty: 'Medium',
+    color: 'from-orange-500 to-red-600',
+    tags: ['Fintech', 'Java', 'Security', 'Payments'],
+    description: 'Similar to Visa, focus is on secure, high-throughput transaction processing.',
+    experienceCount: 55,
+    hiringProcess: [
+      { title: "Phone Screen", desc: "Technical screening." },
+      { title: "Onsite Loop", desc: "Technical and behavioral rounds." }
+    ]
+  },
+  {
+    id: 'capital_one', name: 'Capital One', type: 'Fintech', difficulty: 'Easy',
+    color: 'from-red-600 to-red-800',
+    tags: ['Fintech', 'AWS', 'Java', 'Data'],
+    description: 'Known for a heavily standardized interview process with a focus on case studies and behavioral questions.',
+    experienceCount: 140,
+    hiringProcess: [
+      { title: "Online Assessment", desc: "CodeSignal test." },
+      { title: "Power Day (Onsite)", desc: "1 Case Study, 1 Technical, 1 Behavioral." }
     ]
   }
 ];

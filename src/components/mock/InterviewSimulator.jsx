@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { Video, VideoOff, Mic, MicOff, AlertCircle, Clock, Send, Sparkles } from 'lucide-react';
+import { Video, VideoOff, Mic, MicOff, AlertCircle, Clock, Send, Sparkles, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InterviewFeedback } from './InterviewFeedback';
 import { generateMockQuestions } from '../../utils/mockInterviewGenerator';
@@ -22,9 +22,55 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluation, setEvaluation] = useState(null);
   
+  const [transcript, setTranscript] = useState([]);
+  
   const [showFeedback, setShowFeedback] = useState(false);
   
+  // Voice AI states
+  const [isAiSpeaking, setIsAiSpeaking] = useState(false);
+  const [isDictating, setIsDictating] = useState(false);
+  const [speechSupported] = useState('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
+  const recognitionRef = useRef(null);
+  
   const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (speechSupported) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      
+      recognitionRef.current.onresult = (event) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        
+        // Append final transcript and show interim
+        if (finalTranscript) {
+          setUserAnswer(prev => prev + (prev.endsWith(' ') ? '' : ' ') + finalTranscript);
+        }
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsDictating(false);
+      };
+    }
+
+    return () => {
+      window.speechSynthesis.cancel();
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [speechSupported]);
 
   useEffect(() => {
     setQuestions(generateMockQuestions(type));
@@ -32,13 +78,57 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
 
   useEffect(() => {
     let timer;
-    if (isStarted && timeLeft > 0) {
+    if (isStarted && timeLeft > 0 && !showFeedback) {
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     } else if (timeLeft === 0 && isStarted) {
       handleEnd();
     }
     return () => clearInterval(timer);
-  }, [isStarted, timeLeft]);
+  }, [isStarted, timeLeft, showFeedback]);
+
+  // Handle AI speaking the question
+  useEffect(() => {
+    if (isStarted && questions.length > 0 && !showFeedback) {
+      speakQuestion(questions[currentQuestionIdx]);
+    }
+  }, [isStarted, currentQuestionIdx, questions, showFeedback]);
+
+  const speakQuestion = (text) => {
+    if (!window.speechSynthesis) return;
+    
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Optional: pick a nice English voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => v.name.includes('Google') && v.lang.startsWith('en')) 
+                        || voices.find(v => v.lang.startsWith('en-US'));
+    if (preferredVoice) utterance.voice = preferredVoice;
+    
+    utterance.rate = 0.95; // slightly slower for clarity
+    
+    utterance.onstart = () => setIsAiSpeaking(true);
+    utterance.onend = () => setIsAiSpeaking(false);
+    utterance.onerror = () => setIsAiSpeaking(false);
+    
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const toggleDictation = () => {
+    if (!speechSupported || !recognitionRef.current) return;
+    
+    if (isDictating) {
+      recognitionRef.current.stop();
+      setIsDictating(false);
+    } else {
+      try {
+        recognitionRef.current.start();
+        setIsDictating(true);
+      } catch (e) {
+        console.error("Speech recognition error:", e);
+      }
+    }
+  };
 
   useEffect(() => {
     startCamera();
@@ -82,11 +172,20 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
 
   const handleSubmitAnswer = async () => {
     if (!userAnswer.trim()) return;
+    
+    if (isDictating && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsDictating(false);
+    }
+    
     setIsEvaluating(true);
     
     try {
       const result = await aiService.evaluateAnswer(questions[currentQuestionIdx], userAnswer, type);
       setEvaluation(result);
+      
+      // Do NOT read evaluation aloud to avoid overwhelming UX, 
+      // but we could if requested.
     } catch (err) {
       console.error(err);
     } finally {
@@ -95,6 +194,13 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
   };
 
   const handleNext = () => {
+    // Save to transcript
+    setTranscript(prev => [...prev, {
+      question: questions[currentQuestionIdx],
+      answer: userAnswer,
+      evaluation: evaluation
+    }]);
+
     setEvaluation(null);
     setUserAnswer('');
     if (currentQuestionIdx < questions.length - 1) {
@@ -106,11 +212,30 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
 
   const handleEnd = () => {
     if (stream) stream.getTracks().forEach(track => track.stop());
+    window.speechSynthesis.cancel();
+    if (isDictating && recognitionRef.current) recognitionRef.current.stop();
+    setIsDictating(false);
+    setIsAiSpeaking(false);
     setShowFeedback(true);
   };
 
   if (showFeedback) {
-    return <InterviewFeedback type={type} duration={type === 'behavioral' ? 30*60 - timeLeft : 45*60 - timeLeft} onExit={onEnd} />;
+    // Save the final answer to transcript if not already saved (happens if interview ends by timeout)
+    const finalTranscript = [...transcript];
+    if (evaluation && finalTranscript.length === currentQuestionIdx) {
+      finalTranscript.push({
+        question: questions[currentQuestionIdx],
+        answer: userAnswer,
+        evaluation: evaluation
+      });
+    }
+
+    return <InterviewFeedback 
+      type={type} 
+      duration={type === 'behavioral' ? 30*60 - timeLeft : 45*60 - timeLeft} 
+      transcript={finalTranscript}
+      onExit={onEnd} 
+    />;
   }
 
   if (questions.length === 0) return null;
@@ -264,8 +389,9 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
                       <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
                       <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
                     </div>
-                    <span className="text-[13px] font-mono text-slate-400">
+                    <span className="text-[13px] font-mono text-slate-400 flex items-center gap-2">
                       {isTechnical ? 'solution.js' : 'your-answer.txt'}
+                      {isDictating && <span className="flex items-center gap-1 text-rose-500 font-sans"><div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></div> Recording...</span>}
                     </span>
                   </div>
                   <div className="flex-1 relative flex">
@@ -288,7 +414,20 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
             )}
           </AnimatePresence>
 
-          <div className="flex justify-end items-center shrink-0 pt-2 gap-4">
+           <div className="flex justify-between items-center shrink-0 pt-2 gap-4">
+            <div className="flex items-center gap-2">
+              {speechSupported && !evaluation && (
+                <Button 
+                  variant={isDictating ? "destructive" : "outline"} 
+                  onClick={toggleDictation}
+                  disabled={isEvaluating}
+                  className={`gap-2 ${isDictating ? 'animate-pulse' : 'border-slate-700 text-slate-300 hover:text-white hover:border-slate-500'}`}
+                >
+                  {isDictating ? <MicOff size={16} /> : <Mic size={16} />}
+                  {isDictating ? 'Stop Dictating' : 'Dictate'}
+                </Button>
+              )}
+            </div>
             {!evaluation ? (
               <Button 
                 onClick={handleSubmitAnswer} 
@@ -334,26 +473,42 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
              <div className="absolute inset-0 bg-gradient-to-b from-brand-indigo/5 to-transparent pointer-events-none"></div>
              
              <div className="w-24 h-24 rounded-full bg-[#1A1A1A] border border-[#333] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(99,102,241,0.1)] relative">
-               <div className={`absolute inset-0 rounded-full border border-brand-indigo/30 opacity-20 ${isEvaluating ? 'animate-spin' : 'animate-ping'}`}></div>
-               {isEvaluating ? <Sparkles size={36} className="text-brand-cyan animate-pulse" /> : <Video size={36} className="text-brand-indigo" />}
+               <div className={`absolute inset-0 rounded-full border border-brand-indigo/30 opacity-20 ${isEvaluating ? 'animate-spin' : (isAiSpeaking ? 'animate-ping' : '')}`}></div>
+               {isAiSpeaking && (
+                 <motion.div 
+                   className="absolute inset-0 rounded-full border-2 border-brand-indigo/60"
+                   animate={{ scale: [1, 1.2, 1], opacity: [0.8, 0, 0.8] }}
+                   transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                 />
+               )}
+               {isEvaluating ? <Sparkles size={36} className="text-brand-cyan animate-pulse" /> : <Volume2 size={36} className={`text-brand-indigo ${isAiSpeaking ? 'animate-pulse' : ''}`} />}
              </div>
              
              <h3 className="font-heading font-bold text-xl mb-2 text-slate-100">
                {isEvaluating ? 'AI Evaluator' : 'AI Interviewer'}
              </h3>
              <p className="text-sm text-slate-400 max-w-[250px] leading-relaxed">
-               {isEvaluating ? 'Analyzing your response for correctness, completeness, and clarity...' : 'Listening to your response. Explain your thought process clearly.'}
+               {isEvaluating 
+                 ? 'Analyzing your response for correctness, completeness, and clarity...' 
+                 : (isAiSpeaking ? 'Speaking...' : 'Listening to your response. Explain your thought process clearly.')}
              </p>
              
-             {!isEvaluating && !evaluation && (
+             {!isEvaluating && !evaluation && isAiSpeaking && (
                <div className="mt-10 flex gap-1.5 items-end h-10">
                  {[1, 2, 3, 4, 5, 6, 7].map(i => (
                    <motion.div 
                      key={i}
                      className="w-2 bg-brand-indigo/80 rounded-full"
                      animate={{ height: ['20%', `${40 + Math.random() * 60}%`, '20%'] }}
-                     transition={{ duration: 0.8 + Math.random() * 0.5, repeat: Infinity, ease: "easeInOut" }}
+                     transition={{ duration: 0.3 + Math.random() * 0.3, repeat: Infinity, ease: "easeInOut" }}
                    />
+                 ))}
+               </div>
+             )}
+             {!isEvaluating && !evaluation && !isAiSpeaking && (
+               <div className="mt-10 flex gap-1.5 items-end h-10 opacity-30">
+                 {[1, 2, 3, 4, 5, 6, 7].map(i => (
+                   <div key={i} className="w-2 h-2 bg-brand-indigo/80 rounded-full" />
                  ))}
                </div>
              )}

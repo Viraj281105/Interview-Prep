@@ -5,7 +5,7 @@ import { CheckCircle2, TrendingUp, AlertCircle, ArrowRight, Clock, Award, Sparkl
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store';
 
-export const InterviewFeedback = ({ type, duration, onExit }) => {
+export const InterviewFeedback = ({ type, duration, transcript, onExit }) => {
   const { saveMockInterview } = useAppStore();
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [feedbackData, setFeedbackData] = useState(null);
@@ -13,21 +13,38 @@ export const InterviewFeedback = ({ type, duration, onExit }) => {
   useEffect(() => {
     // Simulate AI processing delay (3-4 seconds)
     const timer = setTimeout(() => {
-      const score = Math.floor(Math.random() * 20) + 75; // 75-95 score
+      let totalScore = 0;
+      let allStrengths = [];
+      let allWeaknesses = [];
+      
+      if (transcript && transcript.length > 0) {
+        transcript.forEach(t => {
+          if (t.evaluation) {
+            totalScore += t.evaluation.score;
+            if (t.evaluation.strengths) allStrengths.push(...t.evaluation.strengths);
+            if (t.evaluation.weaknesses) allWeaknesses.push(...t.evaluation.weaknesses);
+          }
+        });
+      }
+
+      // Convert 1-10 per question to an overall 0-100 score
+      const maxPossibleScore = (transcript?.length || 1) * 10;
+      const calculatedScore = transcript?.length > 0 ? Math.round((totalScore / maxPossibleScore) * 100) : 0;
+      
+      // Deduplicate strengths and weaknesses to keep it concise
+      const uniqueStrengths = [...new Set(allStrengths)].slice(0, 4);
+      const uniqueWeaknesses = [...new Set(allWeaknesses)].slice(0, 4);
       
       const newFeedback = {
         type,
         duration,
-        score,
-        feedback: type === 'dsa' 
-          ? "Good approach on the first problem, but missed edge cases in the second. Time complexity analysis was strong."
-          : "Structured answers well using the STAR method. Consider taking brief pauses before answering to reduce filler words.",
-        strengths: type === 'dsa' 
-          ? ["Explained time complexity clearly before coding.", "Maintained good eye contact with the camera.", "Wrote clean, modular code."]
-          : ["Structured answers well using the STAR method.", "Communicated thoughts without long silences.", "Demonstrated strong leadership principles."],
-        improvements: type === 'dsa'
-          ? ["Edge cases were missed in the second problem.", "Try to reduce filler words.", "Could have optimized space complexity further."]
-          : ["Try to reduce filler words ('um', 'like').", "Take brief pauses to gather your thoughts instead of rushing.", "Provide more quantifiable metrics in your examples."]
+        score: calculatedScore,
+        feedback: calculatedScore > 80 
+          ? "Excellent performance overall. You demonstrated strong technical depth and clear communication." 
+          : "Good effort, but there are several areas that need significant improvement before a real interview.",
+        strengths: uniqueStrengths.length > 0 ? uniqueStrengths : ["Completed the interview session."],
+        improvements: uniqueWeaknesses.length > 0 ? uniqueWeaknesses : ["Try to provide more detailed answers next time."],
+        transcript: transcript || []
       };
 
       setFeedbackData(newFeedback);

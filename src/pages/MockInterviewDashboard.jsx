@@ -1,17 +1,76 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Video, Code2, Users, Settings, Play, History, CheckCircle2 } from 'lucide-react';
+import { Video, Code2, Users, Settings, Play, History, CheckCircle2, X } from 'lucide-react';
 import { InterviewSimulator } from '../components/mock/InterviewSimulator';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+const TranscriptModal = ({ interview, onClose }) => {
+  if (!interview) return null;
+  return (
+    <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+      >
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+          <div>
+            <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white uppercase tracking-wider">{interview.type.replace('-', ' ')} Mock</h2>
+            <p className="text-sm text-slate-500">Score: {interview.score}/100 • {new Date(interview.date).toLocaleDateString()}</p>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-rose-500 hover:text-white">
+            <X size={20} />
+          </Button>
+        </div>
+        <div className="p-6 overflow-y-auto flex-1 space-y-8 custom-scrollbar">
+          {!interview.transcript || interview.transcript.length === 0 ? (
+            <div className="text-center text-slate-500 py-10">No transcript data available for this session.</div>
+          ) : (
+            interview.transcript.map((t, i) => (
+              <div key={i} className="space-y-4">
+                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <h4 className="text-xs font-bold text-brand-indigo uppercase tracking-wider mb-2">Question {i + 1}</h4>
+                  <p className="text-slate-900 dark:text-slate-100 font-medium">{t.question}</p>
+                </div>
+                <div className="pl-6 border-l-2 border-slate-200 dark:border-slate-700 space-y-2">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Your Answer</h4>
+                  <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap font-mono text-sm">{t.answer || '(No answer provided)'}</p>
+                </div>
+                {t.evaluation && (
+                  <div className="pl-6 border-l-2 border-brand-indigo space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-brand-indigo uppercase tracking-wider">AI Evaluation</h4>
+                      <span className="text-xs font-bold bg-brand-indigo/10 text-brand-indigo px-2 py-1 rounded-md">Score: {t.evaluation.score}/10</span>
+                    </div>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm">{t.evaluation.feedback}</p>
+                    
+                    {t.evaluation.idealAnswer && (
+                      <div className="bg-emerald-50 dark:bg-emerald-900/10 p-3 rounded-lg border border-emerald-100 dark:border-emerald-800/30">
+                        <h5 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">Ideal Approach</h5>
+                        <p className="text-slate-600 dark:text-slate-400 text-xs">{t.evaluation.idealAnswer}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
 
 export const MockInterviewDashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeSession, setActiveSession] = useState(null);
   const [activeCompany, setActiveCompany] = useState(null);
+  const [selectedTranscript, setSelectedTranscript] = useState(null);
   const { mockInterviews } = useAppStore();
 
   useEffect(() => {
@@ -29,6 +88,9 @@ export const MockInterviewDashboard = () => {
     { id: 'behavioral', title: 'Behavioral & HR', icon: Users, desc: 'Practice STAR method, leadership principles, and culture fit questions.', duration: '30 mins' },
     { id: 'dsa', title: 'Data Structures & Algorithms', icon: Code2, desc: 'Live coding environment. Array, Strings, Trees, and Graph problems.', duration: '45 mins' },
     { id: 'system-design', title: 'System Design', icon: Settings, desc: 'High-level architecture and scaling questions.', duration: '60 mins' },
+    { id: 'db-sql', title: 'SQL & Databases', icon: Code2, desc: 'Complex queries, indexing, and database internals.', duration: '45 mins' },
+    { id: 'core-os', title: 'Operating Systems', icon: Settings, desc: 'Concurrency, memory management, and OS internals.', duration: '45 mins' },
+    { id: 'frontend', title: 'Frontend (React/JS)', icon: Code2, desc: 'DOM manipulation, React internals, and performance optimization.', duration: '45 mins' }
   ];
 
   const handleEndSession = () => {
@@ -97,18 +159,25 @@ export const MockInterviewDashboard = () => {
           ) : (
             <div className="flex flex-col gap-4">
               {mockInterviews.map((interview) => (
-                <Card key={interview.id} className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200 dark:border-slate-800 hover:border-brand-indigo/30 transition-colors">
+                <Card 
+                  key={interview.id} 
+                  className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200 dark:border-slate-800 hover:border-brand-indigo/50 hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer group"
+                  onClick={() => setSelectedTranscript(interview)}
+                >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                       <CheckCircle2 size={20} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wide text-sm">{interview.type.replace('-', ' ')}</h4>
+                      <h4 className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wide text-sm group-hover:text-brand-indigo transition-colors">{interview.type.replace('-', ' ')}</h4>
                       <p className="text-xs text-slate-500 font-medium">{formatTime(interview.date)} • Score: {interview.score}/100</p>
                     </div>
                   </div>
-                  <div className="text-sm bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg text-slate-600 dark:text-slate-300 sm:max-w-[300px] truncate">
-                    {interview.feedback}
+                  <div className="flex items-center gap-4">
+                    <div className="text-sm bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg text-slate-600 dark:text-slate-300 sm:max-w-[300px] truncate">
+                      {interview.feedback}
+                    </div>
+                    <Button variant="ghost" size="sm" className="hidden sm:flex text-brand-indigo">View</Button>
                   </div>
                 </Card>
               ))}
@@ -134,6 +203,11 @@ export const MockInterviewDashboard = () => {
           </Card>
         </div>
       </div>
+      <AnimatePresence>
+        {selectedTranscript && (
+          <TranscriptModal interview={selectedTranscript} onClose={() => setSelectedTranscript(null)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
