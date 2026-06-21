@@ -92,9 +92,9 @@ export default function TopicPage() {
   };
 
   return (
-    <div className="flex flex-col w-full py-8 px-4 sm:px-6 max-w-5xl mx-auto">
+    <div className="flex flex-col w-full py-6 px-4 sm:px-6 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-brand-indigo dark:hover:text-brand-lavender transition-colors group mb-6"
@@ -104,14 +104,14 @@ export default function TopicPage() {
         
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div className="flex items-start gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-indigo/10 to-brand-purple/10 text-brand-indigo dark:text-brand-lavender flex items-center justify-center text-3xl shadow-inner shrink-0">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-indigo/10 to-brand-purple/10 text-brand-indigo dark:text-brand-lavender flex items-center justify-center text-3xl shadow-inner shrink-0 group-hover:scale-105 transition-transform">
               {module.icon || '📚'}
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-2">
+              <h1 className="text-2xl md:text-3xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-1.5">
                 {module.title}
               </h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+              <p className="text-base text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
                 {module.summary}
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function TopicPage() {
       </div>
 
       {/* Tabs */}
-      <div className="sticky top-20 z-30 py-4 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 mb-8 -mx-4 px-4 sm:-mx-6 sm:px-6">
+      <div className="sticky top-20 z-30 py-3 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 mb-6 -mx-4 px-4 sm:-mx-6 sm:px-6">
         <Tabs 
           activeTab={activeTab} 
           onChange={setActiveTab}

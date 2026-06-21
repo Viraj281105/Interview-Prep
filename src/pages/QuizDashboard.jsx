@@ -12,7 +12,7 @@ export default function QuizDashboard() {
   const { quizScores } = useAppStore();
 
   return (
-    <div className="w-full py-10 px-6 max-w-7xl mx-auto flex flex-col gap-10">
+    <div className="w-full py-8 px-4 sm:px-6 max-w-7xl mx-auto flex flex-col gap-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
@@ -35,9 +35,9 @@ export default function QuizDashboard() {
           
           return (
             <motion.div key={quiz.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-              <Card glass animated className="p-6 h-full flex flex-col group border-white/40 hover:border-brand-indigo/40 transition-all">
+              <Card glass animated className="p-6 h-full flex flex-col group border-white/60 dark:border-slate-700/40 hover:border-brand-indigo/40 hover:shadow-xl hover:shadow-brand-indigo/5 transition-all duration-300">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-indigo/10 to-brand-purple/10 text-brand-indigo dark:text-brand-lavender flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-indigo/10 to-brand-purple/10 text-brand-indigo dark:text-brand-lavender flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
                     {quiz.icon}
                   </div>
                   {hasTaken && (
@@ -55,7 +55,7 @@ export default function QuizDashboard() {
                   )}
                 </div>
                 
-                <h3 className="text-xl font-heading font-bold mb-2 text-slate-900 dark:text-white group-hover:text-brand-indigo transition-colors">
+                <h3 className="text-lg font-heading font-bold mb-1.5 text-slate-900 dark:text-white group-hover:text-brand-indigo transition-colors">
                   {quiz.title}
                 </h3>
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">

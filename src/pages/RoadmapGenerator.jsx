@@ -31,15 +31,15 @@ export default function RoadmapGenerator() {
   };
 
   return (
-    <div className="w-full py-12 px-6 max-w-5xl mx-auto flex flex-col gap-10">
+    <div className="w-full py-8 px-4 sm:px-6 max-w-5xl mx-auto flex flex-col gap-8">
       
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto">
-        <h1 className="text-4xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-4 flex items-center justify-center gap-3">
-          <Compass className="text-brand-indigo" size={36} />
+        <h1 className="text-3xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-3 flex items-center justify-center gap-3">
+          <Compass className="text-brand-indigo" size={32} />
           AI Roadmap Generator
         </h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400">
+        <p className="text-base text-slate-600 dark:text-slate-400">
           Tell us your goals, and our AI will generate a personalized day-by-day study plan to get you interview-ready.
         </p>
       </div>
@@ -53,8 +53,8 @@ export default function RoadmapGenerator() {
             exit={{ opacity: 0, y: -20 }}
             className="w-full max-w-xl mx-auto"
           >
-            <Card glass className="p-8 border-white/40 shadow-xl">
-              <div className="flex flex-col gap-8">
+            <Card glass className="p-6 sm:p-8 border-white/60 dark:border-slate-700/50 shadow-xl">
+              <div className="flex flex-col gap-6">
                 
                 {/* Target Companies */}
                 <div>
