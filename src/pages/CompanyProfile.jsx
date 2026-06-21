@@ -6,9 +6,10 @@ import { ExperienceAccordion } from '../components/companies/ExperienceAccordion
 import { SubmitExperienceForm } from '../components/companies/SubmitExperienceForm';
 import { ArrowLeft, Building2, ExternalLink, Target, Users, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { mockCompanies } from '../data/mock_companies';
+import { useAppStore } from '../store';
 
 export const CompanyProfile = () => {
+  const { mockCompanies } = useAppStore();
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('experiences');

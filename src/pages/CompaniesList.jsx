@@ -3,9 +3,10 @@ import { CompanyCard } from '../components/companies/CompanyCard';
 import { Input } from '../components/ui/Input';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { mockCompanies } from '../data/mock_companies';
+import { useAppStore } from '../store';
 
 export const CompaniesList = () => {
+  const { mockCompanies } = useAppStore();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredCompanies = mockCompanies.filter(company => 

@@ -1,10 +1,11 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
 import { AuthGuard } from './components/auth/AuthGuard';
 import { Loader2 } from 'lucide-react';
+import { useAppStore } from './store';
 
 // Eagerly loaded
 import { Home } from './pages/Home';
@@ -38,6 +39,17 @@ const PageLoader = () => (
 );
 
 function App() {
+  const fetchCoreData = useAppStore(state => state.fetchCoreData);
+  const isDataLoaded = useAppStore(state => state.isDataLoaded);
+
+  useEffect(() => {
+    fetchCoreData();
+  }, [fetchCoreData]);
+
+  if (!isDataLoaded) {
+    return <PageLoader />;
+  }
+
   return (
     <ThemeProvider>
       <AuthProvider>

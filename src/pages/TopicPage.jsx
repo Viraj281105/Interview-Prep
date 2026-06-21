@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, BookOpen, List, Play, CheckCircle2, Save } from 'lucide-react';
-import { allDataModules } from '../data/index';
 import { useAppStore } from '../store';
 import { useFilteredQuestions } from '../hooks/useFilteredQuestions';
 import { QuestionCard } from '../components/ui/QuestionCard';
@@ -15,7 +14,7 @@ export default function TopicPage() {
   const { topicId } = useParams();
   const navigate = useNavigate();
   
-  const { completedQuestions, bookmarkedQuestions, userNotes, saveNote } = useAppStore();
+  const { completedQuestions, bookmarkedQuestions, userNotes, saveNote, allDataModules } = useAppStore();
 
   const [activeTab, setActiveTab] = useState('questions');
   const [filters, setFilters] = useState({ difficulty: 'all', type: 'all', status: 'all' });

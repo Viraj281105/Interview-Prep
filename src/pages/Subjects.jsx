@@ -8,12 +8,11 @@ import { Code, Database, Server, Users, Search, ArrowRight, BookOpen } from 'luc
 import { Link } from 'react-router-dom';
 import { RevisionScheduler } from '../components/practice/RevisionScheduler';
 
-import { subjectsList } from '../data/subjectsList';
-import { allDataModules } from '../data/index';
 import { useAppStore } from '../store';
+import * as Icons from 'lucide-react';
 
 export const Subjects = () => {
-  const { completedQuestions } = useAppStore();
+  const { completedQuestions, subjectsList, allDataModules } = useAppStore();
 
   const getSubjectProgress = (subject) => {
     let total = 0;
@@ -52,7 +51,7 @@ export const Subjects = () => {
             <Card animated glass className="p-6 h-full flex flex-col group border-white/40 dark:border-slate-800/50 hover:border-brand-indigo/30 transition-all cursor-pointer">
               <div className="flex justify-between items-start mb-6">
                 <div className={`p-4 rounded-2xl transition-transform group-hover:scale-110 group-hover:shadow-md ${sub.bg} ${sub.color}`}>
-                  <sub.icon size={26} />
+                  {Icons[sub.icon] ? React.createElement(Icons[sub.icon], { size: 26 }) : <Icons.Box size={26} />}
                 </div>
                 {progress === 100 ? (
                   <Badge variant="primary" className="bg-emerald-500 shadow-lg shadow-emerald-500/20">Completed</Badge>

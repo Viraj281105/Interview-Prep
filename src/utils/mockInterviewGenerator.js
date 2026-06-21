@@ -1,7 +1,4 @@
-import { behavioralData } from '../data/hr_behavioral';
-import { arraysStringsData } from '../data/dsa_arrays';
-import { treesGraphsData } from '../data/dsa_trees';
-import { systemDesignConceptsData } from '../data/core_system_design';
+import { useAppStore } from '../store';
 
 // Helper to shuffle and pick N items
 function getRandomItems(array, n) {
@@ -11,24 +8,26 @@ function getRandomItems(array, n) {
 }
 
 export function generateMockQuestions(type) {
+  const state = useAppStore.getState();
+  const allModules = state.allDataModules || [];
+
+  const getModuleData = (id) => allModules.find(m => m.id === id) || { questions: [] };
+
   switch (type) {
     case 'behavioral':
-      // Pick 3 random behavioral questions
-      return getRandomItems(behavioralData.questions || behavioralData, 3).map(q => q.question || q);
+      return getRandomItems(getModuleData('hr-behavioral').questions, 3).map(q => q.title || q.question);
       
     case 'dsa': {
-      // Pick 1 Array question, 1 Tree question
-      const q1 = getRandomItems(arraysStringsData.questions || arraysStringsData, 1)[0];
-      const q2 = getRandomItems(treesGraphsData.questions || treesGraphsData, 1)[0];
+      const q1 = getRandomItems(getModuleData('dsa-arrays').questions, 1)[0];
+      const q2 = getRandomItems(getModuleData('dsa-trees').questions, 1)[0];
       return [
-        q1?.question || "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-        q2?.question || "Invert a binary tree."
+        q1?.title || q1?.question || "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+        q2?.title || q2?.question || "Invert a binary tree."
       ];
     }
       
     case 'system-design':
-      // Pick 2 random system design questions
-      return getRandomItems(systemDesignConceptsData.questions || systemDesignConceptsData, 2).map(q => q.question || q);
+      return getRandomItems(getModuleData('core-sys-design').questions, 2).map(q => q.title || q.question);
       
     default:
       return [

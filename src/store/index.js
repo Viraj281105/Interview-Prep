@@ -4,6 +4,7 @@ import { createProgressSlice } from './progressSlice';
 import { createGamificationSlice } from './gamificationSlice';
 import { createQuizSlice } from './quizSlice';
 import { createMockSlice } from './mockSlice';
+import { createDataSlice } from './dataSlice';
 
 // Combined store using Zustand slices
 export const useAppStore = create(
@@ -24,6 +25,7 @@ export const useAppStore = create(
       ...createGamificationSlice(set, get, api),
       ...createQuizSlice(set, get, api),
       ...createMockSlice(set, get, api),
+      ...createDataSlice(set, get, api),
     }),
     {
       name: 'prepmaster-storage',

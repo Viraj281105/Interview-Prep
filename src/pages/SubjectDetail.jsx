@@ -4,14 +4,12 @@ import { motion } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ArrowLeft, CheckCircle2, Lock, Star } from 'lucide-react';
-import { allDataModules } from '../data/index';
-import { subjectsList } from '../data/subjectsList';
 import { useAppStore } from '../store';
 
 export const SubjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { completedQuestions } = useAppStore();
+  const { completedQuestions, subjectsList, allDataModules } = useAppStore();
   
   // Find the subject metadata
   const subjectMetadata = useMemo(() => {

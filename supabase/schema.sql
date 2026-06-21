@@ -44,7 +44,67 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- ──────────────────────────────────────────
--- 2. Progress (completed questions)
+-- 2. Core Data: Subjects, Topics, Questions
+-- ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.subjects (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  icon TEXT,
+  description TEXT,
+  color TEXT,
+  bg TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.topics (
+  id TEXT PRIMARY KEY,
+  subject_id TEXT REFERENCES public.subjects(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  order_index INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_topics_subject ON public.topics(subject_id);
+
+CREATE TABLE IF NOT EXISTS public.questions (
+  id TEXT PRIMARY KEY,
+  topic_id TEXT REFERENCES public.topics(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  difficulty TEXT,
+  company_tags TEXT[] DEFAULT '{}',
+  content TEXT,
+  solution TEXT,
+  hints TEXT[] DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_questions_topic ON public.questions(topic_id);
+
+-- ──────────────────────────────────────────
+-- 3. Companies & Daily Challenges
+-- ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.companies (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  type TEXT,
+  difficulty TEXT,
+  color TEXT,
+  tags TEXT[] DEFAULT '{}',
+  description TEXT,
+  experience_count INTEGER DEFAULT 0,
+  hiring_process JSONB DEFAULT '[]',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.daily_challenges (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  date DATE UNIQUE NOT NULL,
+  question_id TEXT REFERENCES public.questions(id) ON DELETE CASCADE,
+  xp_reward INTEGER DEFAULT 100,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ──────────────────────────────────────────
+-- 4. Progress (completed questions)
 -- ──────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.progress (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -175,6 +235,11 @@ CREATE INDEX IF NOT EXISTS idx_analytics_user ON public.analytics(user_id);
 -- Enable RLS on all tables
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subjects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.topics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.questions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.companies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.daily_challenges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bookmarks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notes ENABLE ROW LEVEL SECURITY;
@@ -190,6 +255,14 @@ CREATE POLICY "Users can view own profile" ON public.profiles
 
 CREATE POLICY "Users can update own profile" ON public.profiles
   FOR UPDATE USING (auth.uid() = id);
+
+-- Core Data: Public Read Access
+CREATE POLICY "Public read subjects" ON public.subjects FOR SELECT USING (true);
+CREATE POLICY "Public read topics" ON public.topics FOR SELECT USING (true);
+CREATE POLICY "Public read questions" ON public.questions FOR SELECT USING (true);
+CREATE POLICY "Public read companies" ON public.companies FOR SELECT USING (true);
+CREATE POLICY "Public read daily_challenges" ON public.daily_challenges FOR SELECT USING (true);
+
 
 -- Progress: users can manage their own progress
 CREATE POLICY "Users can manage own progress" ON public.progress
