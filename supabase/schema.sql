@@ -12,9 +12,25 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   display_name TEXT,
   avatar_url TEXT,
   bio TEXT DEFAULT '',
+  phone_number TEXT,
+  dob DATE,
+  city TEXT,
+  country TEXT,
+  college_name TEXT,
+  degree TEXT,
+  branch TEXT,
+  year_of_study INTEGER,
+  current_semester INTEGER,
+  cgpa NUMERIC(4,2),
+  tenth_percentage NUMERIC(5,2),
+  twelfth_percentage NUMERIC(5,2),
+  graduation_year INTEGER,
   target_role TEXT DEFAULT 'Software Engineer',
   target_companies TEXT[] DEFAULT '{}',
   primary_stack TEXT[] DEFAULT '{}',
+  preferred_domains TEXT[] DEFAULT '{}',
+  skills TEXT[] DEFAULT '{}',
+  settings JSONB DEFAULT '{}',
   xp INTEGER DEFAULT 0,
   level INTEGER DEFAULT 1,
   current_streak INTEGER DEFAULT 0,
@@ -229,6 +245,111 @@ CREATE TABLE IF NOT EXISTS public.analytics (
 
 CREATE INDEX IF NOT EXISTS idx_analytics_user ON public.analytics(user_id);
 
+-- ──────────────────────────────────────────
+-- 10. User Projects
+-- ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.user_projects (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  project_name TEXT NOT NULL,
+  description TEXT,
+  tech_stack TEXT[] DEFAULT '{}',
+  github_link TEXT,
+  live_link TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_user_projects_user ON public.user_projects(user_id);
+
+-- ──────────────────────────────────────────
+-- 11. User Experience
+-- ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.user_experience (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  type TEXT DEFAULT 'Internship', -- 'Internship', 'Full-time', 'Part-time'
+  company TEXT NOT NULL,
+  role TEXT NOT NULL,
+  duration TEXT,
+  responsibilities TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_user_experience_user ON public.user_experience(user_id);
+
+-- ──────────────────────────────────────────
+-- 12. User Certifications
+-- ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.user_certifications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  issuer TEXT NOT NULL,
+  date DATE,
+  credential_link TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_user_certifications_user ON public.user_certifications(user_id);
+
+-- ──────────────────────────────────────────
+-- 13. User Resumes
+-- ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.user_resumes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  file_name TEXT NOT NULL,
+  file_url TEXT NOT NULL,
+  uploaded_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_user_resumes_user ON public.user_resumes(user_id);
+
+-- ──────────────────────────────────────────
+-- 14. User History Engine (Phase 3)
+-- ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.user_history (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  action_type TEXT NOT NULL,
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_user_history_user ON public.user_history(user_id);
+
+CREATE TABLE IF NOT EXISTS public.study_sessions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  start_time TIMESTAMPTZ DEFAULT NOW(),
+  end_time TIMESTAMPTZ,
+  duration_minutes INTEGER DEFAULT 0,
+  focus_areas TEXT[] DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_study_sessions_user ON public.study_sessions(user_id);
+
+CREATE TABLE IF NOT EXISTS public.recommendation_logs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  recommendation_type TEXT,
+  recommendation_target TEXT,
+  reason TEXT,
+  is_completed BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_recommendation_logs_user ON public.recommendation_logs(user_id);
+
+-- ──────────────────────────────────────────
+-- 15. User Achievements (External)
+-- ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.user_achievements (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  date DATE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_user_achievements_user ON public.user_achievements(user_id);
+
 -- ============================================
 -- Row Level Security (RLS) Policies
 -- ============================================
@@ -248,6 +369,14 @@ ALTER TABLE public.mock_interviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.achievements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.activity_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_experience ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_certifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_resumes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_achievements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.study_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.recommendation_logs ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: users can read/update their own profile
 CREATE POLICY "Users can view own profile" ON public.profiles
@@ -295,6 +424,18 @@ CREATE POLICY "Users can manage own activity log" ON public.activity_log
 -- Analytics: users can manage their own analytics
 CREATE POLICY "Users can manage own analytics" ON public.analytics
   FOR ALL USING (auth.uid() = user_id);
+
+-- User Profiles data: users can manage their own
+CREATE POLICY "Users can manage own projects" ON public.user_projects FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own experience" ON public.user_experience FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own certifications" ON public.user_certifications FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own resumes" ON public.user_resumes FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own external achievements" ON public.user_achievements FOR ALL USING (auth.uid() = user_id);
+
+-- User History Engine: users can manage their own
+CREATE POLICY "Users can manage own history" ON public.user_history FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own study sessions" ON public.study_sessions FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own recommendation logs" ON public.recommendation_logs FOR ALL USING (auth.uid() = user_id);
 
 -- ============================================
 -- Updated_at trigger for profiles

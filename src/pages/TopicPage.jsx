@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, BookOpen, List, Play, CheckCircle2, Save } from 'lucide-react';
 import { useAppStore } from '../store';
+import { useAuth } from '../context/AuthContext';
+import { logAction } from '../services/historyService';
 import { useFilteredQuestions } from '../hooks/useFilteredQuestions';
 import { QuestionCard } from '../components/ui/QuestionCard';
 import { FilterBar } from '../components/ui/FilterBar';
@@ -15,6 +17,7 @@ export default function TopicPage() {
   const navigate = useNavigate();
   
   const { completedQuestions, bookmarkedQuestions, userNotes, saveNote, allDataModules } = useAppStore();
+  const { currentUser } = useAuth();
 
   const [activeTab, setActiveTab] = useState('questions');
   const [filters, setFilters] = useState({ difficulty: 'all', type: 'all', status: 'all' });
@@ -38,6 +41,12 @@ export default function TopicPage() {
       setNoteText(userNotes[module.id]);
     }
   }, [module, userNotes]);
+
+  useEffect(() => {
+    if (module && currentUser?.id) {
+      logAction(currentUser.id, 'topic_viewed', { topicId: module.id, topicTitle: module.title });
+    }
+  }, [module, currentUser]);
 
   const questions = module?.questions || [];
   const filteredQuestions = useFilteredQuestions(questions, filters, searchQuery, completedQuestions, bookmarkedQuestions);

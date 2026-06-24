@@ -8,6 +8,10 @@ import { Link } from 'react-router-dom';
 import { useAppStore } from '../store';
 import { useAuth } from '../context/AuthContext';
 import { ArrowRight } from 'lucide-react';
+import { generateRecommendations, RECO_TYPES } from '../services/recommendationEngine';
+import { aiService } from '../services/aiService';
+import { getUserHistory } from '../services/historyService';
+import { getUserProfile } from '../services/database';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
 export const Dashboard = () => {
@@ -20,11 +24,34 @@ export const Dashboard = () => {
   } = useAppStore();
   
   const { currentUser } = useAuth();
+  
+  const [recommendations, setRecommendations] = React.useState([]);
+  const [aiInsight, setAiInsight] = React.useState('');
 
   // Calculate Mock Avg. Score
   const avgMockScore = mockInterviews.length > 0
     ? (mockInterviews.reduce((acc, curr) => acc + (curr.score || 0), 0) / mockInterviews.length).toFixed(1)
     : '0.0';
+
+  React.useEffect(() => {
+    if (currentUser?.id) {
+      generateRecommendations(currentUser.id, completedQuestions).then(recos => {
+        setRecommendations(recos);
+      });
+      
+      const fetchInsights = async () => {
+        try {
+          const history = await getUserHistory(currentUser.id);
+          const profile = await getUserProfile(currentUser.id);
+          const insight = await aiService.generateInsights(history, profile, avgMockScore);
+          setAiInsight(insight);
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      fetchInsights();
+    }
+  }, [currentUser, completedQuestions, avgMockScore]);
 
   // Calculate total quizzes taken
   const totalQuizzes = Object.keys(quizScores).length;
@@ -117,6 +144,21 @@ export const Dashboard = () => {
         ))}
       </div>
 
+      {/* AI Coach Insights */}
+      {aiInsight && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <Card animated glass className="p-6 md:p-8 border-brand-indigo/30 bg-gradient-to-r from-brand-indigo/5 to-brand-purple/5 shadow-lg flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="w-16 h-16 shrink-0 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center border border-brand-indigo/20 shadow-inner">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"/><path d="m17 5-5-3-5 3v5.5a14 14 0 0 0 5 9.5 14 14 0 0 0 5-9.5Z"/></svg>
+            </div>
+            <div>
+              <h3 className="font-heading font-bold text-lg mb-2 text-brand-indigo dark:text-brand-lavender">AI Coach Insights</h3>
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-[15px]">{aiInsight}</p>
+            </div>
+          </Card>
+        </motion.div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
         {/* Activity Heatmap */}
         <div className="lg:col-span-2">
@@ -156,22 +198,18 @@ export const Dashboard = () => {
         <Card animated glass className="p-8 border-white/40">
           <h2 className="text-2xl font-heading font-bold mb-6">Recommended for You</h2>
           <div className="space-y-4">
-            {[
-              { title: 'Dynamic Programming', type: 'Topic', icon: BookOpen, tag: 'DSA', link: '/subjects/dsa-dp' },
-              { title: 'Amazon OA Mock', type: 'Mock', icon: Clock, tag: 'Mock', link: '/mock' },
-              { title: 'SQL Joins Practice', type: 'Quiz', icon: Target, tag: 'SQL', link: '/quiz' },
-            ].map((item, i) => (
+            {recommendations.length > 0 ? recommendations.map((item, i) => (
               <Link to={item.link} key={i}>
                 <div className="group flex items-center justify-between p-4 mb-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-800 cursor-pointer transition-all hover:shadow-md">
                   <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:text-brand-indigo transition-colors">
-                      <item.icon size={20} />
+                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:text-brand-indigo transition-colors flex items-center justify-center text-xl w-10 h-10">
+                      {item.icon}
                     </div>
                     <div>
                       <p className="font-semibold text-[15px]">{item.title}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="secondary" className="text-[10px] py-0">{item.tag}</Badge>
-                        <span className="text-xs text-slate-500">{item.type}</span>
+                        <Badge variant="secondary" className="text-[10px] py-0">{item.type.replace('_', ' ')}</Badge>
+                        <span className="text-xs text-slate-500">{item.description}</span>
                       </div>
                     </div>
                   </div>
@@ -180,7 +218,9 @@ export const Dashboard = () => {
                   </Button>
                 </div>
               </Link>
-            ))}
+            )) : (
+              <div className="text-slate-500 text-sm text-center py-4">Generating recommendations...</div>
+            )}
           </div>
           <Link to="/subjects" className="block mt-2">
             <Button variant="outline" className="w-full rounded-xl">Browse All Subjects</Button>

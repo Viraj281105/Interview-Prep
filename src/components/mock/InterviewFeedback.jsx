@@ -4,9 +4,12 @@ import { Button } from '../ui/Button';
 import { CheckCircle2, TrendingUp, AlertCircle, ArrowRight, Clock, Award, Sparkles, Loader2, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store';
+import { useAuth } from '../../context/AuthContext';
+import { logAction } from '../../services/historyService';
 
 export const InterviewFeedback = ({ type, duration, transcript, onExit }) => {
   const { saveMockInterview } = useAppStore();
+  const { currentUser } = useAuth();
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [feedbackData, setFeedbackData] = useState(null);
 
@@ -49,6 +52,11 @@ export const InterviewFeedback = ({ type, duration, transcript, onExit }) => {
 
       setFeedbackData(newFeedback);
       saveMockInterview(newFeedback);
+      
+      if (currentUser?.id) {
+        logAction(currentUser.id, 'mock_taken', { type, score: calculatedScore, duration });
+      }
+      
       setIsAnalyzing(false);
     }, 3500);
 

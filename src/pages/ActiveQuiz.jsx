@@ -6,12 +6,15 @@ import { Button } from '../components/ui/Button';
 import { Clock, ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Play } from 'lucide-react';
 import { mockQuizzes } from '../data/mock_mcq';
 import { useAppStore } from '../store';
+import { useAuth } from '../context/AuthContext';
+import { logAction } from '../services/historyService';
 import { QuizResults } from '../components/quiz/QuizResults';
 
 export default function ActiveQuiz() {
   const { quizId } = useParams();
   const navigate = useNavigate();
   const { saveQuizScore, addXP } = useAppStore();
+  const { currentUser } = useAuth();
 
   const quiz = mockQuizzes.find(q => q.id === quizId);
 
@@ -89,6 +92,16 @@ export default function ActiveQuiz() {
     // Award XP
     if (score > 0) {
       addXP(score * 10);
+    }
+    
+    // Log history
+    if (currentUser?.id) {
+      logAction(currentUser.id, 'quiz_completed', { 
+        quizId: quiz.id, 
+        quizTitle: quiz.title, 
+        score, 
+        total: quiz.questions.length 
+      });
     }
   };
 

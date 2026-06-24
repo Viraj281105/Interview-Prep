@@ -214,5 +214,62 @@ The output MUST be valid JSON.`
       summary: `This roadmap is tailored for a ${skillLevel} engineer targeting ${targetCompanies.join(', ') || 'top tech companies'}. It prioritizes high-ROI topics based on their recent interview patterns.`,
       weeks
     };
+  },
+
+  /**
+   * Generate AI insights based on user history and performance
+   */
+  generateInsights: async (history, profile, avgMockScore) => {
+    const groqKey = import.meta.env.VITE_GROQ_API_KEY;
+    const historySummary = history?.slice(0, 10).map(h => `${h.action_type}: ${h.metadata?.topicTitle || h.metadata?.quizTitle || h.metadata?.type || ''}`).join(', ');
+
+    if (groqKey && history && history.length > 0) {
+      try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${groqKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+              {
+                role: "system",
+                content: "You are an expert, encouraging tech interview coach. Based on the user's recent activity, write a short, punchy 2-sentence insight. Focus on what they are doing well and one specific area they should focus on next. Don't use markdown."
+              },
+              {
+                role: "user",
+                content: `User Goal: ${profile?.career_goals || 'Software Engineer'}. Avg Mock Score: ${avgMockScore}/100. Recent activity: ${historySummary}`
+              }
+            ]
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return data.choices[0].message.content.trim();
+        }
+      } catch (error) {
+        console.error("Failed to connect to Groq for insights:", error);
+      }
+    }
+
+    // --- FALLBACK ---
+    await simulateLatency();
+    
+    if (!history || history.length === 0) {
+      return "Welcome to PrepMaster! Start taking quizzes and mock interviews, and I'll analyze your performance to give you personalized coaching.";
+    }
+
+    if (avgMockScore > 0 && avgMockScore < 70) {
+      return `I noticed your average mock score is ${avgMockScore}. Keep practicing your weak areas, particularly System Design and complex DSA, to boost your confidence.`;
+    }
+
+    if (avgMockScore >= 80) {
+      return `You're crushing it! With an average mock score of ${avgMockScore}, you're showing great technical depth. Make sure to brush up on behavioral questions using the STAR method.`;
+    }
+
+    return `You've been active lately, which is the key to interview success! Based on your recent study sessions, I recommend doing a full Mock Interview to test your knowledge under pressure.`;
   }
 };
