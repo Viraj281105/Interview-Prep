@@ -4,7 +4,7 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { MapPin, Target, Calendar, CheckCircle2, Sparkles, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { generateRoadmap } from '../../services/aiService';
+import { aiService } from '../../services/aiService';
 import { Link } from 'react-router-dom';
 
 export const RoadmapGenerator = () => {
@@ -18,7 +18,7 @@ export const RoadmapGenerator = () => {
     setIsGenerating(true);
     try {
       const companies = targetRole.split(',').map(c => c.trim()).filter(Boolean);
-      const generatedPlan = await generateRoadmap(companies, 'Intermediate', parseInt(timeframe, 10));
+      const generatedPlan = await aiService.generateRoadmap(companies, 'Intermediate', parseInt(timeframe, 10));
       setRoadmap(generatedPlan);
     } catch (e) {
       console.error(e);

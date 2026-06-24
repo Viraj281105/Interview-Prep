@@ -71,6 +71,19 @@ export async function saveProgress(userId, questionId, subjectId) {
   if (error) throw error;
 }
 
+export async function getProgress(userId) {
+  if (!isBackendAvailable()) {
+    const progress = localGet(`progress-${userId}`, []);
+    return progress.map(p => p.questionId);
+  }
+  const { data, error } = await supabase
+    .from('progress')
+    .select('question_id')
+    .eq('user_id', userId);
+  if (error) throw error;
+  return data.map(p => p.question_id);
+}
+
 // ──────────────────────────────────────────────
 // Quiz Attempts
 // ──────────────────────────────────────────────
@@ -94,6 +107,24 @@ export async function saveQuizAttempt(userId, attemptData) {
   if (error) throw error;
 }
 
+export async function getQuizAttempts(userId) {
+  if (!isBackendAvailable()) return localGet(`quiz-attempts-${userId}`, []);
+  const { data, error } = await supabase
+    .from('quiz_attempts')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) throw error;
+  return data.map(d => ({
+    quizId: d.quiz_id,
+    score: d.score,
+    total: d.total,
+    duration: d.duration,
+    date: d.created_at
+  }));
+}
+
 // ──────────────────────────────────────────────
 // Mock Interviews
 // ──────────────────────────────────────────────
@@ -115,6 +146,25 @@ export async function saveMockInterviewResult(userId, interviewData) {
       duration: interviewData.duration,
     });
   if (error) throw error;
+}
+
+export async function getMockInterviews(userId) {
+  if (!isBackendAvailable()) return localGet(`mock-interviews-${userId}`, []);
+  const { data, error } = await supabase
+    .from('mock_interviews')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(100);
+  if (error) throw error;
+  return data.map(d => ({
+    id: d.id,
+    type: d.type,
+    score: d.score,
+    feedback: d.feedback,
+    duration: d.duration,
+    date: d.created_at
+  }));
 }
 
 // ──────────────────────────────────────────────
@@ -153,4 +203,19 @@ export async function saveUserNote(userId, topicId, content) {
       updated_at: new Date().toISOString(),
     });
   if (error) throw error;
+}
+
+export async function getNotes(userId) {
+  if (!isBackendAvailable()) return localGet(`notes-${userId}`, {});
+  const { data, error } = await supabase
+    .from('notes')
+    .select('topic_id, content')
+    .eq('user_id', userId);
+  if (error) throw error;
+  
+  const notesObj = {};
+  data.forEach(n => {
+    notesObj[n.topic_id] = n.content;
+  });
+  return notesObj;
 }

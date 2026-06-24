@@ -14,6 +14,7 @@ import { getUserHistory } from '../services/historyService';
 import { getUserProfile } from '../services/database';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 import { Skeleton, CardSkeleton } from '../components/ui/Skeleton';
+import { ActivityFeed } from '../components/dashboard/ActivityFeed';
 
 export const Dashboard = () => {
   const { 
@@ -248,60 +249,69 @@ export const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Analytics Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4">
-        {/* Mock Interview Progress */}
-        <Card animated glass className="p-8 border-white/40">
-          <h2 className="text-2xl font-heading font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-2">
-            <Award className="text-brand-indigo" /> Mock Performance
-          </h2>
-          <div className="h-64 w-full">
-            {mockChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={mockChartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
-                  <XAxis dataKey="name" tick={{fill: '#64748b', fontSize: 12}} />
-                  <YAxis tick={{fill: '#64748b', fontSize: 12}} domain={[0, 100]} />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                    labelStyle={{ fontWeight: 'bold', color: '#1e293b' }}
-                  />
-                  <Line type="monotone" dataKey="score" stroke="#6366f1" strokeWidth={3} dot={{r: 4, fill: '#6366f1'}} activeDot={{r: 6}} />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center text-slate-400">
-                <Clock size={32} className="mb-2 opacity-50" />
-                <p>Complete your first mock interview to see trends.</p>
-              </div>
-            )}
-          </div>
-        </Card>
+      {/* Analytics Charts & History */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
+        
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Mock Interview Progress */}
+          <Card animated glass className="p-8 border-white/40">
+            <h2 className="text-2xl font-heading font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-2">
+              <Award className="text-brand-indigo" /> Mock Performance
+            </h2>
+            <div className="h-64 w-full">
+              {mockChartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={mockChartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
+                    <XAxis dataKey="name" tick={{fill: '#64748b', fontSize: 12}} />
+                    <YAxis tick={{fill: '#64748b', fontSize: 12}} domain={[0, 100]} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                      labelStyle={{ fontWeight: 'bold', color: '#1e293b' }}
+                    />
+                    <Line type="monotone" dataKey="score" stroke="#6366f1" strokeWidth={3} dot={{r: 4, fill: '#6366f1'}} activeDot={{r: 6}} />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-slate-400">
+                  <Clock size={32} className="mb-2 opacity-50" />
+                  <p>Complete your first mock interview to see trends.</p>
+                </div>
+              )}
+            </div>
+          </Card>
 
-        {/* Topic Mastery Radar */}
-        <Card animated glass className="p-8 border-white/40">
-          <h2 className="text-2xl font-heading font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-2">
-            <Target className="text-brand-pink" /> Topic Mastery
-          </h2>
-          <div className="h-64 w-full">
-            {radarData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-                  <PolarGrid stroke="#e2e8f0" />
-                  <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 12, fontWeight: 600}} />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                  <Radar name="Score" dataKey="mastery" stroke="#ec4899" fill="#ec4899" fillOpacity={0.4} />
-                  <Tooltip />
-                </RadarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center text-slate-400">
-                <BookOpen size={32} className="mb-2 opacity-50" />
-                <p>Take some quizzes to map your knowledge.</p>
-              </div>
-            )}
-          </div>
-        </Card>
+          {/* Topic Mastery Radar */}
+          <Card animated glass className="p-8 border-white/40">
+            <h2 className="text-2xl font-heading font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-2">
+              <Target className="text-brand-pink" /> Topic Mastery
+            </h2>
+            <div className="h-64 w-full">
+              {radarData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                    <PolarGrid stroke="#e2e8f0" />
+                    <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 12, fontWeight: 600}} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar name="Score" dataKey="mastery" stroke="#ec4899" fill="#ec4899" fillOpacity={0.4} />
+                    <Tooltip />
+                  </RadarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-slate-400">
+                  <BookOpen size={32} className="mb-2 opacity-50" />
+                  <p>Take some quizzes to map your knowledge.</p>
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
+
+        {/* Activity Feed */}
+        <div className="lg:col-span-1 h-[420px] lg:h-auto">
+          <ActivityFeed />
+        </div>
+
       </div>
     </div>
   );

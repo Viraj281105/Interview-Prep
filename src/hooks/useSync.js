@@ -13,7 +13,15 @@ export const useSync = () => {
     // Initial load from DB
     const loadFromDb = async () => {
       try {
-        const profile = await db.getUserProfile(currentUser.id);
+        const [profile, bookmarks, progress, quizAttempts, mockInterviews, notes] = await Promise.all([
+          db.getUserProfile(currentUser.id),
+          db.getBookmarks(currentUser.id),
+          db.getProgress(currentUser.id),
+          db.getQuizAttempts(currentUser.id),
+          db.getMockInterviews(currentUser.id),
+          db.getNotes(currentUser.id)
+        ]);
+
         if (profile) {
           useAppStore.setState(state => ({
             xp: Math.max(state.xp, profile.xp || 0),
@@ -22,14 +30,24 @@ export const useSync = () => {
           }));
         }
         
-        const bookmarks = await db.getBookmarks(currentUser.id);
-        if (bookmarks && bookmarks.length > 0) {
-          // Merge local and remote bookmarks
-          useAppStore.setState(state => {
-            const merged = new Set([...state.bookmarkedQuestions, ...bookmarks]);
-            return { bookmarkedQuestions: Array.from(merged) };
-          });
-        }
+        useAppStore.setState(state => {
+          // Merge bookmarks
+          const mergedBookmarks = new Set([...state.bookmarkedQuestions, ...(bookmarks || [])]);
+          // Merge progress (completed questions)
+          const mergedProgress = new Set([...state.completedQuestions, ...(progress || [])]);
+          
+          return { 
+            bookmarkedQuestions: Array.from(mergedBookmarks),
+            completedQuestions: Array.from(mergedProgress),
+            // For arrays, if backend has data, we can prefer backend or merge.
+            // Since it's history, we'll just set it to the backend's (which is the source of truth).
+            quizHistory: quizAttempts?.length > 0 ? quizAttempts : state.quizHistory,
+            mockInterviews: mockInterviews?.length > 0 ? mockInterviews : state.mockInterviews,
+            // Merge notes
+            userNotes: { ...state.userNotes, ...(notes || {}) }
+          };
+        });
+        
       } catch (err) {
         console.error('Failed to load initial data from DB:', err);
       }
