@@ -69,8 +69,8 @@ async function seed() {
         title: q.title || q.question || 'Untitled Question',
         difficulty: q.difficulty || 'Medium',
         company_tags: q.companyTags || [],
-        content: q.problem || q.question || '',
-        solution: q.solution || '',
+        content: q.question || q.problem || '',
+        solution: q.answer || q.solution || '',
         hints: q.hints || []
       }));
 

@@ -28,18 +28,31 @@ export const createDataSlice = (set, get) => ({
         return;
       }
 
-      // Fetch from Supabase
-      const [subjectsRes, topicsRes, questionsRes, companiesRes] = await Promise.all([
+      // Fetch subjects, topics, companies
+      const [subjectsRes, topicsRes, companiesRes] = await Promise.all([
         supabase.from('subjects').select('*'),
         supabase.from('topics').select('*').order('order_index'),
-        supabase.from('questions').select('*'),
         supabase.from('companies').select('*')
       ]);
 
       if (subjectsRes.error) throw subjectsRes.error;
       if (topicsRes.error) throw topicsRes.error;
-      if (questionsRes.error) throw questionsRes.error;
       if (companiesRes.error) throw companiesRes.error;
+
+      // Fetch ALL questions with pagination (bypassing 1000 limit)
+      let allQuestions = [];
+      let from = 0;
+      const step = 1000;
+      while (true) {
+        const { data, error } = await supabase.from('questions').select('*').range(from, from + step - 1);
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        allQuestions.push(...data);
+        if (data.length < step) break;
+        from += step;
+      }
+      
+      const questionsData = allQuestions;
 
       // Fallback if Supabase is connected but tables are empty (Phase 1 Bug Fix)
       if (subjectsRes.data.length === 0 || topicsRes.data.length === 0) {
@@ -61,7 +74,7 @@ export const createDataSlice = (set, get) => ({
       const reconstructedSubjects = subjectsRes.data.map(sub => ({
         ...sub,
         desc: sub.description,
-        icon: sub.icon, // Needs mapping to actual component later if necessary, but UI handles string name? Wait, UI expects Lucide component...
+        icon: sub.icon,
         moduleIds: topicsRes.data.filter(t => t.subject_id === sub.id).map(t => t.id)
       }));
 
@@ -70,13 +83,13 @@ export const createDataSlice = (set, get) => ({
         id: topic.id,
         title: topic.title,
         description: topic.description,
-        questions: questionsRes.data.filter(q => q.topic_id === topic.id).map(q => ({
+        questions: questionsData.filter(q => q.topic_id === topic.id).map(q => ({
           id: q.id,
           title: q.title,
           difficulty: q.difficulty,
           companyTags: q.company_tags,
-          problem: q.content,
-          solution: q.solution,
+          question: q.content,
+          answer: q.solution,
           hints: q.hints
         }))
       }));
