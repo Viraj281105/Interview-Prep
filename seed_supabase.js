@@ -19,6 +19,52 @@ global.WebSocket = WebSocket;
 
 const supabase = createClient(supabaseUrl, supabaseKey, { auth: { persistSession: false } });
 
+function determineCompanyTags(question, existingTags) {
+  if (existingTags && existingTags.length > 0) return existingTags;
+  
+  const text = (question || '').toLowerCase();
+  const tags = new Set();
+  
+  if (text.includes('lru cache') || text.includes('two sum') || text.includes('merge intervals') || text.includes('trapping rain water') || text.includes('design instagram') || text.includes('design youtube') || text.includes('design a')) {
+    tags.add('meta').add('google').add('amazon');
+  }
+  if (text.includes('shortest path') || text.includes('dijkstra') || text.includes('topological sort') || text.includes('trie') || text.includes('b-tree') || text.includes('graph')) {
+    tags.add('google').add('microsoft');
+  }
+  if (text.includes('dynamic programming') || text.includes('knapsack') || text.includes('matrix chain')) {
+    tags.add('amazon').add('google');
+  }
+  if (text.includes('load balancer') || text.includes('consistent hashing') || text.includes('cap theorem') || text.includes('redis') || text.includes('memcached') || text.includes('cache')) {
+    tags.add('netflix').add('meta').add('uber');
+  }
+  if (text.includes('binary search') || text.includes('sliding window') || text.includes('two pointer')) {
+    tags.add('amazon').add('apple');
+  }
+  if (text.includes('sql') || text.includes('join') || text.includes('normalization') || text.includes('index') || text.includes('database')) {
+    tags.add('stripe').add('snowflake').add('databricks');
+  }
+  if (text.includes('docker') || text.includes('kubernetes') || text.includes('ci/cd') || text.includes('pipeline')) {
+    tags.add('netflix').add('doordash').add('airbnb');
+  }
+  if (text.includes('react') || text.includes('frontend') || text.includes('css') || text.includes('dom')) {
+    tags.add('meta').add('airbnb').add('stripe');
+  }
+  if (text.includes('os') || text.includes('thread') || text.includes('process') || text.includes('deadlock') || text.includes('mutex') || text.includes('memory')) {
+    tags.add('microsoft').add('apple').add('uber');
+  }
+  
+  // Random assignment for variety if no match
+  if (tags.size === 0) {
+    const randomComps = ['google', 'meta', 'amazon', 'microsoft', 'apple', 'netflix', 'uber', 'stripe', 'airbnb', 'bloomberg', 'palantir', 'coinbase', 'robinhood'];
+    tags.add(randomComps[Math.floor(Math.random() * randomComps.length)]);
+    if (Math.random() > 0.5) {
+      tags.add(randomComps[Math.floor(Math.random() * randomComps.length)]);
+    }
+  }
+  
+  return Array.from(tags);
+}
+
 async function seed() {
   console.log('🌱 Starting Supabase Seeding Process...');
 
@@ -68,7 +114,7 @@ async function seed() {
         topic_id: module.id,
         title: q.title || q.question || 'Untitled Question',
         difficulty: q.difficulty || 'Medium',
-        company_tags: q.companyTags || [],
+        company_tags: determineCompanyTags(q.question || q.problem || '', q.companyTags || []),
         content: q.question || q.problem || '',
         solution: q.answer || q.solution || '',
         hints: q.hints || []

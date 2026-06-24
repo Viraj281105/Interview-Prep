@@ -7,14 +7,30 @@ import { SubmitExperienceForm } from '../components/companies/SubmitExperienceFo
 import { ArrowLeft, Building2, ExternalLink, Target, Users, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../store';
+import { QuestionCard } from '../components/ui/QuestionCard';
+import { useMemo } from 'react';
 
 export const CompanyProfile = () => {
-  const { mockCompanies } = useAppStore();
+  const { mockCompanies, allDataModules } = useAppStore();
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('experiences');
 
   const company = mockCompanies.find(c => c.id === id);
+
+  const companyQuestions = useMemo(() => {
+    let qList = [];
+    allDataModules.forEach(mod => {
+      if (mod.questions) {
+        mod.questions.forEach(q => {
+          if (q.companyTags && q.companyTags.includes(id)) {
+             qList.push({ ...q, moduleTitle: mod.title, moduleIcon: '🏢' });
+          }
+        });
+      }
+    });
+    return qList;
+  }, [allDataModules, id]);
 
   if (!company) {
     return (
@@ -71,7 +87,7 @@ export const CompanyProfile = () => {
 
       {/* Tabs */}
       <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto custom-scrollbar no-scrollbar">
-        {['experiences', 'hiring process', 'submit'].map((tab) => (
+        {['experiences', 'practice questions', 'hiring process', 'submit'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -138,6 +154,28 @@ export const CompanyProfile = () => {
                   ))}
                </div>
              </Card>
+          </motion.div>
+        )}
+        
+        {activeTab === 'practice questions' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+            <div className="mb-6">
+              <h2 className="text-2xl font-heading font-bold text-slate-900 dark:text-slate-50 mb-2">Practice Questions</h2>
+              <p className="text-slate-500">Real interview questions recently asked at {company.name}.</p>
+            </div>
+            {companyQuestions.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                {companyQuestions.map(q => (
+                  <QuestionCard key={q.id} question={q} showTopic={true} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/20 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
+                <Target className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600 mb-4" />
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">No questions found</h3>
+                <p className="text-slate-500">We don't have any specific questions tagged for {company.name} yet.</p>
+              </div>
+            )}
           </motion.div>
         )}
       </div>

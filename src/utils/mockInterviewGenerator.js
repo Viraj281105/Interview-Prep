@@ -9,14 +9,14 @@ function getRandomItems(array, n) {
 
 // Map the mock interview "type" to topic IDs in the database
 const TYPE_TO_TOPICS = {
-  'behavioral': ['hr-behavioral', 'hr-leadership'],
-  'dsa': ['dsa-arrays', 'dsa-strings', 'dsa-linked-lists', 'dsa-trees', 'dsa-graphs', 'dsa-dp'],
-  'system-design': ['core-sys-design'],
-  'db-sql': ['db-sql', 'db-nosql'],
+  'behavioral': ['hr-behavioral', 'hr-leadership', 'hr-common'],
+  'dsa': ['dsa-arrays', 'dsa-trees', 'dsa-dp', 'dsa-sorting', 'dsa-heaps', 'dsa-linkedlists'],
+  'system-design': ['core-sys-design', 'projects-sys-design'],
+  'db-sql': ['sql', 'nosql', 'postgres', 'redis'],
   'core-os': ['core-os'],
-  'frontend': ['frontend-html-css', 'frontend-js', 'frontend-react'],
-  'backend': ['backend-node', 'backend-python', 'backend-java', 'backend-apis'],
-  'devops': ['devops-git', 'devops-docker', 'devops-k8s', 'devops-ci-cd']
+  'frontend': ['react', 'css', 'javascript', 'web-perf'],
+  'backend': ['nodejs', 'python', 'java', 'express', 'api-design', 'spring-boot', 'microservices'],
+  'devops': ['devops-docker', 'devops-kubernetes', 'devops-cicd']
 };
 
 export async function generateMockQuestions(type) {
@@ -33,7 +33,7 @@ export async function generateMockQuestions(type) {
     // Fetch all questions for these topics
     const { data, error } = await supabase
       .from('questions')
-      .select('id, question')
+      .select('id, content')
       .in('topic_id', topicIds);
       
     if (error || !data || data.length === 0) {
@@ -43,7 +43,7 @@ export async function generateMockQuestions(type) {
     
     // Pick 3 random questions
     const selected = getRandomItems(data, 3);
-    return selected.map(q => q.question);
+    return selected.map(q => q.content);
     
   } catch (err) {
     console.error("Error generating mock questions:", err);
