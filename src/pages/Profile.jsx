@@ -123,7 +123,12 @@ export const Profile = () => {
   return (
     <div className="flex flex-col gap-8 w-full py-10 px-6 max-w-6xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h1 className="text-4xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50">Profile</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-4xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50">Profile</h1>
+          <Link to="/settings" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-brand-indigo transition-colors" title="Settings">
+            <SettingsIcon size={20} />
+          </Link>
+        </div>
         
         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shadow-inner overflow-x-auto max-w-full hide-scrollbar">
           {tabs.map((tab) => (
@@ -183,103 +188,41 @@ export const Profile = () => {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-6">
               
               {/* Personal Information */}
-              <ProfileSection 
-                title="Personal Information" icon={User} 
-                isEditing={editSections['personal']}
-                onEdit={() => toggleEdit('personal')}
-                onSave={() => saveProfileSection('personal')}
-                onCancel={() => { toggleEdit('personal'); setFormData(profile); }}
-              >
-                {editSections['personal'] ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm text-slate-500">Display Name</label>
-                      <Input value={formData.display_name || ''} onChange={e => handleProfileChange('display_name', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="text-sm text-slate-500">Phone Number</label>
-                      <Input value={formData.phone_number || ''} onChange={e => handleProfileChange('phone_number', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="text-sm text-slate-500">Date of Birth</label>
-                      <Input type="date" value={formData.dob || ''} onChange={e => handleProfileChange('dob', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="text-sm text-slate-500">City</label>
-                      <Input value={formData.city || ''} onChange={e => handleProfileChange('city', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="text-sm text-slate-500">Country</label>
-                      <Input value={formData.country || ''} onChange={e => handleProfileChange('country', e.target.value)} />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="text-sm text-slate-500">Bio / About Me</label>
-                      <textarea 
-                        className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 min-h-[100px]"
-                        value={formData.bio || ''} 
-                        onChange={e => handleProfileChange('bio', e.target.value)} 
-                      />
-                    </div>
+              <ProfileSection title="Personal Information" icon={User}>
+                <div className="text-slate-700 dark:text-slate-300">
+                  <p className="mb-4">{profile?.bio || 'No bio provided yet.'}</p>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div><span className="text-slate-500">DOB:</span> {profile?.dob || 'N/A'}</div>
+                    <div><span className="text-slate-500">Phone:</span> {profile?.phone_number || 'N/A'}</div>
+                    <div><span className="text-slate-500">Location:</span> {profile?.city} {profile?.country}</div>
                   </div>
-                ) : (
-                  <div className="text-slate-700 dark:text-slate-300">
-                    <p className="mb-4">{profile?.bio || 'No bio provided yet.'}</p>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div><span className="text-slate-500">DOB:</span> {profile?.dob || 'N/A'}</div>
-                      <div><span className="text-slate-500">Phone:</span> {profile?.phone_number || 'N/A'}</div>
-                      <div><span className="text-slate-500">Location:</span> {profile?.city} {profile?.country}</div>
-                    </div>
-                  </div>
-                )}
+                </div>
               </ProfileSection>
 
               {/* Career Goals */}
-              <ProfileSection 
-                title="Career Goals" icon={Target} 
-                isEditing={editSections['career']}
-                onEdit={() => toggleEdit('career')}
-                onSave={() => saveProfileSection('career')}
-                onCancel={() => { toggleEdit('career'); setFormData(profile); }}
-              >
-                {editSections['career'] ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm text-slate-500">Target Role</label>
-                      <Input value={formData.target_role || ''} onChange={e => handleProfileChange('target_role', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="text-sm text-slate-500">Target Companies (comma separated)</label>
-                      <Input value={(formData.target_companies || []).join(', ')} onChange={e => handleProfileChange('target_companies', e.target.value.split(',').map(s => s.trim()))} />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="text-sm text-slate-500">Preferred Domains (comma separated)</label>
-                      <Input value={(formData.preferred_domains || []).join(', ')} onChange={e => handleProfileChange('preferred_domains', e.target.value.split(',').map(s => s.trim()))} />
+              <ProfileSection title="Career Goals" icon={Target}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                    <p className="text-sm text-slate-500 mb-1">Target Role</p>
+                    <p className="font-semibold">{profile?.target_role || 'Not set'}</p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                    <p className="text-sm text-slate-500 mb-1">Target Companies</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {profile?.target_companies?.length > 0 ? profile.target_companies.map(c => (
+                        <Badge key={c} variant="secondary">{c}</Badge>
+                      )) : <span className="text-sm text-slate-400">None</span>}
                     </div>
                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
-                      <p className="text-sm text-slate-500 mb-1">Target Role</p>
-                      <p className="font-semibold">{profile?.target_role || 'Not set'}</p>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
-                      <p className="text-sm text-slate-500 mb-1">Target Companies</p>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {profile?.target_companies?.length > 0 ? profile.target_companies.map(c => (
-                          <Badge key={c} variant="secondary">{c}</Badge>
-                        )) : <span className="text-sm text-slate-400">None</span>}
-                      </div>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 sm:col-span-2">
-                      <p className="text-sm text-slate-500 mb-1">Preferred Domains</p>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {profile?.preferred_domains?.length > 0 ? profile.preferred_domains.map(d => (
-                          <Badge key={d} variant="outline" className="text-brand-indigo border-brand-indigo/30">{d}</Badge>
-                        )) : <span className="text-sm text-slate-400">None</span>}
-                      </div>
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 sm:col-span-2">
+                    <p className="text-sm text-slate-500 mb-1">Preferred Domains</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {profile?.preferred_domains?.length > 0 ? profile.preferred_domains.map(d => (
+                        <Badge key={d} variant="outline" className="text-brand-indigo border-brand-indigo/30">{d}</Badge>
+                      )) : <span className="text-sm text-slate-400">None</span>}
                     </div>
                   </div>
-                )}
+                </div>
               </ProfileSection>
 
             </motion.div>

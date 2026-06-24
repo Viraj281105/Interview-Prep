@@ -118,8 +118,10 @@ export const aiService = {
   generateRoadmap: async (targetCompanies, skillLevel, prepTimeWeeks) => {
     const groqKey = import.meta.env.VITE_GROQ_API_KEY;
     
+    const { useAppStore } = await import('../store');
+    const mockCompanies = useAppStore.getState().mockCompanies || [];
+    
     // Dynamically fetch company data to weight the roadmap
-    const { mockCompanies } = await import('../data/mock_companies.js');
     const matchedCompanies = targetCompanies.map(tc => {
       return mockCompanies.find(c => c.name.toLowerCase() === tc.toLowerCase() || c.id === tc.toLowerCase());
     }).filter(Boolean);

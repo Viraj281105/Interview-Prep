@@ -1,258 +1,149 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { useTheme } from '../context/ThemeContext';
+import { Input } from '../components/ui/Input';
+import { Settings as SettingsIcon, User, Target, Save, LogOut } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Moon, Sun, Monitor, Bell, Lock, LogOut, User as UserIcon, Shield } from 'lucide-react';
 import { getUserProfile, updateUserProfile } from '../services/database';
-import { supabase } from '../services/supabase';
 
 export const Settings = () => {
-  const { theme, toggleTheme } = useTheme();
-  const { currentUser, signOut } = useAuth();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('Account');
-  const [settings, setSettings] = useState({
-    emailReminders: true,
-    dailyChallenges: true,
-    weeklyReports: false,
-    profileVisibility: 'public',
-    dataCollection: true
-  });
+  const { currentUser, logout } = useAuth();
+  const [profile, setProfile] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
     if (currentUser?.id) {
-      getUserProfile(currentUser.id).then(profile => {
-        if (profile?.settings) {
-          setSettings(prev => ({ ...prev, ...profile.settings }));
-        }
-      });
+      loadProfile();
     }
   }, [currentUser]);
 
-  const handleSettingChange = async (key, value) => {
-    const newSettings = { ...settings, [key]: value };
-    setSettings(newSettings);
-    setIsSaving(true);
+  const loadProfile = async () => {
+    setIsLoading(true);
     try {
-      await updateUserProfile(currentUser.id, { settings: newSettings });
+      const p = await getUserProfile(currentUser.id);
+      setProfile(p);
+      setFormData(p || {});
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleProfileChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSaveMessage('');
+    try {
+      const updated = await updateUserProfile(currentUser.id, formData);
+      setProfile(updated);
+      setFormData(updated);
+      setSaveMessage('Settings saved successfully!');
+      setTimeout(() => setSaveMessage(''), 3000);
+    } catch (e) {
+      console.error(e);
+      setSaveMessage('Failed to save settings.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/login');
-  };
-
-  const handlePasswordReset = async () => {
-    if (!currentUser?.email) return;
-    try {
-      await supabase.auth.resetPasswordForEmail(currentUser.email);
-      alert('Password reset email sent!');
-    } catch (e) {
-      alert('Failed to send reset email');
-    }
-  };
-
-  const tabs = [
-    { id: 'Account', icon: UserIcon },
-    { id: 'Appearance', icon: Monitor },
-    { id: 'Notifications', icon: Bell },
-    { id: 'Privacy', icon: Lock },
-    { id: 'Security', icon: Shield },
-  ];
+  if (isLoading) return <div className="p-8 text-center animate-pulse">Loading Settings...</div>;
 
   return (
-    <div className="flex flex-col gap-8 w-full py-10 px-6 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-4xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-2">Settings</h1>
-        <p className="text-slate-600 dark:text-slate-400">Manage your account preferences, notifications, and security.</p>
+    <div className="flex flex-col gap-8 w-full py-10 px-6 max-w-4xl mx-auto animate-in fade-in">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-4xl font-heading font-bold tracking-tight text-slate-900 dark:text-slate-50 flex items-center gap-3">
+          <SettingsIcon size={36} className="text-brand-indigo" /> Account Settings
+        </h1>
+        <Button variant="outline" className="text-red-500 border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-900/20" onClick={logout}>
+          <LogOut size={16} className="mr-2" /> Sign Out
+        </Button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Sidebar Nav */}
-        <div className="w-full md:w-64 flex flex-col gap-2">
-          {tabs.map(tab => (
-            <Button 
-              key={tab.id}
-              variant={activeTab === tab.id ? 'glass' : 'ghost'} 
-              onClick={() => setActiveTab(tab.id)}
-              className={`justify-start gap-3 rounded-xl transition-all ${
-                activeTab === tab.id 
-                  ? 'bg-white/60 dark:bg-slate-800 shadow-sm shadow-brand-indigo/5 border-brand-indigo/10 text-brand-indigo' 
-                  : 'hover:bg-slate-100 dark:hover:bg-slate-800/50'
-              }`}
-            >
-              <tab.icon size={18} /> {tab.id}
-            </Button>
-          ))}
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 flex flex-col gap-6">
-          
-          {activeTab === 'Account' && (
-            <Card glass className="p-8 border-white/40">
-              <h2 className="text-xl font-heading font-bold mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Account Settings</h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-[15px]">Email Address</p>
-                    <p className="text-sm text-slate-500">{currentUser?.email || 'user@example.com'}</p>
-                  </div>
-                  <Button variant="outline" size="sm" disabled>Change</Button>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-[15px]">Password</p>
-                    <p className="text-sm text-slate-500">Reset your password via email link.</p>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={handlePasswordReset}>Send Reset Link</Button>
-                </div>
-
-                <div className="pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
-                  <h3 className="text-lg font-bold text-red-600 mb-2">Danger Zone</h3>
-                  <p className="text-sm text-slate-500 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
-                  <Button className="bg-red-600 hover:bg-red-700 text-white w-full sm:w-auto">Delete Account</Button>
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Card glass className="p-8 border-white/40 h-full">
+            <h3 className="text-2xl font-heading font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-slate-100">
+              <User className="text-brand-indigo" /> Personal Information
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-slate-500 font-medium mb-1 block">Display Name</label>
+                <Input value={formData.display_name || ''} onChange={e => handleProfileChange('display_name', e.target.value)} />
               </div>
-            </Card>
-          )}
-
-          {activeTab === 'Appearance' && (
-            <Card glass className="p-8 border-white/40">
-              <h2 className="text-xl font-heading font-bold mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Appearance</h2>
-              
-              <div className="flex items-center justify-between">
+              <div>
+                <label className="text-sm text-slate-500 font-medium mb-1 block">Phone Number</label>
+                <Input value={formData.phone_number || ''} onChange={e => handleProfileChange('phone_number', e.target.value)} />
+              </div>
+              <div>
+                <label className="text-sm text-slate-500 font-medium mb-1 block">Date of Birth</label>
+                <Input type="date" value={formData.dob || ''} onChange={e => handleProfileChange('dob', e.target.value)} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="font-semibold text-[15px]">Theme</p>
-                  <p className="text-sm text-slate-500">Toggle between light and dark mode</p>
+                  <label className="text-sm text-slate-500 font-medium mb-1 block">City</label>
+                  <Input value={formData.city || ''} onChange={e => handleProfileChange('city', e.target.value)} />
                 </div>
-                
-                <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800">
-                  <button 
-                    onClick={() => theme !== 'light' && toggleTheme()}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${theme === 'light' ? 'bg-white text-brand-indigo shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                  >
-                    <Sun size={16} /> Light
-                  </button>
-                  <button 
-                    onClick={() => theme !== 'dark' && toggleTheme()}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${theme === 'dark' ? 'bg-slate-800 text-brand-lavender shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
-                  >
-                    <Moon size={16} /> Dark
-                  </button>
+                <div>
+                  <label className="text-sm text-slate-500 font-medium mb-1 block">Country</label>
+                  <Input value={formData.country || ''} onChange={e => handleProfileChange('country', e.target.value)} />
                 </div>
               </div>
-            </Card>
-          )}
+              <div>
+                <label className="text-sm text-slate-500 font-medium mb-1 block">Bio / About Me</label>
+                <textarea 
+                  className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-brand-indigo/50"
+                  value={formData.bio || ''} 
+                  onChange={e => handleProfileChange('bio', e.target.value)} 
+                  placeholder="A short bio about your career goals..."
+                />
+              </div>
+            </div>
+          </Card>
+        </motion.div>
 
-          {activeTab === 'Notifications' && (
-            <Card glass className="p-8 border-white/40">
-              <h2 className="text-xl font-heading font-bold mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex justify-between items-center">
-                Notifications
-                {isSaving && <span className="text-xs font-normal text-slate-400">Saving...</span>}
-              </h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-[15px]">Email Reminders</p>
-                    <p className="text-sm text-slate-500">Receive reminders about upcoming mock interviews.</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" className="sr-only peer" checked={settings.emailReminders} onChange={e => handleSettingChange('emailReminders', e.target.checked)} />
-                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-indigo"></div>
-                  </label>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Card glass className="p-8 border-white/40 h-full flex flex-col justify-between">
+            <div>
+              <h3 className="text-2xl font-heading font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-slate-100">
+                <Target className="text-brand-pink" /> Career Goals
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-slate-500 font-medium mb-1 block">Target Role</label>
+                  <Input value={formData.target_role || ''} onChange={e => handleProfileChange('target_role', e.target.value)} placeholder="e.g. Senior Frontend Engineer" />
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-[15px]">Daily Challenge</p>
-                    <p className="text-sm text-slate-500">Get notified about the daily coding challenge.</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" className="sr-only peer" checked={settings.dailyChallenges} onChange={e => handleSettingChange('dailyChallenges', e.target.checked)} />
-                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-indigo"></div>
-                  </label>
+                <div>
+                  <label className="text-sm text-slate-500 font-medium mb-1 block">Target Companies (comma separated)</label>
+                  <Input value={(formData.target_companies || []).join(', ')} onChange={e => handleProfileChange('target_companies', e.target.value.split(',').map(s => s.trim()))} placeholder="e.g. Google, Stripe, Notion" />
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-[15px]">Weekly Reports</p>
-                    <p className="text-sm text-slate-500">Receive a weekly summary of your prep progress.</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" className="sr-only peer" checked={settings.weeklyReports} onChange={e => handleSettingChange('weeklyReports', e.target.checked)} />
-                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-indigo"></div>
-                  </label>
+                <div>
+                  <label className="text-sm text-slate-500 font-medium mb-1 block">Preferred Domains (comma separated)</label>
+                  <Input value={(formData.preferred_domains || []).join(', ')} onChange={e => handleProfileChange('preferred_domains', e.target.value.split(',').map(s => s.trim()))} placeholder="e.g. FinTech, AI, E-commerce" />
                 </div>
               </div>
-            </Card>
-          )}
+            </div>
 
-          {activeTab === 'Privacy' && (
-            <Card glass className="p-8 border-white/40">
-              <h2 className="text-xl font-heading font-bold mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Privacy</h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-[15px]">Profile Visibility</p>
-                    <p className="text-sm text-slate-500">Choose who can view your profile on leaderboards.</p>
-                  </div>
-                  <select 
-                    className="h-10 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-800 dark:bg-slate-950"
-                    value={settings.profileVisibility}
-                    onChange={e => handleSettingChange('profileVisibility', e.target.value)}
-                  >
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                    <option value="friends">Friends Only</option>
-                  </select>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-[15px]">Data Collection</p>
-                    <p className="text-sm text-slate-500">Allow us to use your anonymized data to improve AI recommendations.</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" className="sr-only peer" checked={settings.dataCollection} onChange={e => handleSettingChange('dataCollection', e.target.checked)} />
-                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-indigo"></div>
-                  </label>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {activeTab === 'Security' && (
-            <Card glass className="p-8 border-white/40">
-              <h2 className="text-xl font-heading font-bold mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Security</h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-[15px]">Sign out of all devices</p>
-                    <p className="text-sm text-slate-500">Log out of every active session across all your devices.</p>
-                  </div>
-                  <Button variant="outline" onClick={handleSignOut} className="gap-2 text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200">
-                    <LogOut size={16} /> Sign Out All
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
-
-        </div>
+            <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center gap-4">
+               {saveMessage && (
+                 <span className={`text-sm font-medium ${saveMessage.includes('successfully') ? 'text-emerald-500' : 'text-red-500'}`}>
+                   {saveMessage}
+                 </span>
+               )}
+               <Button onClick={handleSave} disabled={isSaving} size="lg" className="w-full bg-brand-indigo hover:bg-brand-purple text-white shadow-lg shadow-brand-indigo/20">
+                 {isSaving ? 'Saving...' : <><Save size={20} className="mr-2" /> Save All Settings</>}
+               </Button>
+            </div>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );

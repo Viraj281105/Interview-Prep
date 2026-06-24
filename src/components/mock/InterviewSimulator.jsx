@@ -72,8 +72,16 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
     };
   }, [speechSupported]);
 
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
+
   useEffect(() => {
-    setQuestions(generateMockQuestions(type));
+    async function loadQuestions() {
+      setIsLoadingQuestions(true);
+      const q = await generateMockQuestions(type);
+      setQuestions(q);
+      setIsLoadingQuestions(false);
+    }
+    loadQuestions();
   }, [type]);
 
   useEffect(() => {
@@ -238,7 +246,7 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
     />;
   }
 
-  if (questions.length === 0) {
+  if (questions.length === 0 && !isLoadingQuestions) {
     return (
       <div className="max-w-4xl mx-auto w-full flex flex-col items-center justify-center py-20 text-center animate-in fade-in">
         <AlertCircle size={48} className="text-amber-500 mb-4" />
@@ -291,8 +299,8 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
               <p className="font-bold text-lg mb-1">{companyId ? `Ready for ${companyId.toUpperCase()}?` : 'Ready to begin?'}</p>
               <p className="text-sm text-slate-400">Ensure you are in a quiet room with good lighting.</p>
             </div>
-            <Button onClick={() => setIsStarted(true)} size="lg" className="w-full sm:w-auto bg-brand-indigo hover:bg-brand-purple shadow-brand-indigo/20 shadow-lg text-white font-bold px-8">
-              Start AI Interview
+            <Button onClick={() => setIsStarted(true)} size="lg" disabled={isLoadingQuestions} className="w-full sm:w-auto bg-brand-indigo hover:bg-brand-purple shadow-brand-indigo/20 shadow-lg text-white font-bold px-8">
+              {isLoadingQuestions ? 'Preparing Questions...' : 'Start AI Interview'}
             </Button>
           </div>
         </Card>
