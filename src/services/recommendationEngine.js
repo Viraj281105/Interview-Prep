@@ -1,6 +1,5 @@
 import { getUserHistory } from './historyService';
 import { getUserProfile } from './database';
-import { allDataModules } from '../data';
 import { useAppStore } from '../store';
 
 export const RECO_TYPES = {
@@ -12,16 +11,21 @@ export const RECO_TYPES = {
 };
 
 export async function generateRecommendations(userId, completedQuestions = []) {
-  if (!userId) return getDefaultRecommendations();
+  if (!userId) return getDynamicDefaults();
 
   try {
     const history = await getUserHistory(userId);
     const profile = await getUserProfile(userId);
     const storeState = useAppStore.getState();
     const quizScores = storeState.quizScores || {};
+    const allTopics = storeState.topics || [];
+
+    if (!allTopics.length) {
+       return []; // Data not loaded yet
+    }
 
     if (!history || history.length === 0) {
-      return getProfileBasedDefaults(profile);
+      return getProfileBasedDefaults(profile, allTopics);
     }
 
     const recos = [];
@@ -47,32 +51,27 @@ export async function generateRecommendations(userId, completedQuestions = []) {
       usedIds.add(`weak-${weak.id}`);
     }
 
-    // 2. CONTINUE: Find most recently viewed topic that isn't fully complete
+    // 2. CONTINUE: Find most recently viewed topic
     const recentTopicViews = history.filter(h => h.action_type === 'topic_viewed');
     if (recentTopicViews.length > 0) {
       for (const view of recentTopicViews) {
         const topicId = view.metadata?.topicId;
         if (!topicId || usedIds.has(topicId)) continue;
         
-        const module = allDataModules.find(m => m.id === topicId);
+        const module = allTopics.find(m => m.id === topicId);
         if (!module) continue;
 
-        const total = module.questions?.length || 0;
-        const completed = module.questions?.filter(q => completedQuestions.includes(q.id)).length || 0;
-        
-        if (completed < total && total > 0) {
-          recos.push({
-            type: RECO_TYPES.CONTINUE,
-            id: module.id,
-            title: `Continue: ${module.title}`,
-            description: `You are ${Math.round((completed/total)*100)}% done with this module. Keep going!`,
-            icon: module.icon || '📚',
-            link: `/topic/${module.id}`,
-            priority: 9
-          });
-          usedIds.add(topicId);
-          break; 
-        }
+        recos.push({
+          type: RECO_TYPES.CONTINUE,
+          id: module.id,
+          title: `Continue: ${module.title}`,
+          description: `Pick up where you left off. Review your notes and practice questions.`,
+          icon: module.icon || '📚',
+          link: `/topic/${module.id}`,
+          priority: 9
+        });
+        usedIds.add(topicId);
+        break; 
       }
     }
 
@@ -80,7 +79,7 @@ export async function generateRecommendations(userId, completedQuestions = []) {
     const recentTopics = [...new Set(recentTopicViews.map(v => v.metadata?.topicId).filter(Boolean))];
     if (recentTopics.length > 0) {
       const topicToTest = recentTopics[0];
-      const mod = allDataModules.find(m => m.id === topicToTest);
+      const mod = allTopics.find(m => m.id === topicToTest);
       if (mod && !usedIds.has(`practice-${topicToTest}`)) {
         recos.push({
           type: RECO_TYPES.PRACTICE,
@@ -116,7 +115,7 @@ export async function generateRecommendations(userId, completedQuestions = []) {
     // 5. NEW TOPIC (Fill to 3 items)
     if (recos.length < 3) {
       const primaryStack = profile?.primary_stack || [];
-      const suggestedModules = allDataModules.filter(m => !usedIds.has(m.id) && primaryStack.some(tech => m.title.toLowerCase().includes(tech.toLowerCase())));
+      const suggestedModules = allTopics.filter(m => !usedIds.has(m.id) && primaryStack.some(tech => m.title.toLowerCase().includes(tech.toLowerCase())));
       
       for (const mod of suggestedModules) {
         if (recos.length >= 3) break;
@@ -134,7 +133,7 @@ export async function generateRecommendations(userId, completedQuestions = []) {
     }
 
     if (recos.length < 3) {
-      const fallbackDefaults = getDefaultRecommendations();
+      const fallbackDefaults = getDynamicDefaults(allTopics);
       for (const def of fallbackDefaults) {
         if (recos.length >= 3) break;
         if (!usedIds.has(def.id)) {
@@ -147,54 +146,71 @@ export async function generateRecommendations(userId, completedQuestions = []) {
     return recos.sort((a, b) => b.priority - a.priority).slice(0, 3);
   } catch (e) {
     console.error('Recommendation engine error:', e);
-    return getDefaultRecommendations();
+    return getDynamicDefaults();
   }
 }
 
-function getDefaultRecommendations() {
-  return [
-    {
-      type: RECO_TYPES.NEW_TOPIC,
-      id: 'dsa-arrays',
-      title: 'Master Arrays',
-      description: 'The most common data structure in interviews.',
-      icon: '📊',
-      link: '/topic/dsa-arrays',
-      priority: 1
-    },
-    {
-      type: RECO_TYPES.MOCK,
-      id: 'mock_dsa',
-      title: 'DSA Mock Interview',
-      description: 'Test your algorithmic skills under pressure.',
-      icon: '🎥',
-      link: '/mock',
-      priority: 1
-    },
-    {
-      type: RECO_TYPES.PRACTICE,
-      id: 'quiz-react-fundamentals',
-      title: 'React Fundamentals Quiz',
-      description: 'Quick 10-question assessment.',
-      icon: '📝',
-      link: '/quiz/quiz-react-fundamentals',
-      priority: 1
-    }
-  ];
+function getDynamicDefaults(allTopics = []) {
+  if (allTopics.length === 0) {
+     allTopics = useAppStore.getState().topics || [];
+  }
+  
+  const defaults = [];
+  
+  // Safe fallback if topics haven't loaded yet
+  const firstTopic = allTopics.length > 0 ? allTopics[0] : { id: 'dsa-arrays', title: 'Arrays', icon: '📊' };
+  
+  defaults.push({
+    type: RECO_TYPES.NEW_TOPIC,
+    id: firstTopic.id,
+    title: `Master ${firstTopic.title}`,
+    description: 'A fundamental topic that appears in most interviews.',
+    icon: firstTopic.icon || '📊',
+    link: `/topic/${firstTopic.id}`,
+    priority: 1
+  });
+
+  defaults.push({
+    type: RECO_TYPES.MOCK,
+    id: 'mock_dsa',
+    title: 'DSA Mock Interview',
+    description: 'Test your algorithmic skills under pressure.',
+    icon: '🎥',
+    link: '/mock',
+    priority: 1
+  });
+
+  defaults.push({
+    type: RECO_TYPES.PRACTICE,
+    id: 'quiz-random',
+    title: 'Take a Random Quiz',
+    description: 'Quick assessment across various topics.',
+    icon: '📝',
+    link: '/quiz',
+    priority: 1
+  });
+
+  return defaults;
 }
 
-function getProfileBasedDefaults(profile) {
-  const defaults = getDefaultRecommendations();
-  if (profile?.primary_stack?.includes('Python')) {
-    defaults[0] = {
-      type: RECO_TYPES.NEW_TOPIC,
-      id: 'lang-python',
-      title: 'Python Deep Dive',
-      description: 'Master Python internals for your interviews.',
-      icon: '🐍',
-      link: '/topic/lang-python',
-      priority: 2
-    };
+function getProfileBasedDefaults(profile, allTopics) {
+  const defaults = getDynamicDefaults(allTopics);
+  
+  if (profile?.primary_stack && profile.primary_stack.length > 0 && allTopics.length > 0) {
+    const mainTech = profile.primary_stack[0];
+    const match = allTopics.find(t => t.title.toLowerCase().includes(mainTech.toLowerCase()));
+    
+    if (match) {
+      defaults[0] = {
+        type: RECO_TYPES.NEW_TOPIC,
+        id: match.id,
+        title: `${match.title} Deep Dive`,
+        description: `Master ${mainTech} for your upcoming interviews.`,
+        icon: match.icon || '💻',
+        link: `/topic/${match.id}`,
+        priority: 2
+      };
+    }
   }
   return defaults;
 }

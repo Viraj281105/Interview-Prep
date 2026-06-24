@@ -41,6 +41,22 @@ export const createDataSlice = (set, get) => ({
       if (questionsRes.error) throw questionsRes.error;
       if (companiesRes.error) throw companiesRes.error;
 
+      // Fallback if Supabase is connected but tables are empty (Phase 1 Bug Fix)
+      if (subjectsRes.data.length === 0 || topicsRes.data.length === 0) {
+        console.warn('Backend tables are empty, falling back to static data');
+        const { subjectsList: staticSubjects } = await import('../data/subjectsList');
+        const { allDataModules: staticModules } = await import('../data/index');
+        const { mockCompanies: staticCompanies } = await import('../data/mock_companies');
+        set({
+          subjectsList: staticSubjects,
+          allDataModules: staticModules,
+          mockCompanies: staticCompanies,
+          isDataLoaded: true,
+          isDataLoading: false
+        });
+        return;
+      }
+
       // Reconstruct subjectsList
       const reconstructedSubjects = subjectsRes.data.map(sub => ({
         ...sub,

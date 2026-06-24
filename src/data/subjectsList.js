@@ -1,4 +1,4 @@
-import { Code, Database, Server, Layout, Users } from 'lucide-react';
+import { Code, Database, Server, Layout, Users, Cloud, BrainCircuit } from 'lucide-react';
 
 export const subjectsList = [
   { 
@@ -17,43 +17,43 @@ export const subjectsList = [
     desc: 'Scalable architectures, Load balancing.', 
     color: 'text-brand-violet', 
     bg: 'bg-brand-violet/10',
-    moduleIds: ['core-sys-design', 'projects-system-design']
+    moduleIds: ['core-sys-design', 'projects-sys-design', 'projects-deep-dive']
   },
   { 
     id: 'react', 
-    title: 'React & Frontend', 
+    title: 'Frontend Development', 
     icon: 'Layout', 
-    desc: 'Hooks, State Management, Performance.', 
+    desc: 'React, JS, CSS, Performance.', 
     color: 'text-brand-cyan', 
     bg: 'bg-brand-cyan/10',
-    moduleIds: ['react', 'frontend-js', 'frontend-css', 'frontend-perf']
+    moduleIds: ['react', 'javascript', 'css', 'web-perf']
   },
   { 
-    id: 'sql', 
-    title: 'SQL', 
-    icon: 'Database', 
-    desc: 'Complex queries, Joins, Indexing.', 
-    color: 'text-orange-500', 
-    bg: 'bg-orange-500/10',
-    moduleIds: ['db-sql']
+    id: 'backend', 
+    title: 'Backend & APIs', 
+    icon: 'Server', 
+    desc: 'Node, Express, Spring Boot, Microservices.', 
+    color: 'text-blue-500', 
+    bg: 'bg-blue-500/10',
+    moduleIds: ['nodejs', 'express', 'api-design', 'spring-boot', 'microservices']
   },
   { 
     id: 'dbms', 
-    title: 'Database Management (DBMS)', 
+    title: 'Databases (SQL & NoSQL)', 
     icon: 'Database', 
-    desc: 'ACID, PostgreSQL, NoSQL, Redis.', 
+    desc: 'SQL, PostgreSQL, NoSQL, Redis.', 
     color: 'text-amber-600', 
     bg: 'bg-amber-600/10',
-    moduleIds: ['db-postgres', 'db-nosql', 'db-redis']
+    moduleIds: ['sql', 'postgres', 'nosql', 'redis']
   },
   { 
     id: 'oop', 
     title: 'Object Oriented Programming', 
     icon: 'Code', 
-    desc: 'Java, C++, Python, TypeScript.', 
+    desc: 'Concepts, Java, C++, Python, TypeScript.', 
     color: 'text-rose-500', 
     bg: 'bg-rose-500/10',
-    moduleIds: ['java', 'cpp', 'python', 'ts']
+    moduleIds: ['core-oop', 'java', 'cpp', 'python', 'typescript']
   },
   { 
     id: 'os', 
@@ -72,6 +72,24 @@ export const subjectsList = [
     color: 'text-blue-500', 
     bg: 'bg-blue-500/10',
     moduleIds: ['core-networking']
+  },
+  { 
+    id: 'devops', 
+    title: 'DevOps & Cloud', 
+    icon: 'Cloud', 
+    desc: 'Docker, Kubernetes, CI/CD.', 
+    color: 'text-teal-500', 
+    bg: 'bg-teal-500/10',
+    moduleIds: ['devops-docker', 'devops-kubernetes', 'devops-cicd']
+  },
+  { 
+    id: 'ai-ml', 
+    title: 'AI & Machine Learning', 
+    icon: 'BrainCircuit', 
+    desc: 'Fundamentals, Deep Learning, GenAI.', 
+    color: 'text-purple-500', 
+    bg: 'bg-purple-500/10',
+    moduleIds: ['ai-ml-fundamentals', 'ai-ml-deep-learning', 'ai-ml-genai']
   },
   { 
     id: 'behavioral', 

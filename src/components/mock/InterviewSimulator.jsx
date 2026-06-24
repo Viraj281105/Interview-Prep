@@ -238,7 +238,16 @@ export const InterviewSimulator = ({ type, companyId, onEnd }) => {
     />;
   }
 
-  if (questions.length === 0) return null;
+  if (questions.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto w-full flex flex-col items-center justify-center py-20 text-center animate-in fade-in">
+        <AlertCircle size={48} className="text-amber-500 mb-4" />
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">No Questions Available</h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-6">We couldn't generate a mock interview for this topic because the question bank is currently empty.</p>
+        <Button onClick={onEnd} variant="outline">Go Back</Button>
+      </div>
+    );
+  }
 
   if (!isStarted) {
     return (

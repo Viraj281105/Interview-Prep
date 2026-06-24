@@ -133,6 +133,10 @@ export const aiService = {
 
     if (groqKey) {
       try {
+        const { useAppStore } = await import('../store');
+        const topics = useAppStore.getState().topics || [];
+        const availableTopicsContext = topics.map(t => `${t.title} (ID: ${t.id})`).join(', ');
+
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -150,14 +154,23 @@ export const aiService = {
   "title": "String",
   "summary": "String",
   "weeks": [
-    { "week": Number, "title": "String", "focus": "String", "tasks": ["String", "String", "String"] }
+    { 
+      "week": Number, 
+      "title": "String", 
+      "focus": "String", 
+      "tasks": [
+        { "task": "String", "topicId": "String (must be one of the provided available IDs, or null if strictly off-platform)" }
+      ] 
+    }
   ]
 }
 The output MUST be valid JSON.`
               },
               {
                 role: "user",
-                content: `Create a ${prepTimeWeeks}-week technical interview preparation roadmap for a ${skillLevel} software engineer targeting these companies: ${targetCompanies.length > 0 ? targetCompanies.join(', ') : 'top tech companies'}. ${companyContext ? 'Use this data to tailor the plan: ' + companyContext : ''} Ensure tasks are realistic for the week.`
+                content: `Create a ${prepTimeWeeks}-week technical interview preparation roadmap for a ${skillLevel} software engineer targeting these companies: ${targetCompanies.length > 0 ? targetCompanies.join(', ') : 'top tech companies'}. ${companyContext ? 'Use this data to tailor the plan: ' + companyContext : ''} Ensure tasks are realistic for the week.
+                
+Available platform topics to map to (use these IDs in your tasks where relevant): ${availableTopicsContext}`
               }
             ]
           })
@@ -211,9 +224,9 @@ The output MUST be valid JSON.`
         title: isReviewWeek ? "Review & Full Mock Loops" : `Mastering ${topic}`,
         focus: isReviewWeek ? "Simulating high-pressure onsite loops." : `Deep dive into ${topic} patterns asked by ${targetCompanies[0] || 'top companies'}.`,
         tasks: [
-          `Complete 5 ${skillLevel} level questions related to ${topic}`,
-          isReviewWeek ? "Do 2 full mock interview loops back-to-back" : "Read 1 architecture blog post or engineering article",
-          `Do a 45-minute timed mock interview for ${topic}`
+          { task: `Complete 5 ${skillLevel} level questions related to ${topic}`, topicId: null },
+          { task: isReviewWeek ? "Do 2 full mock interview loops back-to-back" : "Read 1 architecture blog post or engineering article", topicId: null },
+          { task: `Do a 45-minute timed mock interview for ${topic}`, topicId: null }
         ]
       });
     }
