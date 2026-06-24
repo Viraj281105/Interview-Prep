@@ -4,6 +4,11 @@ export const nosqlData = {
   icon: '🗃️',
   summary: 'Document, Key-Value, Wide-Column, and Graph databases for massive scale.',
   concepts: ['CAP Theorem', 'BASE', 'Document Stores', 'Key-Value Stores', 'Graph Databases', 'Wide-Column Stores', 'Sharding', 'Replication'],
+  
+  learningLinks: [
+    { title: 'PostgreSQL Tutorial', url: 'https://www.postgresqltutorial.com/' },
+    { title: 'Use The Index, Luke', url: 'https://use-the-index-luke.com/' }
+  ],
   questions: [
     { id: 'nosql-001', question: 'What is NoSQL?', difficulty: 'easy', type: 'theory', answer: 'Stands for "Not Only SQL". A class of non-relational database management systems that do not use the traditional tabular relations used in RDBMS. Designed for flexible schemas, horizontal scaling, and handling massive volumes of unstructured or semi-structured data.' },
     { id: 'nosql-002', question: 'What are the four main types of NoSQL databases?', difficulty: 'medium', type: 'theory', answer: '1. Document Stores (MongoDB, CouchDB). 2. Key-Value Stores (Redis, DynamoDB). 3. Wide-Column Stores (Cassandra, HBase). 4. Graph Databases (Neo4j, Amazon Neptune).' },

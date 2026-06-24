@@ -4,7 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useAppStore } from '../../store';
 import { Button } from '../ui/Button';
-import { Moon, Sun, User, Code2, Menu, X, LogOut, Settings as SettingsIcon, Flame, Award } from 'lucide-react';
+import { Moon, Sun, User, Code2, Menu, X, LogOut, Settings as SettingsIcon, Flame, Award, Bookmark } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NAV_LINKS, MOBILE_NAV_LINKS } from '../../constants/routes';
 
@@ -106,6 +106,11 @@ export const Navbar = () => {
                       <Link to="/achievements" onClick={() => setProfileMenuOpen(false)}>
                         <button className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
                           <Award size={16} /> Achievements
+                        </button>
+                      </Link>
+                      <Link to="/bookmarks" onClick={() => setProfileMenuOpen(false)}>
+                        <button className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                          <Bookmark size={16} /> Bookmarks
                         </button>
                       </Link>
                       <Link to="/settings" onClick={() => setProfileMenuOpen(false)}>

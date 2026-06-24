@@ -4,6 +4,11 @@ export const javaData = {
   icon: '☕',
   summary: 'Statically-typed, object-oriented language running on JVM. Enterprise standard for backend services, Android development, and large-scale distributed systems.',
   concepts: ['JVM', 'Garbage Collection', 'Generics', 'Streams', 'Lambdas', 'Multithreading', 'Collections Framework', 'Spring', 'OOP Principles', 'Exception Handling', 'Functional Interfaces'],
+  
+  learningLinks: [
+    { title: 'MDN Web Docs', url: 'https://developer.mozilla.org/' },
+    { title: 'W3Schools', url: 'https://www.w3schools.com/' }
+  ],
   questions: [
     { id: 'java-001', question: 'What is the difference between JDK, JRE, and JVM?', difficulty: 'easy', type: 'theory', answer: 'JVM (Java Virtual Machine): Executes bytecode. Platform-dependent. Handles memory management and GC. JRE (Java Runtime Environment): JVM + standard class libraries. Used to run Java. JDK (Java Development Kit): JRE + development tools (javac, debugger). Used to develop Java.' },
     { id: 'java-002', question: 'Explain abstract class vs interface.', difficulty: 'medium', type: 'theory', answer: 'Abstract class: Can have state (instance variables), constructors, and concrete methods. Single inheritance. Interface: Multiple inheritance. Variables are implicitly public static final. Methods are implicitly public abstract (except default/static in Java 8+). Use abstract for "is-a", interface for "can-do".' },

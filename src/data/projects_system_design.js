@@ -4,6 +4,11 @@ export const systemDesignInterviewData = {
   icon: '🏛️',
   summary: 'Architecting scalable systems: URL shorteners, Chat apps, Video streaming, and more.',
   concepts: ['Requirements Gathering', 'Capacity Estimation', 'High-Level Design', 'Database Schema', 'API Design', 'Scaling Bottlenecks'],
+  
+  learningLinks: [
+    { title: 'System Design Primer', url: 'https://github.com/donnemartin/system-design-primer' },
+    { title: 'ByteByteGo', url: 'https://bytebytego.com/' }
+  ],
   questions: [
     { id: 'sdi-001', question: 'What is the standard framework for answering a System Design interview question?', difficulty: 'easy', type: 'theory', answer: '1. Requirements Clarification (Functional & Non-Functional). 2. Back-of-the-envelope Estimation (Capacity planning). 3. System Interface/API Definition. 4. Database Schema Design. 5. High-Level Architecture. 6. Deep Dive/Scaling (Addressing bottlenecks, single points of failure, edge cases).' },
     { id: 'sdi-002', question: 'Functional vs Non-Functional Requirements.', difficulty: 'easy', type: 'theory', answer: 'Functional: What the system MUST do (e.g., users can send messages, users can upload videos). Non-Functional: How the system behaves (e.g., Highly Available, Low Latency, Eventual Consistency, highly secure).' },

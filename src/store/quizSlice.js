@@ -2,6 +2,9 @@
 export const createQuizSlice = (set, get) => ({
   quizScores: {}, // Format: { quizId: { score, total, date, duration } }
   quizHistory: [], // Ordered list of recent quiz attempts
+  currentActiveQuiz: null, // Holds dynamically generated quiz
+
+  setCurrentActiveQuiz: (quiz) => set({ currentActiveQuiz: quiz }),
 
   saveQuizScore: (quizId, scoreData) => {
     set((state) => ({

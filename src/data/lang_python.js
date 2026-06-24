@@ -4,6 +4,11 @@ export const pythonData = {
   icon: '🐍',
   summary: 'High-level, dynamically-typed, interpreted language known for readability and extensive standard library. Dominant in AI/ML, data science, and backend development.',
   concepts: ['GIL', 'Decorators', 'Generators', 'List Comprehensions', 'Duck Typing', 'MRO', 'Context Managers', 'Metaclasses', '*args/**kwargs', 'Slots', 'Descriptors', 'Asyncio'],
+  
+  learningLinks: [
+    { title: 'MDN Web Docs', url: 'https://developer.mozilla.org/' },
+    { title: 'W3Schools', url: 'https://www.w3schools.com/' }
+  ],
   questions: [
     { id: 'py-001', question: 'What is the difference between a list and a tuple in Python?', difficulty: 'easy', type: 'theory', answer: 'Lists are mutable (can be changed) while tuples are immutable (cannot be changed). Tuples are faster, use less memory, and can be used as dictionary keys (because they are hashable). Lists are for homogeneous data, tuples for heterogeneous data.', code: 'my_list = [1, 2, 3]\\nmy_tuple = (1, 2, 3)', codeLanguage: 'python' },
     { id: 'py-002', question: 'Explain the Global Interpreter Lock (GIL).', difficulty: 'hard', type: 'theory', answer: 'The GIL is a mutex in CPython that allows only one thread to execute Python bytecode at a time. It exists because CPython memory management is not thread-safe. Implications: CPU-bound multithreaded programs don\'t achieve parallelism. I/O-bound programs still benefit from threading. Solution: Use multiprocessing for CPU-bound tasks.' },

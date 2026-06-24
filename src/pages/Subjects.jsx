@@ -14,6 +14,8 @@ import * as Icons from 'lucide-react';
 export const Subjects = () => {
   const { completedQuestions, subjectsList, allDataModules } = useAppStore();
 
+  const [searchTerm, setSearchTerm] = React.useState('');
+
   const getSubjectProgress = (subject) => {
     let total = 0;
     let completed = 0;
@@ -29,6 +31,11 @@ export const Subjects = () => {
     return total > 0 ? Math.round((completed / total) * 100) : 0;
   };
 
+  const filteredSubjects = subjectsList.filter(sub => 
+    sub.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    sub.desc.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="flex flex-col gap-8 w-full py-8 px-4 sm:px-6 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -39,12 +46,24 @@ export const Subjects = () => {
         
         <div className="relative w-full md:w-80">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-indigo/60" size={18} />
-          <Input placeholder="Search subjects..." className="pl-11 h-12 rounded-2xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border-slate-200 dark:border-slate-800 shadow-sm focus:border-brand-indigo focus:ring-brand-indigo/20" />
+          <Input 
+            placeholder="Search subjects..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-11 h-12 rounded-2xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border-slate-200 dark:border-slate-800 shadow-sm focus:border-brand-indigo focus:ring-brand-indigo/20" 
+          />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {subjectsList.map((sub, i) => {
+      {filteredSubjects.length === 0 ? (
+        <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/20 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
+          <Search className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600 mb-4" />
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">No subjects found</h3>
+          <p className="text-slate-500">Try adjusting your search term.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredSubjects.map((sub, i) => {
           const progress = getSubjectProgress(sub);
           return (
           <motion.div key={sub.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
@@ -77,7 +96,8 @@ export const Subjects = () => {
             </Card>
           </motion.div>
         )})}
-      </div>
+        </div>
+      )}
 
       <div className="mt-8">
         <RevisionScheduler />

@@ -4,6 +4,10 @@ export const networkingData = {
   icon: '🌐',
   summary: 'TCP/IP, OSI model, HTTP/HTTPS, DNS, and network protocols.',
   concepts: ['OSI Model', 'TCP vs UDP', 'HTTP/HTTPS', 'DNS', 'TCP 3-Way Handshake', 'WebSockets', 'NAT'],
+  
+  learningLinks: [
+    { title: 'Computer Networking Basics', url: 'https://www.cloudflare.com/learning/network-layer/what-is-the-network-layer/' }
+  ],
   questions: [
     { id: 'net-001', question: 'What is a Computer Network?', difficulty: 'easy', type: 'theory', answer: 'A group of two or more interconnected computer systems that use common communication protocols over digital interconnections to share resources.' },
     { id: 'net-002', question: 'What is an IP Address?', difficulty: 'easy', type: 'theory', answer: 'Internet Protocol Address. A unique numerical label assigned to each device connected to a computer network that uses the Internet Protocol for communication. Used for host identification and location addressing.' },

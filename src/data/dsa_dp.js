@@ -4,6 +4,11 @@ export const dpData = {
   icon: '🧮',
   summary: 'Solving complex problems by breaking them down into simpler subproblems and caching results.',
   concepts: ['Memoization (Top-Down)', 'Tabulation (Bottom-Up)', 'Knapsack Problem', 'LCS', 'State Transition'],
+  
+  learningLinks: [
+    { title: 'GeeksforGeeks DSA', url: 'https://www.geeksforgeeks.org/data-structures/' },
+    { title: 'LeetCode Explore', url: 'https://leetcode.com/explore/' }
+  ],
   questions: [
     { id: 'dp-001', question: 'What is Dynamic Programming (DP)?', difficulty: 'medium', type: 'theory', answer: 'An algorithmic technique for solving optimization problems by breaking them down into simpler overlapping subproblems, solving each subproblem exactly once, and storing their solutions (memoization or tabulation) to avoid redundant computations.' },
     { id: 'dp-002', question: 'What are the two key properties a problem must have to use DP?', difficulty: 'medium', type: 'theory', answer: '1. Overlapping Subproblems: The problem can be broken down into subproblems which are reused multiple times. 2. Optimal Substructure: The optimal solution to the overall problem can be constructed from the optimal solutions of its subproblems.' },

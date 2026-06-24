@@ -4,6 +4,11 @@ export const kubernetesData = {
   icon: '☸️',
   summary: 'Container orchestration, Pods, Deployments, Services, and cluster architecture.',
   concepts: ['Pods', 'Deployments', 'Services', 'Control Plane', 'Kubelet', 'ConfigMaps', 'Ingress'],
+  
+  learningLinks: [
+    { title: 'Docker Tutorial', url: 'https://docs.docker.com/get-started/' },
+    { title: 'Kubernetes Basics', url: 'https://kubernetes.io/docs/tutorials/kubernetes-basics/' }
+  ],
   questions: [
     { id: 'k8s-001', question: 'What is Kubernetes (K8s)?', difficulty: 'easy', type: 'theory', answer: 'An open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications. Originally developed by Google.' },
     { id: 'k8s-002', question: 'What is a Node in Kubernetes?', difficulty: 'easy', type: 'theory', answer: 'A worker machine in Kubernetes (can be a VM or physical machine). Each node contains the services necessary to run Pods, managed by the Control Plane. Components include Kubelet, Kube-proxy, and the Container Runtime (e.g., containerd).' },

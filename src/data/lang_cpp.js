@@ -4,6 +4,11 @@ export const cppData = {
   icon: '⚡',
   summary: 'High-performance, compiled systems programming language. Core to game engines, high-frequency trading, and operating systems.',
   concepts: ['Pointers', 'Memory Management', 'OOP', 'STL', 'Templates', 'RAII', 'Smart Pointers', 'Move Semantics', 'Virtual Functions', 'Multithreading'],
+  
+  learningLinks: [
+    { title: 'MDN Web Docs', url: 'https://developer.mozilla.org/' },
+    { title: 'W3Schools', url: 'https://www.w3schools.com/' }
+  ],
   questions: [
     { id: 'cpp-001', question: 'Difference between C and C++?', difficulty: 'easy', type: 'theory', answer: 'C is procedural, lacks OOP, doesn\'t support function overloading, uses malloc/free. C++ supports OOP (classes), function/operator overloading, exception handling, uses new/delete, and has STL.' },
     { id: 'cpp-002', question: 'What is a pointer vs a reference?', difficulty: 'easy', type: 'theory', answer: 'Pointer holds memory address, can be reassigned, can be null, requires dereferencing (*). Reference is an alias to an existing variable, cannot be reassigned once initialized, cannot be null, syntax is cleaner.' },

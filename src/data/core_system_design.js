@@ -4,6 +4,11 @@ export const systemDesignConceptsData = {
   icon: '🏗️',
   summary: 'Scalability, Load Balancing, Caching, CAP Theorem, and Microservices.',
   concepts: ['Scalability', 'Load Balancing', 'Caching', 'CAP Theorem', 'Database Sharding', 'Message Queues', 'Microservices'],
+  
+  learningLinks: [
+    { title: 'System Design Primer', url: 'https://github.com/donnemartin/system-design-primer' },
+    { title: 'ByteByteGo', url: 'https://bytebytego.com/' }
+  ],
   questions: [
     { id: 'sdc-001', question: 'Vertical vs Horizontal Scaling.', difficulty: 'easy', type: 'theory', answer: 'Vertical (Scale Up): Adding more power (CPU, RAM) to an existing machine. Has a hard limit and involves downtime. Horizontal (Scale Out): Adding more machines to your pool of resources. Conceptually infinite, provides redundancy, requires load balancing.' },
     { id: 'sdc-002', question: 'What is a Load Balancer?', difficulty: 'easy', type: 'theory', answer: 'A component that evenly distributes incoming network traffic across a group of backend servers. This ensures no single server bears too much demand, improving responsiveness and availability.' },

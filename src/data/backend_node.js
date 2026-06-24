@@ -4,6 +4,11 @@ export const nodeData = {
   icon: '🟩',
   summary: 'Asynchronous event-driven JavaScript runtime built on Chrome\'s V8 engine.',
   concepts: ['Event Loop', 'Non-blocking I/O', 'Streams', 'Buffers', 'Modules (CJS/ESM)', 'Cluster', 'Worker Threads', 'EventEmitter'],
+  
+  learningLinks: [
+    { title: 'Node.js Docs', url: 'https://nodejs.org/en/docs/' },
+    { title: 'Spring Boot Guide', url: 'https://spring.io/guides' }
+  ],
   questions: [
     { id: 'node-001', question: 'How does the Node.js Event Loop work?', difficulty: 'hard', type: 'theory', answer: 'The Event Loop allows Node.js to perform non-blocking I/O operations despite being single-threaded. It delegates operations to the OS kernel. It has 6 phases: 1. Timers (setTimeout/setInterval). 2. Pending callbacks. 3. Idle/Prepare. 4. Poll (retrieve new I/O events). 5. Check (setImmediate). 6. Close callbacks. Microtasks (Promises, process.nextTick) run between phases.' },
     { id: 'node-002', question: 'What is process.nextTick()?', difficulty: 'medium', type: 'theory', answer: 'A method that adds a callback to the "nextTick queue". This queue is processed immediately after the current operation completes, BEFORE the event loop continues to the next phase (and before Promises). Useful for ensuring a callback executes before any I/O events are fired.' },

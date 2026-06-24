@@ -4,6 +4,10 @@ export const behavioralData = {
   icon: '⭐',
   summary: 'Navigating past experiences, failures, and conflicts using the STAR method.',
   concepts: ['STAR Method', 'Conflict Resolution', 'Handling Failure', 'Adaptability', 'Time Management'],
+  
+  learningLinks: [
+    { title: 'STAR Method Guide', url: 'https://www.themuse.com/advice/star-interview-method' }
+  ],
   questions: [
     { id: 'hrb-001', question: 'What is the STAR method?', difficulty: 'easy', type: 'theory', answer: 'A structured manner of responding to a behavioral interview question. Situation (set the scene), Task (describe your responsibility), Action (explain exactly what YOU did), Result (share the positive outcome, ideally with metrics).' },
     { id: 'hrb-002', question: 'Tell me about a time you had a conflict with a coworker.', difficulty: 'medium', type: 'theory', answer: 'STAR approach. Focus on communication, empathy, and professional resolution. Example: "S: We disagreed on the DB schema. A: I scheduled a 1-on-1 to understand their perspective. We realized we were optimizing for different things. R: We compromised on a hybrid approach, improving team trust."' },

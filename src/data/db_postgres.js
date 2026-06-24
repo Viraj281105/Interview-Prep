@@ -4,6 +4,11 @@ export const postgresData = {
   icon: '🐘',
   summary: 'Advanced features of the world\'s most advanced open-source relational database.',
   concepts: ['MVCC', 'JSONB', 'CTEs', 'Window Functions', 'Vacuuming', 'WAL', 'Indexes', 'Full-Text Search', 'Partitioning'],
+  
+  learningLinks: [
+    { title: 'PostgreSQL Tutorial', url: 'https://www.postgresqltutorial.com/' },
+    { title: 'Use The Index, Luke', url: 'https://use-the-index-luke.com/' }
+  ],
   questions: [
     { id: 'pg-001', question: 'What makes PostgreSQL different from MySQL?', difficulty: 'medium', type: 'theory', answer: 'PostgreSQL is strictly an Object-Relational Database Management System (ORDBMS). It fully complies with ACID, supports advanced data types (JSONB, Arrays, HStore, UUIDs, Geospatial), advanced locking (MVCC), materialized views, and partial indexes. MySQL is historically geared towards speed and web apps, though it has caught up in recent versions.' },
     { id: 'pg-002', question: 'Explain MVCC (Multi-Version Concurrency Control) in PostgreSQL.', difficulty: 'hard', type: 'theory', answer: 'MVCC allows high concurrency. Instead of locking a row when reading/writing, PostgreSQL creates a new version of the row for the transaction. Readers don\'t block writers, and writers don\'t block readers. Old versions (dead tuples) are kept until transactions that need them finish, then cleaned up by VACUUM.' },

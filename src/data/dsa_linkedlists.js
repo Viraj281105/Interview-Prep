@@ -4,6 +4,11 @@ export const linkedListsRecursionData = {
   icon: '🔗',
   summary: 'Pointers, cycles, reversing lists, and recursive problem solving (Backtracking).',
   concepts: ['Singly/Doubly Linked Lists', 'Fast & Slow Pointers', 'Recursion', 'Backtracking', 'Memoization'],
+  
+  learningLinks: [
+    { title: 'GeeksforGeeks DSA', url: 'https://www.geeksforgeeks.org/data-structures/' },
+    { title: 'LeetCode Explore', url: 'https://leetcode.com/explore/' }
+  ],
   questions: [
     { id: 'll-001', question: 'What is a Linked List?', difficulty: 'easy', type: 'theory', answer: 'A linear data structure consisting of nodes. Each node contains data and a reference (pointer) to the next node in the sequence. Unlike arrays, elements are not stored in contiguous memory locations.' },
     { id: 'll-002', question: 'Linked List vs Array?', difficulty: 'easy', type: 'theory', answer: 'Array: Contiguous memory, O(1) random access by index, O(N) insertion/deletion (due to shifting). Linked List: Non-contiguous memory, O(N) access (must traverse), O(1) insertion/deletion at a known node (just update pointers).' },

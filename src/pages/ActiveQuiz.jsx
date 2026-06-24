@@ -13,10 +13,10 @@ import { QuizResults } from '../components/quiz/QuizResults';
 export default function ActiveQuiz() {
   const { quizId } = useParams();
   const navigate = useNavigate();
-  const { saveQuizScore, addXP } = useAppStore();
+  const { saveQuizScore, addXP, currentActiveQuiz } = useAppStore();
   const { currentUser } = useAuth();
 
-  const quiz = mockQuizzes.find(q => q.id === quizId);
+  const quiz = quizId === 'active' ? currentActiveQuiz : mockQuizzes.find(q => q.id === quizId);
 
   // States
   const [hasStarted, setHasStarted] = useState(false);

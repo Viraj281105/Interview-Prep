@@ -4,6 +4,11 @@ export const javascriptData = {
   icon: 'JS',
   summary: 'The language of the web. Understanding its quirks, event loop, closures, and modern ES6+ features.',
   concepts: ['Event Loop', 'Closures', 'Promises/Async', 'Prototypal Inheritance', 'Hoisting', 'Scope', 'This Keyword', 'ES6+', 'Modules', 'Memory Management'],
+  
+  learningLinks: [
+    { title: 'React Docs', url: 'https://react.dev/' },
+    { title: 'Frontend Masters', url: 'https://frontendmasters.com/' }
+  ],
   questions: [
     { id: 'js-001', question: 'Explain the Event Loop.', difficulty: 'hard', type: 'theory', answer: 'The Event Loop handles async callbacks in Node and the browser. It monitors the Call Stack and the Task Queue (Callback Queue). If the Call Stack is empty, it pushes the first task from the queue onto the stack. Microtasks (Promises, MutationObserver) have higher priority than Macrotasks (setTimeout, DOM events) and are executed immediately after the current operation completes, before the next macrotask.' },
     { id: 'js-002', question: 'What is a closure?', difficulty: 'medium', type: 'theory', answer: 'A closure is a function bundled together with references to its surrounding state (lexical environment). It gives a function access to its outer scope even after the outer function has returned. Used for data privacy, currying, and maintaining state in async callbacks.' },

@@ -13,6 +13,7 @@ import { aiService } from '../services/aiService';
 import { getUserHistory } from '../services/historyService';
 import { getUserProfile } from '../services/database';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { Skeleton, CardSkeleton } from '../components/ui/Skeleton';
 
 export const Dashboard = () => {
   const { 
@@ -145,7 +146,16 @@ export const Dashboard = () => {
       </div>
 
       {/* AI Coach Insights */}
-      {aiInsight && (
+      {!aiInsight ? (
+        <Card animated glass className="p-6 md:p-8 border-brand-indigo/30 bg-gradient-to-r from-brand-indigo/5 to-brand-purple/5 shadow-lg flex flex-col md:flex-row items-start md:items-center gap-6">
+          <Skeleton variant="circular" className="w-16 h-16 shrink-0" />
+          <div className="w-full">
+            <Skeleton variant="text" className="w-48 h-6 mb-3" />
+            <Skeleton variant="text" className="w-full mb-2" />
+            <Skeleton variant="text" className="w-3/4" />
+          </div>
+        </Card>
+      ) : (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <Card animated glass className="p-6 md:p-8 border-brand-indigo/30 bg-gradient-to-r from-brand-indigo/5 to-brand-purple/5 shadow-lg flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="w-16 h-16 shrink-0 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center border border-brand-indigo/20 shadow-inner">
@@ -219,7 +229,17 @@ export const Dashboard = () => {
                 </div>
               </Link>
             )) : (
-              <div className="text-slate-500 text-sm text-center py-4">Generating recommendations...</div>
+              <div className="space-y-4">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="flex items-center gap-4 p-4 mb-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+                    <Skeleton variant="circular" className="w-10 h-10 shrink-0" />
+                    <div className="flex-1">
+                      <Skeleton variant="text" className="w-1/2 h-4 mb-2" />
+                      <Skeleton variant="text" className="w-3/4 h-3" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
           <Link to="/subjects" className="block mt-2">

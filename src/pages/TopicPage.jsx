@@ -185,6 +185,33 @@ export default function TopicPage() {
                 </div>
               )}
 
+              {module.learningLinks && module.learningLinks.length > 0 && (
+                <div className="bg-white/60 dark:bg-slate-900/40 border border-white/40 dark:border-slate-800/50 p-6 md:p-8 rounded-3xl backdrop-blur-md shadow-sm">
+                  <h3 className="text-xl font-heading font-bold mb-4 flex items-center gap-2">
+                    <List size={20} className="text-brand-indigo" /> Learning Resources
+                  </h3>
+                  <div className="flex flex-col gap-3">
+                    {module.learningLinks.map((link, i) => (
+                      <a 
+                        key={i} 
+                        href={link.url} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 shrink-0">
+                          <BookOpen size={14} />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-slate-900 dark:text-slate-100 text-sm">{link.title}</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400">{new URL(link.url).hostname}</div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="bg-white/60 dark:bg-slate-900/40 border border-white/40 dark:border-slate-800/50 p-6 md:p-8 rounded-3xl backdrop-blur-md shadow-sm flex flex-col flex-1">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xl font-heading font-bold">Personal Notes</h3>

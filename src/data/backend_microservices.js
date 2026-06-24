@@ -4,6 +4,11 @@ export const microservicesData = {
   icon: '🧩',
   summary: 'Designing distributed systems, inter-service communication, fault tolerance, and scaling.',
   concepts: ['Service Discovery', 'API Gateway', 'Event-Driven', 'Saga Pattern', 'Circuit Breaker', 'Distributed Tracing', 'CQRS', 'CAP Theorem'],
+  
+  learningLinks: [
+    { title: 'Node.js Docs', url: 'https://nodejs.org/en/docs/' },
+    { title: 'Spring Boot Guide', url: 'https://spring.io/guides' }
+  ],
   questions: [
     { id: 'ms-001', question: 'What are Microservices?', difficulty: 'easy', type: 'theory', answer: 'An architectural style that structures an application as a collection of loosely coupled, independently deployable services. Each service is organized around a specific business capability, owns its own database, and communicates via lightweight protocols (HTTP/REST, gRPC, or messaging queues).' },
     { id: 'ms-002', question: 'Monolith vs Microservices: When to use which?', difficulty: 'medium', type: 'theory', answer: 'Monolith: Best for early-stage startups, small teams, simple domains, fast prototyping. Easier to deploy and debug. Microservices: Best for large teams, complex domains, high scalability needs, polyglot environments. Harder to deploy, test, and monitor (distributed systems complexity).' },

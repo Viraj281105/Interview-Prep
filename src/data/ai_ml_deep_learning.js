@@ -4,6 +4,10 @@ export const deepLearningData = {
   icon: '🧠',
   summary: 'CNNs, RNNs, Backpropagation, Activation Functions, and Optimization.',
   concepts: ['Artificial Neural Networks', 'Backpropagation', 'Activation Functions', 'CNNs', 'RNNs', 'Optimizers', 'Regularization'],
+  
+  learningLinks: [
+    { title: 'Machine Learning Crash Course', url: 'https://developers.google.com/machine-learning/crash-course' }
+  ],
   questions: [
     { id: 'dl-001', question: 'What is Deep Learning?', difficulty: 'easy', type: 'theory', answer: 'A subset of Machine Learning based on Artificial Neural Networks with multiple layers (hence "deep"). It attempts to simulate the behavior of the human brain to learn from large amounts of data.' },
     { id: 'dl-002', question: 'What is an Artificial Neuron (Perceptron)?', difficulty: 'easy', type: 'theory', answer: 'The fundamental unit of a neural network. It takes multiple inputs, multiplies them by their respective weights, adds a bias, and passes the sum through an activation function to produce an output.' },

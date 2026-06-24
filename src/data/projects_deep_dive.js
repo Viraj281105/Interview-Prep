@@ -4,6 +4,10 @@ export const projectDeepDiveData = {
   icon: '🔍',
   summary: 'Questions to help you articulate your past experience, challenges, and architecture decisions.',
   concepts: ['Architecture Decisions', 'Hardest Bugs', 'Performance Optimization', 'Trade-offs', 'Tech Stack Choices'],
+  
+  learningLinks: [
+    { title: 'FreeCodeCamp', url: 'https://www.freecodecamp.org/' }
+  ],
   questions: [
     { id: 'pdd-001', question: 'Describe the overall architecture of your most recent/complex project.', difficulty: 'medium', type: 'theory', answer: 'Start high-level (Frontend -> Gateway -> Microservices -> DBs). Mention the core technologies used at each layer. Then briefly explain the data flow for the most important feature.' },
     { id: 'pdd-002', question: 'Why did you choose [Technology X] over [Technology Y] for this project?', difficulty: 'hard', type: 'theory', answer: 'Never say "because I wanted to learn it" or "because it\'s popular". Discuss specific trade-offs: performance, community support, team familiarity, ecosystem, scaling characteristics, or specific technical features (e.g., "We chose Postgres over MongoDB because we needed strict ACID compliance for financial data").' },

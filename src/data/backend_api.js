@@ -4,6 +4,11 @@ export const apiDesignData = {
   icon: '🔌',
   summary: 'Architecting scalable, secure, and maintainable communication interfaces between systems.',
   concepts: ['REST Constraints', 'GraphQL', 'Idempotency', 'Authentication', 'Versioning', 'Pagination', 'Rate Limiting', 'Webhooks', 'Caching'],
+  
+  learningLinks: [
+    { title: 'Node.js Docs', url: 'https://nodejs.org/en/docs/' },
+    { title: 'Spring Boot Guide', url: 'https://spring.io/guides' }
+  ],
   questions: [
     { id: 'api-001', question: 'What is REST?', difficulty: 'easy', type: 'theory', answer: 'Representational State Transfer. An architectural style for distributed hypermedia systems. It relies on a stateless, client-server, cacheable communications protocol (virtually always HTTP).' },
     { id: 'api-002', question: 'What are the 6 guiding constraints of REST?', difficulty: 'hard', type: 'theory', answer: '1. Client-Server architecture. 2. Statelessness (no client context stored on server). 3. Cacheability (responses must define themselves as cacheable or not). 4. Layered System (client cannot tell if it is connected to end server or intermediary). 5. Uniform Interface (identification of resources, manipulation through representations, self-descriptive messages, HATEOAS). 6. Code on Demand (optional).' },

@@ -4,6 +4,11 @@ export const typescriptData = {
   icon: '📘',
   summary: 'Statically-typed superset of JavaScript. Adds type safety, interfaces, generics, and advanced type system features to JavaScript for large-scale application development.',
   concepts: ['Type System', 'Interfaces', 'Generics', 'Union/Intersection Types', 'Type Guards', 'Mapped Types', 'Conditional Types', 'Decorators', 'Enums', 'Utility Types'],
+  
+  learningLinks: [
+    { title: 'MDN Web Docs', url: 'https://developer.mozilla.org/' },
+    { title: 'W3Schools', url: 'https://www.w3schools.com/' }
+  ],
   questions: [
     { id: 'ts-001', question: 'What is the difference between interface and type?', difficulty: 'medium', type: 'theory', answer: 'Both define object shapes. `interface` supports declaration merging (same-name interfaces auto-merge) and is better for public API contracts. `type` supports unions, intersections, mapped types, and primitives. Use interface for objects, type for aliases/unions.' },
     { id: 'ts-002', question: 'Explain TypeScript generics.', difficulty: 'medium', type: 'practical', answer: 'Generics create reusable components that work with multiple types while preserving type safety. Acts as a variable for a type. Constraints use `extends` to limit allowed types.' },

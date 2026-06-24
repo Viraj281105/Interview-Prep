@@ -4,6 +4,11 @@ export const treesGraphsData = {
   icon: '🌲',
   summary: 'Hierarchical and relational data structures, DFS, BFS, and shortest path algorithms.',
   concepts: ['Binary Trees', 'BST', 'DFS', 'BFS', 'Topological Sort', 'Dijkstra', 'Trie', 'Union Find'],
+  
+  learningLinks: [
+    { title: 'GeeksforGeeks DSA', url: 'https://www.geeksforgeeks.org/data-structures/' },
+    { title: 'LeetCode Explore', url: 'https://leetcode.com/explore/' }
+  ],
   questions: [
     { id: 'tree-001', question: 'What is a Binary Tree?', difficulty: 'easy', type: 'theory', answer: 'A tree data structure in which each node has at most two children, referred to as the left child and the right child.' },
     { id: 'tree-002', question: 'What is a Binary Search Tree (BST)?', difficulty: 'easy', type: 'theory', answer: 'A binary tree where the value of every node in a node\'s left subtree is strictly less than the node\'s value, and the value of every node in its right subtree is strictly greater than the node\'s value. In-order traversal of a BST yields a sorted array.' },

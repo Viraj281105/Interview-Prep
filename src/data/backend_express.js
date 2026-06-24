@@ -4,6 +4,11 @@ export const expressData = {
   icon: '🚂',
   summary: 'Fast, unopinionated, minimalist web framework for Node.js.',
   concepts: ['Middleware', 'Routing', 'Error Handling', 'Authentication', 'CORS', 'Rate Limiting', 'Security Headers', 'Validation'],
+  
+  learningLinks: [
+    { title: 'Node.js Docs', url: 'https://nodejs.org/en/docs/' },
+    { title: 'Spring Boot Guide', url: 'https://spring.io/guides' }
+  ],
   questions: [
     { id: 'exp-001', question: 'What is Middleware in Express?', difficulty: 'easy', type: 'theory', answer: 'Middleware functions have access to the request (`req`), response (`res`), and the `next` middleware function in the application\'s request-response cycle. They can execute code, make changes to the req/res objects, end the cycle, or call `next()`.' },
     { id: 'exp-002', question: 'Explain the order of middleware execution.', difficulty: 'medium', type: 'theory', answer: 'Middleware executes sequentially in the exact order they are defined via `app.use()`. Global middleware should be placed at the top. Error-handling middleware should be placed at the very bottom, after all other routes and middleware.' },

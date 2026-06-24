@@ -4,6 +4,10 @@ export const commonHrData = {
   icon: '👋',
   summary: 'The classic opening and closing questions of every tech interview.',
   concepts: ['Elevator Pitch', 'Strengths/Weaknesses', 'Career Goals', 'Reverse Interviewing'],
+  
+  learningLinks: [
+    { title: 'STAR Method Guide', url: 'https://www.themuse.com/advice/star-interview-method' }
+  ],
   questions: [
     { id: 'hrc-001', question: 'Tell me about yourself.', difficulty: 'easy', type: 'theory', answer: 'The Elevator Pitch. Keep it to 2 minutes. Present -> Past -> Future. "Currently, I am a [Title] at [Company] building [Current Project]. Before that, I worked on [Past Highlight]. I am looking for a role where I can [Future Goal aligning with the company]."' },
     { id: 'hrc-002', question: 'Why do you want to work here?', difficulty: 'easy', type: 'theory', answer: 'Show you did your research. Don\'t just say "it\'s a great company". Mention a specific product they build, a recent blog post they wrote, their tech stack, or their engineering culture. Align it with your career goals.' },

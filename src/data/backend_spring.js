@@ -4,6 +4,11 @@ export const springBootData = {
   icon: '🍃',
   summary: 'Opinionated, convention-over-configuration Java framework for building enterprise applications and microservices.',
   concepts: ['IoC & DI', 'Auto-Configuration', 'Annotations', 'Spring MVC', 'JPA/Hibernate', 'Spring Security', 'Actuator', 'AOP'],
+  
+  learningLinks: [
+    { title: 'Node.js Docs', url: 'https://nodejs.org/en/docs/' },
+    { title: 'Spring Boot Guide', url: 'https://spring.io/guides' }
+  ],
   questions: [
     { id: 'sb-001', question: 'What is the difference between Spring and Spring Boot?', difficulty: 'easy', type: 'theory', answer: 'Spring is the core framework providing Dependency Injection (DI) and Inversion of Control (IoC). It requires heavy manual XML or Java configuration. Spring Boot is an extension that provides "opinionated" auto-configuration, embedded servers (Tomcat), and starter POMs to get applications running instantly without boilerplate.' },
     { id: 'sb-002', question: 'Explain Inversion of Control (IoC) and Dependency Injection (DI).', difficulty: 'medium', type: 'theory', answer: 'IoC means the control of object creation is handed over from the programmer to the framework (the Spring Container). DI is the pattern used to implement IoC; instead of objects instantiating their dependencies, the Container injects them (via constructor, setter, or field injection).' },

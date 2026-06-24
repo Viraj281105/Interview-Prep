@@ -4,6 +4,11 @@ export const arraysStringsData = {
   icon: '🧮',
   summary: 'Foundational data structures, two pointers, sliding window, and string manipulation.',
   concepts: ['Two Pointers', 'Sliding Window', 'Prefix Sum', 'Hash Maps', 'In-place Manipulation', 'Palindromes', 'Substrings'],
+  
+  learningLinks: [
+    { title: 'GeeksforGeeks DSA', url: 'https://www.geeksforgeeks.org/data-structures/' },
+    { title: 'LeetCode Explore', url: 'https://leetcode.com/explore/' }
+  ],
   questions: [
     { id: 'arr-001', question: 'What is an Array?', difficulty: 'easy', type: 'theory', answer: 'A linear data structure consisting of a collection of elements, each identified by an array index. Elements are stored in contiguous memory locations, allowing O(1) random access.' },
     { id: 'arr-002', question: 'Explain the Two Pointers technique.', difficulty: 'medium', type: 'theory', answer: 'A technique where two pointers iterate through the data structure in tandem until one or both hit a certain condition. Often used in sorted arrays to find pairs (moving from both ends to the center) or for fast/slow pointer traversals.' },

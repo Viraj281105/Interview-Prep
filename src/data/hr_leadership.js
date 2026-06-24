@@ -4,6 +4,10 @@ export const leadershipData = {
   icon: '🤝',
   summary: 'Assessing your ability to lead, mentor, and align with company values.',
   concepts: ['Mentorship', 'Ownership', 'Cross-Functional Collaboration', 'Feedback Culture', 'Vision'],
+  
+  learningLinks: [
+    { title: 'STAR Method Guide', url: 'https://www.themuse.com/advice/star-interview-method' }
+  ],
   questions: [
     { id: 'hrl-001', question: 'How do you define Leadership?', difficulty: 'easy', type: 'theory', answer: 'Leadership is not a title; it is action. It is about taking ownership, empowering others, clearing roadblocks, setting a vision, and taking responsibility when things go wrong while sharing credit when things go right.' },
     { id: 'hrl-002', question: 'Describe your leadership style.', difficulty: 'medium', type: 'theory', answer: 'Examples: Servant Leadership (focus on unblocking the team), Transformational (inspiring innovation), or Democratic (building consensus). "I lean towards Servant Leadership. My primary job is to ensure my team has the tools, knowledge, and psychological safety to do their best work."' },

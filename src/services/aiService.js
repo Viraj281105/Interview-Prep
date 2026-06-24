@@ -115,11 +115,21 @@ export const aiService = {
     return "Can you give me a specific example of when that approach failed, and what you learned from it?";
   },
 
-  /**
-   * Generate a personalized prep roadmap
-   */
   generateRoadmap: async (targetCompanies, skillLevel, prepTimeWeeks) => {
     const groqKey = import.meta.env.VITE_GROQ_API_KEY;
+    
+    // Dynamically fetch company data to weight the roadmap
+    const { mockCompanies } = await import('../data/mock_companies.js');
+    const matchedCompanies = targetCompanies.map(tc => {
+      return mockCompanies.find(c => c.name.toLowerCase() === tc.toLowerCase() || c.id === tc.toLowerCase());
+    }).filter(Boolean);
+
+    let companyContext = "";
+    let aggregatedTags = [];
+    if (matchedCompanies.length > 0) {
+      companyContext = matchedCompanies.map(c => `Company: ${c.name}, Tags: ${c.tags.join(', ')}, Difficulty: ${c.difficulty}`).join('. ');
+      matchedCompanies.forEach(c => aggregatedTags.push(...c.tags));
+    }
 
     if (groqKey) {
       try {
@@ -147,7 +157,7 @@ The output MUST be valid JSON.`
               },
               {
                 role: "user",
-                content: `Create a ${prepTimeWeeks}-week technical interview preparation roadmap for a ${skillLevel} software engineer targeting these companies: ${targetCompanies.length > 0 ? targetCompanies.join(', ') : 'top tech companies'}. Ensure tasks are realistic for the week.`
+                content: `Create a ${prepTimeWeeks}-week technical interview preparation roadmap for a ${skillLevel} software engineer targeting these companies: ${targetCompanies.length > 0 ? targetCompanies.join(', ') : 'top tech companies'}. ${companyContext ? 'Use this data to tailor the plan: ' + companyContext : ''} Ensure tasks are realistic for the week.`
               }
             ]
           })
@@ -165,22 +175,21 @@ The output MUST be valid JSON.`
       }
     }
 
-    // --- FALLBACK: Advanced Local Heuristics ---
+    // --- FALLBACK: Dynamic Local Heuristics ---
     await simulateLatency();
-
-    const companies = targetCompanies.map(c => c.toLowerCase());
-    const isGoogle = companies.some(c => c.includes('google') || c.includes('meta') || c.includes('amazon'));
-    const isStripe = companies.some(c => c.includes('stripe') || c.includes('airbnb') || c.includes('shopify'));
-    const isSystemHeavy = companies.some(c => c.includes('netflix') || c.includes('uber') || c.includes('databricks'));
 
     let topics = [];
     
-    if (isStripe) {
-      topics = ["API Design & REST", "Practical Integration Tasks", "Frontend Architecture", "Bug Squashing", "Concurrency", "Behavioral & Values"];
-    } else if (isSystemHeavy) {
-      topics = ["Distributed Systems Intro", "Concurrency & OS", "Advanced System Design", "Microservices", "Hard DSA", "Behavioral (Culture Fit)"];
-    } else if (isGoogle) {
-      topics = ["Graphs & Trees", "Dynamic Programming", "Advanced Data Structures", "System Design Fundamentals", "Mock Interview Loop"];
+    if (aggregatedTags.length > 0) {
+      // Weight topics based on tags
+      const uniqueTags = [...new Set(aggregatedTags)];
+      topics = uniqueTags.slice(0, Math.max(5, prepTimeWeeks)).map(t => `Focus: ${t}`);
+      
+      // Ensure basics are covered based on difficulty
+      const isHard = matchedCompanies.some(c => c.difficulty === 'Hard' || c.difficulty === 'Expert');
+      if (isHard) {
+        topics.push("Advanced System Design", "Hard Dynamic Programming");
+      }
     } else {
       topics = ["Arrays & Hashmaps", "Two Pointers", "Trees", "System Design Basics", "Behavioral & STAR Method"];
     }
@@ -188,7 +197,7 @@ The output MUST be valid JSON.`
     if (skillLevel === 'Beginner') {
       topics.unshift("Basic Data Structures", "Big-O Notation");
     } else if (skillLevel === 'Advanced') {
-      topics = topics.map(t => "Advanced " + t);
+      topics = topics.map(t => t.includes('Focus:') ? t : "Advanced " + t);
       topics.push("System Architecture Deep Dive");
     }
 
@@ -211,7 +220,7 @@ The output MUST be valid JSON.`
 
     return {
       title: `${prepTimeWeeks}-Week ${skillLevel} Prep Plan for ${targetCompanies.join(', ') || 'MAANG'}`,
-      summary: `This roadmap is tailored for a ${skillLevel} engineer targeting ${targetCompanies.join(', ') || 'top tech companies'}. It prioritizes high-ROI topics based on their recent interview patterns.`,
+      summary: `This roadmap is dynamically tailored for a ${skillLevel} engineer targeting ${targetCompanies.join(', ') || 'top tech companies'}. It prioritizes high-ROI topics based on actual company tags and hiring patterns.`,
       weeks
     };
   },

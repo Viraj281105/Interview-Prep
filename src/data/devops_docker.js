@@ -4,6 +4,11 @@ export const dockerData = {
   icon: '🐳',
   summary: 'Containerization, images, volumes, networking, and Docker Compose.',
   concepts: ['Containers vs VMs', 'Images', 'Dockerfile', 'Volumes', 'Docker Compose', 'Networking', 'Namespaces & Cgroups'],
+  
+  learningLinks: [
+    { title: 'Docker Tutorial', url: 'https://docs.docker.com/get-started/' },
+    { title: 'Kubernetes Basics', url: 'https://kubernetes.io/docs/tutorials/kubernetes-basics/' }
+  ],
   questions: [
     { id: 'doc-001', question: 'What is Docker?', difficulty: 'easy', type: 'theory', answer: 'An open-source platform that automates the deployment, scaling, and management of applications inside lightweight, portable, self-sufficient containers.' },
     { id: 'doc-002', question: 'Containers vs Virtual Machines.', difficulty: 'medium', type: 'theory', answer: 'VMs abstract physical hardware; each VM requires a full Guest OS (heavy, slow boot, high memory overhead). Containers abstract the OS; they share the host\'s OS kernel and isolate applications using Linux Namespaces and Cgroups (lightweight, fast boot, low overhead).' },

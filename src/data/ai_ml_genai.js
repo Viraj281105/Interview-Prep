@@ -4,6 +4,10 @@ export const genAiData = {
   icon: '✨',
   summary: 'Transformers, Attention mechanism, Prompt Engineering, RAG, and Fine-Tuning.',
   concepts: ['Transformers', 'Self-Attention', 'LLMs', 'Prompt Engineering', 'RAG', 'Vector Databases', 'Fine-Tuning', 'Tokens'],
+  
+  learningLinks: [
+    { title: 'Machine Learning Crash Course', url: 'https://developers.google.com/machine-learning/crash-course' }
+  ],
   questions: [
     { id: 'gen-001', question: 'What is Generative AI?', difficulty: 'easy', type: 'theory', answer: 'A branch of artificial intelligence focused on creating new, original content (text, images, audio, video, code) based on patterns and structures learned from massive training datasets.' },
     { id: 'gen-002', question: 'What is a Large Language Model (LLM)?', difficulty: 'easy', type: 'theory', answer: 'A foundational AI model trained on vast amounts of text data. It uses deep learning architectures (specifically Transformers) to understand and generate human-like text by predicting the most probable next word in a sequence.' },

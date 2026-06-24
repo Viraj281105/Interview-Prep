@@ -28,6 +28,7 @@ const PremiumUpgrade = lazy(() => import('./pages/PremiumUpgrade').then(module =
 const Profile = lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
 const Settings = lazy(() => import('./pages/Settings').then(module => ({ default: module.Settings })));
 const Achievements = lazy(() => import('./pages/Achievements').then(module => ({ default: module.Achievements })));
+const Bookmarks = lazy(() => import('./pages/Bookmarks').then(module => ({ default: module.Bookmarks })));
 const NotFound = lazy(() => import('./pages/NotFound').then(module => ({ default: module.NotFound })));
 
 // Fallback loader
@@ -78,6 +79,7 @@ function App() {
                 <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />
                 <Route path="settings" element={<AuthGuard><Settings /></AuthGuard>} />
                 <Route path="achievements" element={<AuthGuard><Achievements /></AuthGuard>} />
+                <Route path="bookmarks" element={<AuthGuard><Bookmarks /></AuthGuard>} />
                 
                 {/* 404 */}
                 <Route path="*" element={<NotFound />} />

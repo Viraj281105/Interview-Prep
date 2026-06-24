@@ -4,6 +4,10 @@ export const mlFundamentalsData = {
   icon: '🧠',
   summary: 'Supervised vs Unsupervised learning, Regression, Classification, and Model Evaluation.',
   concepts: ['Supervised Learning', 'Unsupervised Learning', 'Overfitting', 'Cross-Validation', 'Bias-Variance Tradeoff', 'Linear Regression', 'Decision Trees'],
+  
+  learningLinks: [
+    { title: 'Machine Learning Crash Course', url: 'https://developers.google.com/machine-learning/crash-course' }
+  ],
   questions: [
     { id: 'ml-001', question: 'What is Machine Learning?', difficulty: 'easy', type: 'theory', answer: 'A subset of AI that involves training algorithms to learn patterns from data and make predictions or decisions without being explicitly programmed for that specific task.' },
     { id: 'ml-002', question: 'Supervised vs Unsupervised Learning.', difficulty: 'easy', type: 'theory', answer: 'Supervised Learning uses labeled data (input-output pairs) to train models (e.g., predicting house prices). Unsupervised Learning uses unlabeled data to discover hidden patterns or groupings (e.g., customer segmentation).' },

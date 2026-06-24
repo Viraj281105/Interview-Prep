@@ -4,6 +4,11 @@ export const sqlData = {
   icon: '🗄️',
   summary: 'RDBMS fundamentals, complex querying, normalization, and transaction isolation.',
   concepts: ['ACID', 'Normalization', 'Joins', 'Indexes', 'Isolation Levels', 'Transactions', 'Locks', 'Execution Plans'],
+  
+  learningLinks: [
+    { title: 'PostgreSQL Tutorial', url: 'https://www.postgresqltutorial.com/' },
+    { title: 'Use The Index, Luke', url: 'https://use-the-index-luke.com/' }
+  ],
   questions: [
     { id: 'sql-001', question: 'What are the ACID properties?', difficulty: 'easy', type: 'theory', answer: 'Atomicity: All or nothing (transaction completes fully or rolls back). Consistency: Database remains in a valid state before and after. Isolation: Concurrent transactions don\'t interfere with each other. Durability: Committed data is saved permanently, even if the system crashes.' },
     { id: 'sql-002', question: 'Explain Database Normalization.', difficulty: 'medium', type: 'theory', answer: 'The process of organizing data to reduce redundancy and improve data integrity. 1NF: Atomic values, unique columns. 2NF: 1NF + no partial dependencies (all non-key attributes depend on the WHOLE primary key). 3NF: 2NF + no transitive dependencies (non-key attributes depend ONLY on the primary key).' },

@@ -4,6 +4,11 @@ export const sortingSearchingData = {
   icon: '🔍',
   summary: 'Sorting algorithms, Binary Search, Quickselect, and Divide & Conquer techniques.',
   concepts: ['Binary Search', 'Merge Sort', 'Quick Sort', 'Quickselect', 'Divide and Conquer', 'Search Space', 'O(N log N)'],
+  
+  learningLinks: [
+    { title: 'GeeksforGeeks DSA', url: 'https://www.geeksforgeeks.org/data-structures/' },
+    { title: 'LeetCode Explore', url: 'https://leetcode.com/explore/' }
+  ],
   questions: [
     { id: 'sort-001', question: 'What is Binary Search?', difficulty: 'easy', type: 'theory', answer: 'An efficient algorithm for finding an item from a sorted list of items. It works by repeatedly dividing in half the portion of the list that could contain the item, until you\'ve narrowed down the possible locations to just one. Time complexity: O(log N).' },
     { id: 'sort-002', question: 'Implement standard Binary Search.', difficulty: 'easy', type: 'practical', answer: 'Use two pointers, `left` and `right`. Calculate `mid = left + Math.floor((right - left) / 2)`. If `target === nums[mid]`, return `mid`. If `target < nums[mid]`, `right = mid - 1`. Else `left = mid + 1`.', code: `function search(nums, target) {

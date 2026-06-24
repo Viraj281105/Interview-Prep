@@ -4,6 +4,11 @@ export const cicdCloudData = {
   icon: '☁️',
   summary: 'Continuous Integration, Continuous Deployment, Jenkins, GitOps, and Cloud infrastructure.',
   concepts: ['CI/CD Pipelines', 'GitOps', 'Infrastructure as Code', 'AWS/GCP Basics', 'Jenkins/GitHub Actions', 'Serverless', 'Terraform'],
+  
+  learningLinks: [
+    { title: 'Docker Tutorial', url: 'https://docs.docker.com/get-started/' },
+    { title: 'Kubernetes Basics', url: 'https://kubernetes.io/docs/tutorials/kubernetes-basics/' }
+  ],
   questions: [
     { id: 'cicd-001', question: 'What is CI (Continuous Integration)?', difficulty: 'easy', type: 'theory', answer: 'A software development practice where developers frequently merge their code changes into a central repository (often multiple times a day). Automated builds and unit tests are run immediately after every commit to detect integration errors as quickly as possible.' },
     { id: 'cicd-002', question: 'What is CD (Continuous Delivery vs Continuous Deployment)?', difficulty: 'medium', type: 'theory', answer: 'Continuous Delivery: Code changes are automatically built, tested, and prepared for production release, but require a HUMAN to click a button to deploy. Continuous Deployment: Every change that passes the automated tests is deployed to production AUTOMATICALLY without human intervention.' },

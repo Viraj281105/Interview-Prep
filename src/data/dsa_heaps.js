@@ -4,6 +4,11 @@ export const heapsStacksQueuesData = {
   icon: '🥞',
   summary: 'LIFO/FIFO data structures, Monotonic Stacks, and Priority Queues.',
   concepts: ['LIFO', 'FIFO', 'Min/Max Heap', 'Priority Queue', 'Monotonic Stack', 'Circular Queue'],
+  
+  learningLinks: [
+    { title: 'GeeksforGeeks DSA', url: 'https://www.geeksforgeeks.org/data-structures/' },
+    { title: 'LeetCode Explore', url: 'https://leetcode.com/explore/' }
+  ],
   questions: [
     { id: 'hsq-001', question: 'What is a Stack?', difficulty: 'easy', type: 'theory', answer: 'A linear data structure that follows the Last-In, First-Out (LIFO) principle. The last element added to the stack will be the first one removed. Operations: Push, Pop, Peek.' },
     { id: 'hsq-002', question: 'What is a Queue?', difficulty: 'easy', type: 'theory', answer: 'A linear data structure that follows the First-In, First-Out (FIFO) principle. The first element added will be the first one removed. Operations: Enqueue, Dequeue, Front, Rear.' },

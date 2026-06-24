@@ -4,6 +4,11 @@ export const cssData = {
   icon: '💅',
   summary: 'Cascading Style Sheets, layout algorithms, preprocessors, and modern styling architectures.',
   concepts: ['Flexbox', 'Grid', 'Specificity', 'Box Model', 'BEM', 'CSS Modules', 'Tailwind', 'Animations', 'Container Queries', 'Cascade Layers'],
+  
+  learningLinks: [
+    { title: 'React Docs', url: 'https://react.dev/' },
+    { title: 'Frontend Masters', url: 'https://frontendmasters.com/' }
+  ],
   questions: [
     { id: 'css-001', question: 'Explain CSS Specificity.', difficulty: 'medium', type: 'theory', answer: 'Specificity determines which CSS rule is applied by browsers. It\'s calculated using a 4-value system: Inline styles (1,0,0,0) > IDs (0,1,0,0) > Classes/Pseudo-classes/Attributes (0,0,1,0) > Elements/Pseudo-elements (0,0,0,1). `!important` overrides all of them. Universal selector (*) has 0 specificity.' },
     { id: 'css-002', question: 'What is the Box Model?', difficulty: 'easy', type: 'theory', answer: 'The structure of every element: Content (innermost), Padding (transparent area around content), Border (around padding), Margin (transparent area around border). Default is `box-sizing: content-box` (width = content only). `box-sizing: border-box` includes padding and border in the specified width/height.' },

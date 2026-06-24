@@ -4,6 +4,11 @@ export const webPerfData = {
   icon: '🚀',
   summary: 'Core Web Vitals, browser rendering pipeline, caching, and network optimization.',
   concepts: ['Core Web Vitals', 'Critical Rendering Path', 'Lazy Loading', 'Caching', 'CDN', 'Service Workers', 'Prefetch/Preload', 'Tree Shaking', 'Bundle Splitting'],
+  
+  learningLinks: [
+    { title: 'React Docs', url: 'https://react.dev/' },
+    { title: 'Frontend Masters', url: 'https://frontendmasters.com/' }
+  ],
   questions: [
     { id: 'perf-001', question: 'What are the Core Web Vitals?', difficulty: 'hard', type: 'theory', answer: 'Core Web Vitals are user-centric performance metrics by Google: 1. Largest Contentful Paint (LCP): Loading performance — how quickly the main content renders (target < 2.5s). 2. Interaction to Next Paint (INP): Responsiveness — time from user interaction to next frame (target < 200ms). 3. Cumulative Layout Shift (CLS): Visual stability — how much content shifts unexpectedly (target < 0.1).' },
     { id: 'perf-002', question: 'Explain the Critical Rendering Path.', difficulty: 'hard', type: 'theory', answer: 'The sequence the browser follows: 1. Parse HTML → DOM tree. 2. Parse CSS → CSSOM tree. 3. Combine DOM + CSSOM → Render Tree. 4. Layout (Reflow) — calculate element positions. 5. Paint — fill in pixels. 6. Composite — combine painted layers. CSS blocks rendering. JS blocks HTML parsing.' },

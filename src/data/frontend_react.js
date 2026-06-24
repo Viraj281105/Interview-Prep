@@ -4,6 +4,11 @@ export const reactData = {
     icon: '⚛️',
     summary: 'A JavaScript library for building user interfaces with a component-based architecture and declarative rendering.',
     concepts: ['JSX', 'Virtual DOM', 'Hooks', 'State & Props', 'Context API', 'Reconciliation', 'Higher-Order Components', 'Refs', 'Suspense', 'Server Components', 'Error Boundaries', 'Portals'],
+    
+  learningLinks: [
+    { title: 'React Docs', url: 'https://react.dev/' },
+    { title: 'Frontend Masters', url: 'https://frontendmasters.com/' }
+  ],
     questions: [
       { id: 'react-001', question: 'What is the Virtual DOM and how does React use it?', difficulty: 'easy', type: 'theory', answer: 'The Virtual DOM is a lightweight JavaScript representation of the actual DOM. When state changes, React creates a new Virtual DOM tree, compares it with the previous one (diffing), and calculates the minimum number of changes needed (reconciliation) before updating the real DOM. This batched approach is faster than direct DOM manipulation.' },
       { id: 'react-002', question: 'Explain the difference between useEffect and useLayoutEffect.', difficulty: 'hard', type: 'theory', answer: 'useEffect runs asynchronously AFTER the browser paints the DOM, so it doesn\'t block rendering. useLayoutEffect runs synchronously immediately after React performs all DOM mutations, BEFORE the browser paints. useLayoutEffect is used when you need to read DOM measurements and mutate the DOM again to prevent visual flickering. Example: measuring tooltip position before it renders.' },

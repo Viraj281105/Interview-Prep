@@ -4,6 +4,11 @@ export const redisData = {
   icon: '⚡',
   summary: 'In-memory data structure store, used as a database, cache, and message broker.',
   concepts: ['Data Types', 'Persistence (RDB/AOF)', 'Pub/Sub', 'Eviction Policies', 'Transactions', 'Lua Scripting', 'Clustering', 'Pipelining'],
+  
+  learningLinks: [
+    { title: 'PostgreSQL Tutorial', url: 'https://www.postgresqltutorial.com/' },
+    { title: 'Use The Index, Luke', url: 'https://use-the-index-luke.com/' }
+  ],
   questions: [
     { id: 'red-001', question: 'What is Redis?', difficulty: 'easy', type: 'theory', answer: 'Remote Dictionary Server. An open-source, in-memory, key-value data structure store. It is extremely fast (sub-millisecond latency) and can be used as a database, cache, message broker, and streaming engine.' },
     { id: 'red-002', question: 'Why is Redis so fast?', difficulty: 'medium', type: 'theory', answer: '1. In-Memory: Data resides in RAM, bypassing slow disk I/O. 2. Single-Threaded Event Loop (mostly): Avoids context switching and lock overhead (though I/O and background tasks use threads). 3. Highly optimized C codebase. 4. Efficient data structures (e.g., skip lists for Sorted Sets).' },

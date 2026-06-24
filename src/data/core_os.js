@@ -4,6 +4,10 @@ export const osData = {
   icon: '💻',
   summary: 'Processes, Threads, Concurrency, Memory Management, and File Systems.',
   concepts: ['Processes vs Threads', 'Concurrency vs Parallelism', 'Deadlocks', 'Mutex & Semaphores', 'Virtual Memory', 'Paging', 'Scheduling'],
+  
+  learningLinks: [
+    { title: 'OS Concepts (GeeksforGeeks)', url: 'https://www.geeksforgeeks.org/operating-systems/' }
+  ],
   questions: [
     { id: 'os-001', question: 'What is an Operating System?', difficulty: 'easy', type: 'theory', answer: 'System software that manages computer hardware, software resources, and provides common services for computer programs. It acts as an intermediary between the user/applications and the physical hardware.' },
     { id: 'os-002', question: 'What is a Process?', difficulty: 'easy', type: 'theory', answer: 'An instance of a program in execution. It contains the program code and its current activity. Each process has its own isolated memory space (heap, stack, data, text segments) and resources.' },
