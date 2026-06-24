@@ -66,16 +66,16 @@ export function generateQuiz({ mode, difficulty, subject }) {
       code: q.code,
       options: options,
       correctOptionIndex: correctOptionIndex,
-      explanation: \`From module: \${q.moduleTitle}\`
+      explanation: `From module: ${q.moduleTitle}`
     };
   });
 
   return {
-    id: \`dynamic-\${Date.now()}\`,
+    id: `dynamic-${Date.now()}`,
     title: mode === 'rapid' ? 'Rapid Fire Assessment' : mode === 'subject' ? 'Subject Mastery' : 'Mixed Assessment',
     subject: mode === 'subject' && subject !== 'all' ? subjectsList.find(s => s.id === subject)?.title : 'Various',
     icon: mode === 'rapid' ? '⚡' : '🧠',
-    description: \`A dynamically generated \${difficulty !== 'all' ? difficulty : ''} quiz containing \${count} questions.\`,
+    description: `A dynamically generated ${difficulty !== 'all' ? difficulty : ''} quiz containing ${count} questions.`,
     timeLimit: timeLimit,
     questions: quizQuestions
   };
